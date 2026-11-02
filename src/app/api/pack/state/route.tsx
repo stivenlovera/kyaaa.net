@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUser } from "@/src/app/utils/auth";
+import { adminDenied } from "@/src/app/utils/auth";
 import { repositoryPack } from "@/src/app/repositories/pack.repository";
 import { IResponse } from "@/src/app/types/response";
 import logger, { jsonLog } from "@/src/app/utils/logger";
@@ -8,9 +8,9 @@ import { Prisma } from "../../../../../generated/prisma/client";
 export async function PATCH(request: NextRequest) {
     logger.info(`api/pack/state PATCH`)
     try {
-        const user = await getCurrentUser();
-        if (user === null) {
-            return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
+        const denied = await adminDenied();
+        if (denied) {
+            return denied;
         }
         const body: { pack_id: number, state_pack_id: number } = await request.json();
         if (body.pack_id === undefined || body.state_pack_id === undefined) {

@@ -1,3 +1,4 @@
+import { profileImageUrl } from "../utils/profile-image";
 export interface JWTPayload {
     user_id: number;
     email: string;
@@ -11,6 +12,8 @@ export interface IAuth {
     nick: string
     image: string | null
     file?: string | null
+    /** Solo para la UI (mostrar el enlace al admin). Los permisos reales se comprueban en el servidor. */
+    is_admin?: boolean
 }
 
 export interface IAuthentication extends IAuth {
@@ -131,7 +134,7 @@ export const initialStateFormChangeProfile: IFormChangeProfile = {
         email: "",
         name: "",
         nick: "",
-        image: `${process.env.NEXT_PUBLIC_STATIC_URL_S3}/img/new_user.png`,
+        image: profileImageUrl(null),
         file: null,
         verified_email: null
     },

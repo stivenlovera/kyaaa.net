@@ -13,6 +13,8 @@ export interface IListPacks {
         /** URL de la portada: pública, o firmada si la portada es una página de pago. */
         url: string
     }
+    pack_serie: PackSerie[]
+    pack_character: PackCharacter[]
 }
 
 export interface INewPacksAuth extends IListPacks {
@@ -36,6 +38,10 @@ export interface IPackInfo {
         /** URL de la portada: pública, o firmada si la portada es una página de pago. */
         url: string
     }
+    /** URL de la imagen del modal "Gracias por tu compra"; null = imagen por defecto. */
+    thanks_image: string | null
+    /** URL de la imagen del modal "Registrate ahora!"; null = sin imagen. */
+    register_image: string | null
     pack_serie: PackSerie[]
     pack_types: PackType[]
     pack_character: PackCharacter[]
@@ -132,7 +138,19 @@ export interface IAdminPack {
     state: number;
     state_pack_id: number;
     update_at: Date | null;
+    /** URL completa de la imagen del modal "Gracias por tu compra"; null = la genérica. */
+    thanks_image: string | null;
+    /** URL completa de la imagen del modal "Registrate ahora!"; null = sin imagen. */
+    register_image: string | null;
+    pack_serie: PackSerie[];
+    pack_character: PackCharacter[];
+    /** URL de la miniatura de la primera página; null si el pack aún no tiene páginas. */
+    thumbnail: string | null;
 }
+
+/** Columnas de `pack` con imágenes de los modales, subidas al bucket static en `packs/<code>/<campo>.<ext>`. */
+export const PACK_MEDIA_FIELDS = ['thanks_image', 'register_image'] as const;
+export type PackMediaField = typeof PACK_MEDIA_FIELDS[number];
 
 export interface IAdminPackPage {
     packs: IAdminPack[];

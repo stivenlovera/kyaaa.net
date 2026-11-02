@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUser } from "@/src/app/utils/auth";
+import { adminDenied } from "@/src/app/utils/auth";
 import { repositoryPage } from "@/src/app/repositories/pages.repository";
 import { IFormPage } from "@/src/app/types/page.types";
 import { IResponse } from "@/src/app/types/response";
 import logger, { jsonLog } from "@/src/app/utils/logger";
+import { PAGE_TYPE } from "@/src/app/utils/page-access";
 import { Prisma } from "../../../../../generated/prisma/client";
 
 export async function PATCH(request: NextRequest) {
     logger.info(`api/pack/pages PATCH`)
     try {
-        const user = await getCurrentUser();
-        if (user === null) {
-            return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
+        const denied = await adminDenied();
+        if (denied) {
+            return denied;
         }
         const body: IFormPage = await request.json();
         if (body.page_id === undefined) {
@@ -20,7 +21,7 @@ export async function PATCH(request: NextRequest) {
         if (!body.num || body.num.trim() === '') {
             return NextResponse.json({ success: false, message: 'El número de página es obligatorio' }, { status: 400 });
         }
-        if (body.page_type_id !== 1 && body.page_type_id !== 2) {
+        if (!(Object.values(PAGE_TYPE) as number[]).includes(body.page_type_id)) {
             return NextResponse.json({ success: false, message: 'Tipo de página inválido' }, { status: 400 });
         }
         const page = await repositoryPage.update(body.page_id, body.num.trim(), body.page_type_id, body.state ? 1 : 0);
@@ -41,9 +42,9 @@ export async function PATCH(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
     logger.info(`api/pack/pages DELETE`)
     try {
-        const user = await getCurrentUser();
-        if (user === null) {
-            return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
+        const denied = await adminDenied();
+        if (denied) {
+            return denied;
         }
         const body: { page_id: number } = await request.json();
         if (body.page_id === undefined) {

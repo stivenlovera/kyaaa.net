@@ -41,8 +41,8 @@ export default async function Home({ params }: PageHomeProps) {
   /* const { locale } = await params;
   const t = await getTranslations('home'); */
 
-  const packs = await repositoryPack.findPacksNew();
   const user = await getCurrentUser();
+  const packs = await repositoryPack.findPacksNew(user !== null);
 
   let likes: ILikePack[] = []
   let buys: IBuyPack[] = []

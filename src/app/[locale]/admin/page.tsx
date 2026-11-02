@@ -1,3 +1,4 @@
+import { requireAdminPage } from '@/src/app/utils/auth'
 import Link from 'next/link'
 import {
     FaBoxOpen,
@@ -7,6 +8,7 @@ import {
     FaFilm,
     FaTag,
 } from 'react-icons/fa6'
+import { AdminBreadcrumb } from './_components/breadcrumb'
 
 const sections = [
     { href: '/admin/pack', label: 'Packs', icon: FaBoxOpen },
@@ -17,9 +19,11 @@ const sections = [
     { href: '/admin/votes', label: 'Votaciones', icon: FaSquarePollVertical },
 ]
 
-export default function Page() {
+export default async function Page() {
+    await requireAdminPage()
     return (
         <div className='px-2 py-2 md:px-10 lg:px-20 xl:px-64 2xl:px-72 md:py-5 lg:py-10 xl:py-14'>
+            <AdminBreadcrumb />
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
                 {sections.map(({ href, label, icon: Icon }) => (
                     <Link key={href} href={href} className='card flex flex-col items-center gap-2 hover:bg-neutral-800'>

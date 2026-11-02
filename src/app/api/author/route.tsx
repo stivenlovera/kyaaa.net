@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUser } from "@/src/app/utils/auth";
+import { adminDenied } from "@/src/app/utils/auth";
 import { repositoryAuthor } from "@/src/app/repositories/author.repository";
 import { IAdminAuthor, IFormAuthor } from "@/src/app/types/author.types";
 import { IResponse } from "@/src/app/types/response";
@@ -19,9 +19,9 @@ const validate = (body: Partial<IFormAuthor>): string | null => {
 export async function POST(request: NextRequest) {
     logger.info(`api/author POST`)
     try {
-        const user = await getCurrentUser();
-        if (user === null) {
-            return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
+        const denied = await adminDenied();
+        if (denied) {
+            return denied;
         }
         const body: IFormAuthor = await request.json();
         const error = validate(body);
@@ -44,9 +44,9 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
     logger.info(`api/author PATCH`)
     try {
-        const user = await getCurrentUser();
-        if (user === null) {
-            return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
+        const denied = await adminDenied();
+        if (denied) {
+            return denied;
         }
         const body: IFormAuthor = await request.json();
         if (body.author_id === undefined) {
@@ -75,9 +75,9 @@ export async function PATCH(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
     logger.info(`api/author DELETE`)
     try {
-        const user = await getCurrentUser();
-        if (user === null) {
-            return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
+        const denied = await adminDenied();
+        if (denied) {
+            return denied;
         }
         const body: { author_id: number } = await request.json();
         if (body.author_id === undefined) {

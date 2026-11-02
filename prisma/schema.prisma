@@ -27,6 +27,8 @@ model Pack {
   code_pay          String?
   price_list        Decimal
   code_free         String?
+  thanks_image      String?
+  register_image    String?
   state             Int                @default(1)
   state_pack_id     Int                @default(1)
   state_pack        State_Pack         @relation(fields: [state_pack_id], references: [state_pack_id])
@@ -43,6 +45,7 @@ model Pack {
   buyPacks         Buy_Pack[]
   favoritePacks     Favorite_Pack[]
   likePacks         Like_Pack[]
+  pack_platforms    Pack_platform[]
 
   @@map(name: "pack")
 }
@@ -167,6 +170,41 @@ model Size {
   update_at DateTime?
 
   @@map(name: "size")
+}
+
+// Plataformas externas (Ko-fi, Patreon, Facebook…) a las que redirigen los pósters de cada pack.
+model Platform {
+  platform_id    Int             @id @default(autoincrement())
+  name           String
+  slug           String          @unique
+  base_url       String?
+  state          Int             @default(1)
+  create_at      DateTime?
+  update_at      DateTime?
+  pack_platforms Pack_platform[]
+
+  @@map(name: "platform")
+}
+
+// Póster de un pack para una plataforma: se muestra debajo del botón comprar y enlaza a `url`.
+// `poster` es la key en el bucket static (packs/<code>/poster/<slug>.<ext>), no la URL completa.
+model Pack_platform {
+  pack_platform_id Int       @id @default(autoincrement())
+  pack_id          Int
+  pack             Pack      @relation(fields: [pack_id], references: [pack_id])
+  platform_id      Int
+  platform         Platform  @relation(fields: [platform_id], references: [platform_id])
+  poster           String
+  url              String
+  title            String?
+  sort             Int       @default(0)
+  clicks           Int       @default(0)
+  state            Int       @default(1)
+  create_at        DateTime?
+  update_at        DateTime?
+
+  @@unique([pack_id, platform_id])
+  @@map(name: "pack_platform")
 }
 
 model Page_size {

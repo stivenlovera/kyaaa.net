@@ -50,7 +50,7 @@ export const DialogDeleteSerie = ({ open, onClose, serie, onDeleted }: DialogDel
                         onClick={onClose}
                         disabled={isPending}
                     >
-                        Cancelar
+                        Cerrar
                     </button>
                     <button
                         className="btn-primary w-full text-red-500"

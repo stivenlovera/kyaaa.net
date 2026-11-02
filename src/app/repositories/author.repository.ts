@@ -42,13 +42,15 @@ export const repositoryAuthor = {
         return characters;
     },
 
-    findAllPerAuthor: async (slug: string): Promise<IListPacks[] | null> => {
+    findAllPerAuthor: async (slug: string, loggedIn: boolean): Promise<IListPacks[] | null> => {
         const packs = await prisma.pack.findMany({
             select: {
                 name: true,
                 description: true,
                 pack_id: true,
                 code: true,
+                pack_serie: { select: { serie: { select: { name: true, serie_id: true } } } },
+                pack_character: { select: { character: { select: { name: true, character_id: true } } } },
                 pages: {
                     // Portada: prefiere una página gratis (page_type 1) y luego la de menor número.
                     orderBy: [{ page_type_id: 'asc' }, { num: 'asc' }],
@@ -87,7 +89,7 @@ export const repositoryAuthor = {
         const listPacks = await Promise.all(packs.map(async (p) => {
             const pack: IListPacks = {
                 ...p,
-                portada: await packPortada(p.code, p.pages[0])
+                portada: await packPortada(p.code, p.pages[0], loggedIn)
             }
             return pack
         }))

@@ -21,7 +21,6 @@ export const DialogAuthorForm = ({ open, onClose, author, onSaved }: DialogAutho
     const { setAlert } = useAlert()
     const isEdit = author !== null && author !== undefined
     const [form, setForm] = useState(emptyForm)
-    const [slugTouched, setSlugTouched] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [isPending, setIsPending] = useState(false)
 
@@ -29,7 +28,6 @@ export const DialogAuthorForm = ({ open, onClose, author, onSaved }: DialogAutho
     useEffect(() => {
         if (open) {
             setForm(isEdit ? { name: author!.name, slug: author!.slug, state: author!.state === 1 } : emptyForm)
-            setSlugTouched(isEdit)
             setError(null)
         }
     }, [open, author, isEdit])
@@ -68,7 +66,7 @@ export const DialogAuthorForm = ({ open, onClose, author, onSaved }: DialogAutho
                             value={form.name}
                             onChange={(e) => {
                                 const name = e.currentTarget.value
-                                setForm((f) => ({ ...f, name, slug: slugTouched ? f.slug : slugify(name) }))
+                                setForm((f) => ({ ...f, name, slug: slugify(name) }))
                             }}
                             disabled={isPending}
                             autoFocus
@@ -81,11 +79,8 @@ export const DialogAuthorForm = ({ open, onClose, author, onSaved }: DialogAutho
                             className='w-full'
                             name="slug"
                             value={form.slug}
-                            onChange={(e) => {
-                                setSlugTouched(true)
-                                setForm((f) => ({ ...f, slug: e.currentTarget.value }))
-                            }}
-                            disabled={isPending}
+                            // Solo lectura: se genera a partir del nombre.
+                            readOnly
                         />
                     </div>
                     <div className='flex items-center gap-2'>
@@ -93,7 +88,10 @@ export const DialogAuthorForm = ({ open, onClose, author, onSaved }: DialogAutho
                             id="state"
                             type="checkbox"
                             checked={form.state}
-                            onChange={(e) => { setForm((f) => ({ ...f, state: e.currentTarget.checked })) }}
+                            onChange={(e) => {
+                                const state = e.currentTarget.checked
+                                setForm((f) => ({ ...f, state }))
+                            }}
                             disabled={isPending}
                         />
                         <label htmlFor="state" className="text-sm">Activo</label>
@@ -106,7 +104,7 @@ export const DialogAuthorForm = ({ open, onClose, author, onSaved }: DialogAutho
                             onClick={onClose}
                             disabled={isPending}
                         >
-                            Cancelar
+                            Cerrar
                         </button>
                         <button
                             className="btn-primary w-full"

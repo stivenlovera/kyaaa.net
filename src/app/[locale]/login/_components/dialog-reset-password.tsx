@@ -67,7 +67,7 @@ export const DialogResetPassword = ({ openResetPassword, onResetPassword }: Dial
               onClick={() => { onResetPassword(false) }}
               disabled={isPending}
             >
-              Cancelar
+              Cerrar
             </button>
             <button
               className="btn-primary w-full"

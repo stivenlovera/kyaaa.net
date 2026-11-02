@@ -21,7 +21,6 @@ export const DialogLabelForm = ({ open, onClose, label, onSaved }: DialogLabelFo
     const { setAlert } = useAlert()
     const isEdit = label !== null && label !== undefined
     const [form, setForm] = useState(emptyForm)
-    const [slugTouched, setSlugTouched] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [isPending, setIsPending] = useState(false)
 
@@ -29,7 +28,6 @@ export const DialogLabelForm = ({ open, onClose, label, onSaved }: DialogLabelFo
     useEffect(() => {
         if (open) {
             setForm(isEdit ? { name: label!.name, slug: label!.slug, state: label!.state === 1 } : emptyForm)
-            setSlugTouched(isEdit)
             setError(null)
         }
     }, [open, label, isEdit])
@@ -68,7 +66,7 @@ export const DialogLabelForm = ({ open, onClose, label, onSaved }: DialogLabelFo
                             value={form.name}
                             onChange={(e) => {
                                 const name = e.currentTarget.value
-                                setForm((f) => ({ ...f, name, slug: slugTouched ? f.slug : slugify(name) }))
+                                setForm((f) => ({ ...f, name, slug: slugify(name) }))
                             }}
                             disabled={isPending}
                             autoFocus
@@ -81,11 +79,8 @@ export const DialogLabelForm = ({ open, onClose, label, onSaved }: DialogLabelFo
                             className='w-full'
                             name="slug"
                             value={form.slug}
-                            onChange={(e) => {
-                                setSlugTouched(true)
-                                setForm((f) => ({ ...f, slug: e.currentTarget.value }))
-                            }}
-                            disabled={isPending}
+                            // Solo lectura: se genera a partir del nombre.
+                            readOnly
                         />
                     </div>
                     <div className='flex items-center gap-2'>
@@ -93,7 +88,10 @@ export const DialogLabelForm = ({ open, onClose, label, onSaved }: DialogLabelFo
                             id="state"
                             type="checkbox"
                             checked={form.state}
-                            onChange={(e) => { setForm((f) => ({ ...f, state: e.currentTarget.checked })) }}
+                            onChange={(e) => {
+                                const state = e.currentTarget.checked
+                                setForm((f) => ({ ...f, state }))
+                            }}
                             disabled={isPending}
                         />
                         <label htmlFor="state" className="text-sm">Activa</label>
@@ -106,7 +104,7 @@ export const DialogLabelForm = ({ open, onClose, label, onSaved }: DialogLabelFo
                             onClick={onClose}
                             disabled={isPending}
                         >
-                            Cancelar
+                            Cerrar
                         </button>
                         <button
                             className="btn-primary w-full"

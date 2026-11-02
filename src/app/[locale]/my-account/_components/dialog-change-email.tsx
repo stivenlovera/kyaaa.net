@@ -80,7 +80,7 @@ export const DialogChangeEmail = ({ openChangeEmail, onChangeEmail }: DialogChan
                             onClick={() => { onChangeEmail(false) }}
                             disabled={isPending}
                         >
-                            Cancelar
+                            Cerrar
                         </button>
                         <button
                             className="btn-primary w-full"

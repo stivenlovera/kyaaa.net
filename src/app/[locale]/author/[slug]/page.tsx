@@ -19,7 +19,7 @@ interface PagePaginateProps {
 export default async function Page({ params }: PagePaginateProps) {
     const { slug } = await params;
     const user = await getCurrentUser();
-    const listPack = await repositoryAuthor.findAllPerAuthor(slug)
+    const listPack = await repositoryAuthor.findAllPerAuthor(slug, user !== null)
     logger.info(`author/${slug} ${jsonLog(listPack)}`)
 
     let likes: ILikePack[] = []

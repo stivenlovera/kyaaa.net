@@ -1,11 +1,45 @@
-import { IAdminPack, IAdminPackPage, IListPacks, IPackForEdit, IPackInfo, IPackRelationIds } from "../types/pack.types";
+import { IAdminPack, IAdminPackPage, IListPacks, IPackForEdit, IPackInfo, IPackRelationIds, PackMediaField } from "../types/pack.types";
+import { Prisma } from "../../../generated/prisma/client";
+import { packMediaUrl } from "../utils/pack-images";
 import { packPortada } from "../utils/pack-portada";
-import { STATE_PACK } from "../utils/page-access";
+import { PAGE_TYPE, SIZE, STATE_PACK } from "../utils/page-access";
 import { prisma } from "../utils/prisma";
+
+// Campos del listado/formulario del admin. thanks_image/register_image se devuelven como URL completa.
+const ADMIN_PACK_SELECT = {
+    pack_id: true, name: true, code: true, description: true, price_list: true, state: true,
+    state_pack_id: true, update_at: true, thanks_image: true, register_image: true,
+    pack_serie: { select: { serie: { select: { name: true, serie_id: true } } } },
+    pack_character: { select: { character: { select: { name: true, character_id: true } } } },
+    // Miniatura: la primera página del pack (menor número), en tamaño TUMB.
+    pages: {
+        orderBy: { num: 'asc' },
+        take: 1,
+        select: {
+            num: true,
+            page_type_id: true,
+            page_size: { where: { size_id: SIZE.TUMB }, select: { size: { select: { extension: true, name: true } } } }
+        }
+    },
+} as const;
+
+type AdminPackRow = Prisma.PackGetPayload<{ select: typeof ADMIN_PACK_SELECT }>;
+
+async function toAdminPack({ pages, ...pack }: AdminPackRow): Promise<IAdminPack> {
+    const page = pages[0];
+    return {
+        ...pack,
+        price_list: pack.price_list.toNumber(),
+        thanks_image: packMediaUrl(pack.thanks_image),
+        register_image: packMediaUrl(pack.register_image),
+        // El admin siempre está logueado: versión sin censura.
+        thumbnail: page && page.page_size.length > 0 ? (await packPortada(pack.code, page, true)).url : null,
+    }
+}
 
 export const repositoryPack = {
 
-    findPacksNew: async (): Promise<IListPacks[] | null> => {
+    findPacksNew: async (loggedIn: boolean): Promise<IListPacks[] | null> => {
         const packs = await prisma.pack.findMany({
             // Solo packs publicados; "próximamente" y "borrador" no salen en la portada.
             where: {
@@ -16,6 +50,8 @@ export const repositoryPack = {
                 description: true,
                 pack_id: true,
                 code: true,
+                pack_serie: { select: { serie: { select: { name: true, serie_id: true } } } },
+                pack_character: { select: { character: { select: { name: true, character_id: true } } } },
                 pages: {
                     // Portada: prefiere una página gratis (page_type 1) y luego la de menor número.
                     orderBy: [{ page_type_id: 'asc' }, { num: 'asc' }],
@@ -43,7 +79,7 @@ export const repositoryPack = {
         const newPacks = await Promise.all(packs.map(async (p) => {
             const pack: IListPacks = {
                 ...p,
-                portada: await packPortada(p.code, p.pages[0])
+                portada: await packPortada(p.code, p.pages[0], loggedIn)
             }
             return pack
         }))
@@ -60,7 +96,44 @@ export const repositoryPack = {
         return newPacks || null;
     },
 
-    findPackInfo: async (code: string): Promise<IPackInfo | null> => {
+    // Datos para los metadatos (título, descripción, og:image). La imagen es la versión censurada del
+    // bucket público (`<code>/og/<num>.jpeg`): la ven los rastreadores de redes sociales, sin sesión.
+    findPackMeta: async (code: string): Promise<{ name: string, description: string, image: string | null } | null> => {
+        const pack = await prisma.pack.findFirst({
+            where: { code: code },
+            select: {
+                name: true,
+                description: true,
+                pages: {
+                    where: {
+                        page_type_id: PAGE_TYPE.FREE,
+                        page_size: { some: { size_id: SIZE.OG } }
+                    },
+                    orderBy: { num: 'asc' },
+                    take: 1,
+                    select: {
+                        num: true,
+                        page_size: {
+                            where: { size_id: SIZE.OG },
+                            select: { size: { select: { name: true, extension: true } } }
+                        }
+                    }
+                }
+            }
+        });
+        if (pack === null) {
+            return null;
+        }
+        const page = pack.pages[0];
+        const size = page?.page_size[0]?.size;
+        return {
+            name: pack.name,
+            description: pack.description,
+            image: size ? `${process.env.NEXT_PUBLIC_PACKS_URL_S3}/${code}/${size.name}/${page.num}.${size.extension}` : null,
+        };
+    },
+
+    findPackInfo: async (code: string, loggedIn: boolean): Promise<IPackInfo | null> => {
         const pack = await prisma.pack.findFirst({
             where: {
                 code: code
@@ -72,6 +145,8 @@ export const repositoryPack = {
                 code: true,
                 price_list: true,
                 update_at: true,
+                thanks_image: true,
+                register_image: true,
                 pages: {
                     // Portada: prefiere una página gratis (page_type 1) y luego la de menor número.
                     orderBy: [{ page_type_id: 'asc' }, { num: 'asc' }],
@@ -161,7 +236,9 @@ export const repositoryPack = {
             const serialize: IPackInfo = {
                 ...pack!,
                 price_list: pack.price_list.toNumber(),
-                portada: await packPortada(pack.code, pack.pages[0])
+                portada: await packPortada(pack.code, pack.pages[0], loggedIn),
+                thanks_image: packMediaUrl(pack.thanks_image),
+                register_image: packMediaUrl(pack.register_image)
             }
             return serialize;
         }
@@ -171,40 +248,31 @@ export const repositoryPack = {
     findPaginated: async (page: number, pageSize: number): Promise<IAdminPackPage> => {
         const [packs, total] = await Promise.all([
             prisma.pack.findMany({
-                orderBy: { name: 'asc' },
+                orderBy: { pack_id: 'desc' },
                 skip: (page - 1) * pageSize,
                 take: pageSize,
-                select: {
-                    pack_id: true,
-                    name: true,
-                    code: true,
-                    description: true,
-                    price_list: true,
-                    state: true,
-                    state_pack_id: true,
-                    update_at: true,
-                }
+                select: ADMIN_PACK_SELECT
             }),
             prisma.pack.count(),
         ])
-        return { packs: packs.map((p) => ({ ...p, price_list: p.price_list.toNumber() })), total }
+        return { packs: await Promise.all(packs.map(toAdminPack)), total }
     },
 
     create: async (name: string, code: string, description: string, price_list: number, state: number, state_pack_id: number): Promise<IAdminPack> => {
         const pack = await prisma.pack.create({
             data: { name, code, description, price_list, state, state_pack_id, create_at: new Date(), update_at: new Date() },
-            select: { pack_id: true, name: true, code: true, description: true, price_list: true, state: true, state_pack_id: true, update_at: true }
+            select: ADMIN_PACK_SELECT
         })
-        return { ...pack, price_list: pack.price_list.toNumber() }
+        return toAdminPack(pack)
     },
 
     update: async (pack_id: number, name: string, code: string, description: string, price_list: number, state: number, state_pack_id: number): Promise<IAdminPack> => {
         const pack = await prisma.pack.update({
             where: { pack_id },
             data: { name, code, description, price_list, state, state_pack_id, update_at: new Date() },
-            select: { pack_id: true, name: true, code: true, description: true, price_list: true, state: true, state_pack_id: true, update_at: true }
+            select: ADMIN_PACK_SELECT
         })
-        return { ...pack, price_list: pack.price_list.toNumber() }
+        return toAdminPack(pack)
     },
 
     /** Cambio rápido del estado editorial del pack (publicado/próximamente/borrador), sin tocar el resto de campos. */
@@ -214,6 +282,18 @@ export const repositoryPack = {
             data: { state_pack_id, update_at: new Date() },
             select: { pack_id: true, state_pack_id: true }
         })
+    },
+
+    /** Guarda la key (dentro del bucket static) de una imagen de los modales del pack. */
+    updateMedia: async (pack_id: number, field: PackMediaField, key: string): Promise<void> => {
+        await prisma.pack.update({
+            where: { pack_id },
+            data: { [field]: key, update_at: new Date() },
+        })
+    },
+
+    findCodeById: async (pack_id: number): Promise<{ code: string } | null> => {
+        return await prisma.pack.findUnique({ where: { pack_id }, select: { code: true } })
     },
 
     delete: async (pack_id: number): Promise<void> => {

@@ -21,7 +21,7 @@ export const FormProfile = () => {
     const [openChangePassword, setChangePassword] = useState<boolean>(false)
 
     const { checkAuth } = useAuth()
-    const { setOpen } = useToast()
+    const { showToast } = useToast()
     const { setAlert } = useAlert()
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -58,12 +58,7 @@ export const FormProfile = () => {
     const action = async (prevState: IFormChangeProfile, formData: FormData) => {
         const result = await actionFormChangeProfile(prevState, formData)
         if (result.success) {
-            setOpen(true)
-            setAlert({
-                message: "REGISTRADO CORRECTAMENTE",
-                open: true,
-                icon: "success"
-            })
+            showToast("Cambios guardados correctamente")
             checkAuth()
             await fetchFormUser()
         }

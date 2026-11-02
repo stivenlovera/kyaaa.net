@@ -16,7 +16,7 @@ export default async function Page({ params }: PageProps) {
     const { code } = await params;
 
     const user = await getCurrentUser();
-    const pack = await repositoryPack.findPackInfo(code);
+    const pack = await repositoryPack.findPackInfo(code, user !== null);
 
     if (user === null) {
         notFound()

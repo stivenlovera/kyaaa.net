@@ -34,6 +34,7 @@ declare const messages: {
     "paginas_gratis": "Free images",
     "paginas_bloqueadas": "There are {count} more images in this pack",
     "actualizado": "Updated",
+    "plataformas": "Also on",
     "extra-pack": {
       "descarga": "Donwload",
       "comprar": "Buy now!",
@@ -42,7 +43,15 @@ declare const messages: {
         "titulo": "Register now!",
         "mensaje": "Log in with your email and password or register to download or purchase, click here.",
         "inicia_sesion": "Log in",
-        "cancelar": "Cancel"
+        "cerrar": "Close"
+      },
+      "toast": {
+        "like_agregado": "You like this pack",
+        "like_quitado": "You no longer like this pack",
+        "guardado_agregado": "Pack saved to favorites",
+        "guardado_quitado": "Pack removed from favorites",
+        "error": "The action could not be completed, please try again",
+        "descarga_no_disponible": "The download for this pack is not available yet"
       }
     }
   },
@@ -63,7 +72,7 @@ declare const messages: {
     "titulo": "Authors"
   },
   "dialogo": {
-    "cancelar": "Cancel"
+    "cerrar": "Close"
   }
 };
 export default messages;

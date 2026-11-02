@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import moment from 'moment'
 import Link from 'next/link'
+import Image from 'next/image'
 import { FaGear, FaPen, FaPlus, FaTrash } from 'react-icons/fa6'
 import { useRouter } from '@/src/i18n/navigation'
 import { IAdminPack } from '@/src/app/types/pack.types'
@@ -37,6 +38,8 @@ export const PackList = ({ packs, states }: PackListProps) => {
                 <table className='w-full text-left'>
                     <thead>
                         <tr className='border-b border-neutral-700'>
+                            <th className='p-2'>ID</th>
+                            <th className='p-2'></th>
                             <th className='p-2'>Nombre</th>
                             <th className='p-2'>Código</th>
                             <th className='p-2'>Precio</th>
@@ -49,11 +52,27 @@ export const PackList = ({ packs, states }: PackListProps) => {
                     <tbody>
                         {packs.length === 0 ? (
                             <tr>
-                                <td className='p-2' colSpan={7}>No hay packs registrados.</td>
+                                <td className='p-2' colSpan={9}>No hay packs registrados.</td>
                             </tr>
                         ) : packs.map((pack) => (
                             <tr key={pack.pack_id} className='border-b border-neutral-800'>
-                                <td className='p-2'>{pack.name}</td>
+                                <td className='p-2'>{pack.pack_id}</td>
+                                <td className='p-2'>
+                                    {pack.thumbnail ? (
+                                        <Image src={pack.thumbnail} alt={`Miniatura ${pack.name}`} width={60} height={78} className='w-15 h-auto' unoptimized />
+                                    ) : (
+                                        <div className='w-15 aspect-4/5 bg-neutral-900' />
+                                    )}
+                                </td>
+                                <td className='p-2'>
+                                    <div>{pack.name}</div>
+                                    <div className='text-xs text-neutral-400'>
+                                        Serie: {pack.pack_serie.map((s) => s.serie.name).join(', ') || '-'}
+                                    </div>
+                                    <div className='text-xs text-neutral-400'>
+                                        Personajes: {pack.pack_character.map((c) => c.character.name).join(', ') || '-'}
+                                    </div>
+                                </td>
                                 <td className='p-2'>{pack.code}</td>
                                 <td className='p-2'>{pack.price_list}</td>
                                 <td className='p-2'>{pack.state === 1 ? 'Activo' : 'Inactivo'}</td>

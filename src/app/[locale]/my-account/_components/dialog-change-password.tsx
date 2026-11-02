@@ -99,7 +99,7 @@ export const DialogChangePassword = ({ openChangePassword, onChangePassword }: D
                             onClick={() => { onChangePassword(false) }}
                             disabled={isPending}
                         >
-                            Cancelar
+                            Cerrar
                         </button>
                         <button
                             id="dropdown-button"

@@ -50,7 +50,7 @@ export const DialogDeleteAuthor = ({ open, onClose, author, onDeleted }: DialogD
                         onClick={onClose}
                         disabled={isPending}
                     >
-                        Cancelar
+                        Cerrar
                     </button>
                     <button
                         className="btn-primary w-full text-red-500"
