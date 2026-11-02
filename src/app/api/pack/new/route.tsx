@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
 
     logger.info(`api/packs/new GET ${jsonLog([])}`)
     try {
-        const packs = await repositoryPack.findPacksNew();
         const user = await getCurrentUser();
+        const packs = await repositoryPack.findPacksNew(user !== null);
         let likes: ILikePack[] = []
         let buys: IBuyPack[] = []
         let favorites: IFavoritePack[] = []

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUser } from "@/src/app/utils/auth";
+import { adminDenied } from "@/src/app/utils/auth";
 import { repositorySerie } from "@/src/app/repositories/serie.repository";
 import { IAdminSerie, IFormSerie } from "@/src/app/types/serie.types";
 import { IResponse } from "@/src/app/types/response";
@@ -19,9 +19,9 @@ const validate = (body: Partial<IFormSerie>): string | null => {
 export async function POST(request: NextRequest) {
     logger.info(`api/serie POST`)
     try {
-        const user = await getCurrentUser();
-        if (user === null) {
-            return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
+        const denied = await adminDenied();
+        if (denied) {
+            return denied;
         }
         const body: IFormSerie = await request.json();
         const error = validate(body);
@@ -44,9 +44,9 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
     logger.info(`api/serie PATCH`)
     try {
-        const user = await getCurrentUser();
-        if (user === null) {
-            return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
+        const denied = await adminDenied();
+        if (denied) {
+            return denied;
         }
         const body: IFormSerie = await request.json();
         if (body.serie_id === undefined) {
@@ -75,9 +75,9 @@ export async function PATCH(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
     logger.info(`api/serie DELETE`)
     try {
-        const user = await getCurrentUser();
-        if (user === null) {
-            return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
+        const denied = await adminDenied();
+        if (denied) {
+            return denied;
         }
         const body: { serie_id: number } = await request.json();
         if (body.serie_id === undefined) {

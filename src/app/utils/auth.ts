@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
-import { NextRequest } from 'next/server';
+import { notFound } from 'next/navigation';
+import { NextRequest, NextResponse } from 'next/server';
 import { IUser, JWTPayload } from '../types/user.type';
 import { repositoryAuth } from '../repositories/auth.repository';
 import logger, { jsonLog } from './logger';
@@ -127,8 +128,44 @@ export async function getCurrentUser(): Promise<IUser | null> {
     const token = cookieStore.get('accessToken')?.value;
     if (!token) return null;
     const userCookie = await verifyAccessToken(token);
-    const user = repositoryAuth.findUserById(userCookie!.user_id);
+    if (userCookie === null) return null;
+    const user = repositoryAuth.findUserById(userCookie.user_id);
     return user;
+}
+
+/** Usuario actual si tiene el rol admin; null si no hay sesión o no lo tiene. */
+export async function getCurrentAdmin(): Promise<IUser | null> {
+    const user = await getCurrentUser();
+    if (user === null) return null;
+    return (await repositoryAuth.isAdmin(user.user_id)) ? user : null;
+}
+
+/**
+ * Para las páginas de /admin: responde 404 si quien entra no es admin. Cada página debe llamarla antes de
+ * leer datos: Next renderiza el layout y la página en paralelo, así que el notFound() del layout no evita
+ * que los datos de la página viajen en la respuesta.
+ */
+export async function requireAdminPage(): Promise<IUser> {
+    const admin = await getCurrentAdmin();
+    if (admin === null) {
+        notFound();
+    }
+    return admin;
+}
+
+/**
+ * Para las rutas de administración: devuelve la respuesta de error (401 sin sesión, 403 sin rol admin)
+ * o null si quien llama es admin y la ruta puede seguir.
+ */
+export async function adminDenied(): Promise<NextResponse | null> {
+    const user = await getCurrentUser();
+    if (user === null) {
+        return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
+    }
+    if (!(await repositoryAuth.isAdmin(user.user_id))) {
+        return NextResponse.json({ success: false, message: 'No tienes permiso para esta acción' }, { status: 403 });
+    }
+    return null;
 }
 
 // Set auth cookies

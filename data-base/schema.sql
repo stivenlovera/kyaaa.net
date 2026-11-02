@@ -78,6 +78,8 @@ CREATE TABLE `pack` (
   `code_pay` varchar(20) DEFAULT '',
   `price_list` decimal(10,2) NOT NULL,
   `code_free` varchar(20) DEFAULT '',
+  `thanks_image` varchar(255) DEFAULT NULL,
+  `register_image` varchar(255) DEFAULT NULL,
   `state` tinyint(1) NOT NULL DEFAULT '1',
   `state_pack_id` int NOT NULL DEFAULT '1',
   `create_at` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -85,6 +87,19 @@ CREATE TABLE `pack` (
   PRIMARY KEY (`pack_id`),
   KEY `state_pack_id` (`state_pack_id`),
   CONSTRAINT `pack_ibfk_1` FOREIGN KEY (`state_pack_id`) REFERENCES `state_pack` (`state_pack_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `platform`;
+CREATE TABLE `platform` (
+  `platform_id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `slug` varchar(100) NOT NULL,
+  `base_url` varchar(255) DEFAULT NULL,
+  `state` tinyint NOT NULL DEFAULT '1',
+  `create_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`platform_id`),
+  UNIQUE KEY `uq_platform_slug` (`slug`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `page_type`;
@@ -292,6 +307,26 @@ CREATE TABLE `page` (
   KEY `page_type_id` (`page_type_id`),
   CONSTRAINT `page_ibfk_1` FOREIGN KEY (`pack_id`) REFERENCES `pack` (`pack_id`),
   CONSTRAINT `page_ibfk_2` FOREIGN KEY (`page_type_id`) REFERENCES `page_type` (`page_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `pack_platform`;
+CREATE TABLE `pack_platform` (
+  `pack_platform_id` int NOT NULL AUTO_INCREMENT,
+  `pack_id` int NOT NULL,
+  `platform_id` int NOT NULL,
+  `poster` varchar(255) NOT NULL,
+  `url` varchar(500) NOT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `sort` int NOT NULL DEFAULT '0',
+  `clicks` int NOT NULL DEFAULT '0',
+  `state` tinyint NOT NULL DEFAULT '1',
+  `create_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`pack_platform_id`),
+  UNIQUE KEY `uq_pack_platform` (`pack_id`,`platform_id`),
+  KEY `platform_id` (`platform_id`),
+  CONSTRAINT `pack_platform_ibfk_1` FOREIGN KEY (`pack_id`) REFERENCES `pack` (`pack_id`),
+  CONSTRAINT `pack_platform_ibfk_2` FOREIGN KEY (`platform_id`) REFERENCES `platform` (`platform_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `participate`;

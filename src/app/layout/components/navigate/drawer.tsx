@@ -87,13 +87,15 @@ const Drawer = ({ openDrawer, onDrawerClose, user }: DrawerProps) => {
                                 >
                                     {ta('mi_cuenta')}
                                 </Link>
-                                <Link
-                                    href={'/admin'}
-                                    className="block p-3 hover:text-blue-400 hover:bg-blue-950"
-                                    onClick={() => { onDrawerClose() }}
-                                >
-                                    {ta('administrar')}
-                                </Link>
+                                {user.is_admin && (
+                                    <Link
+                                        href={'/admin'}
+                                        className="block p-3 hover:text-blue-400 hover:bg-blue-950"
+                                        onClick={() => { onDrawerClose() }}
+                                    >
+                                        {ta('administrar')}
+                                    </Link>
+                                )}
                                 <button
                                     className="block p-3 hover:text-blue-400 hover:bg-blue-950  w-full"
                                     onClick={() => {

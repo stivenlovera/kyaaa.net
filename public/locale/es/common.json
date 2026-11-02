@@ -31,6 +31,7 @@
     "paginas_gratis": "Imagenes gratis",
     "paginas_bloqueadas": "Hay {count} imagenes mas en este pack",
     "actualizado": "Actualizado",
+    "plataformas": "También en",
     "extra-pack": {
       "descarga": "Descargar",
       "comprar": "Comprar ahora",
@@ -39,7 +40,15 @@
         "titulo": "Registrate ahora!",
         "mensaje": "Inicia sesión con tu correo electrónico y contraseña o regístrate para descargar o comprar, haz clic aquí.",
         "inicia_sesion": "Inicia sesion",
-        "cancelar": "cancelar"
+        "cerrar": "Cerrar"
+      },
+      "toast": {
+        "like_agregado": "Te gusta este pack",
+        "like_quitado": "Ya no te gusta este pack",
+        "guardado_agregado": "Pack guardado en favoritos",
+        "guardado_quitado": "Pack quitado de favoritos",
+        "error": "No se pudo completar la acción, inténtalo de nuevo",
+        "descarga_no_disponible": "La descarga de este pack aún no está disponible"
       }
     }
   },
@@ -60,6 +69,6 @@
     "titulo": "Autores"
   },
   "dialogo": {
-    "cancelar": "cancelar"
+    "cerrar": "Cerrar"
   }
 }

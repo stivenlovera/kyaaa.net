@@ -76,6 +76,7 @@ const PageRow = ({ page, onSaved, onDeleteRequest }: PageRowProps) => {
                     disabled={isPending}
                 >
                     <option value={PAGE_TYPE.FREE}>Gratis</option>
+                    <option value={PAGE_TYPE.REGISTERED}>Registrados</option>
                     <option value={PAGE_TYPE.BUY}>De pago</option>
                 </select>
             </td>

@@ -50,7 +50,7 @@ export const DialogDeleteLabel = ({ open, onClose, label, onDeleted }: DialogDel
                         onClick={onClose}
                         disabled={isPending}
                     >
-                        Cancelar
+                        Cerrar
                     </button>
                     <button
                         className="btn-primary w-full text-red-500"

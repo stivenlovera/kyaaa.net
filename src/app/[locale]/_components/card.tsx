@@ -19,6 +19,8 @@ export const Card = ({
     const [like, setLike] = useState<boolean>(pack.like)
     const [favorite, setFavorite] = useState<boolean>(pack.favorite)
     const [buy, setBuy] = useState<boolean>(pack.buy)
+    const series = pack.pack_serie.map((s) => s.serie.name).join(', ')
+    const characters = pack.pack_character.map((c) => c.character.name).join(', ')
 
     const fetchChangeLike = async (pack_id: number) => {
         try {
@@ -50,16 +52,21 @@ export const Card = ({
             href={`/pack/${pack.code}`}
         >
             <div className="grid place-items-end">
-                <Image
-                    width={400}
-                    height={500}
-                    alt={`Preview ${pack.name}`}
-                    fetchPriority="high"
-                    className="w-full col-start-1 row-start-1"
-                    unoptimized
-                    priority
-                    src={`${urlImage}`}
-                />
+                {urlImage ? (
+                    <Image
+                        width={400}
+                        height={500}
+                        alt={`Preview ${pack.name}`}
+                        fetchPriority="high"
+                        className="w-full col-start-1 row-start-1"
+                        unoptimized
+                        priority
+                        src={urlImage}
+                    />
+                ) : (
+                    // Sin portada visible para este usuario (ver utils/pack-portada.ts).
+                    <div className="w-full aspect-[4/5] col-start-1 row-start-1 bg-neutral-900" />
+                )}
                 {user !== null ? (
                     <div className="col-start-1 row-start-1 flex items-start justify-end gap-1 p-1">
                         {
@@ -108,9 +115,15 @@ export const Card = ({
             </div>
 
             <div className=''>
-                <div className='flex justify-between basis-full bg-gray-800 p-1'>
+                <div className='flex flex-col basis-full bg-gray-800 p-1'>
                     <div className='line-clamp-2 hover:line-clamp-none sm:text-10 xl:text-12'>
                         {pack.name.toLocaleLowerCase()}
+                    </div>
+                    <div className='truncate text-xs text-neutral-400'>
+                        Serie: {series || '-'}
+                    </div>
+                    <div className='truncate text-xs text-neutral-400'>
+                        Personajes: {characters || '-'}
                     </div>
                 </div>
             </div>

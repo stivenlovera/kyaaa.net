@@ -3,6 +3,7 @@ import { repositoryAuth } from '@/src/app/repositories/auth.repository';
 import { IResponse } from '@/src/app/types/response';
 import { getCurrentUser } from '@/src/app/utils/auth';
 import logger, { jsonLog } from '@/src/app/utils/logger';
+import { profileImageUrl } from '@/src/app/utils/profile-image';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -22,7 +23,11 @@ export async function GET(request: NextRequest) {
         success: true,
         message: 'This is protected data',
         data: {
-          user: { ...userValid!, image: `${process.env.NEXT_PUBLIC_STATIC_URL_S3}/img/${userValid?.image}`},
+          user: {
+            ...userValid!,
+            image: profileImageUrl(userValid?.image),
+            is_admin: await repositoryAuth.isAdmin(user.user_id),
+          },
           secretInfo: 'Only authenticated users can see this',
           timestamp: new Date().toISOString(),
         },

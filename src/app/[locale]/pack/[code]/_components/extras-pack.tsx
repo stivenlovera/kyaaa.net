@@ -7,6 +7,8 @@ import { DialogRegisterNow } from './dialog-register-now';
 import API from '@/src/providers/api';
 import { IResponse } from '@/src/app/types/response';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/src/providers/toastProvider';
+import { isAxiosError } from 'axios';
 
 interface IExtraPackProps {
     code: string
@@ -17,6 +19,8 @@ interface IExtraPackProps {
     user_buy: boolean
     /** Pack gratuito: no hay nada que comprar. */
     free?: boolean
+    /** URL de la imagen del modal "Registrate ahora!" (pack.register_image). */
+    register_image?: string | null
 }
 export const ExtraPack = ({
     code,
@@ -25,47 +29,42 @@ export const ExtraPack = ({
     user_like,
     user_favorite,
     user_buy,
-    free = false
+    free = false,
+    register_image
 }: IExtraPackProps) => {
     const router = useRouter();
     const t = useTranslations('pack-info');
     const { user } = useAuth()
+    const { showToast } = useToast()
     const [like, setLike] = useState(user_like)
     const [favorite, setFavorite] = useState(user_favorite)
     const [loading, setLoading] = useState(false)
     const [openDialogRegisterNow, setOpenDialogRegisterNow] = useState(false)
 
+    // Descargar, comprar, guardar y me gusta requieren sesión: sin ella se abre el modal "Registrate ahora!".
+    const requireLogin = (action: () => void) => {
+        if (user !== null) {
+            action()
+        } else {
+            setOpenDialogRegisterNow(true)
+        }
+    }
+
+    // La API decide qué ZIP le toca al usuario (completo o gratis + registrados) y devuelve una URL
+    // firmada de corta duración; el navegador lo descarga directamente de S3.
     const handleDownload = async () => {
         try {
             setLoading(true)
-            // 1. Realizar la petición a tu API de backend
-            const response = await fetch('https://usc1.contabostorage.com/698352ccd113428cb40866703a92c514:static/01.jpeg', {
-                method: 'GET',
-                headers: {
-                    // Agrega tokens de autorización si tu API lo requiere
-
-                }
-            });
-
-            if (!response.ok) throw new Error('Error al descargar el archivo');
-            // 2. Convertir la respuesta a un objeto binario (Blob)
-            const blob: Blob = await response.blob();
-            // 3. Crear una URL temporal en el navegador para ese Blob
-            const blobUrl: string = window.URL.createObjectURL(blob);
-            // 4. Crear un elemento <a> invisible para forzar la descarga
-            const link: HTMLAnchorElement = document.createElement('a');
-            link.href = blobUrl;
-            link.setAttribute('download', 'nombre_archivo_final.jpeg'); // Nombre con el que se guardará
-            // 5. Añadir al DOM, hacer click y removerlo inmediatamente
-            document.body.appendChild(link);
-            link.click();
-            // Limpieza de recursos de memoria en el cliente
-            link.parentNode?.removeChild(link);
-            window.URL.revokeObjectURL(blobUrl);
-            setLoading(false)
+            const { data } = await API.get<IResponse<{ url: string }>>('/api/pack/download', { params: { code } });
+            if (data.success) {
+                window.location.href = data.data.url
+            }
         } catch (error) {
             console.error('Error durante la descarga:', error);
+            const notAvailable = isAxiosError(error) && error.response?.status === 404
+            showToast(t(notAvailable ? 'extra-pack.toast.descarga_no_disponible' : 'extra-pack.toast.error'), 'danger')
         } finally {
+            setLoading(false)
         }
     };
 
@@ -74,9 +73,11 @@ export const ExtraPack = ({
             const { data } = await API.post<IResponse<boolean>>('/api/like-pack', { pack_id });
             if (data.success) {
                 setLike(data.data)
+                showToast(t(data.data ? 'extra-pack.toast.like_agregado' : 'extra-pack.toast.like_quitado'))
             }
         } catch (error) {
             console.error('Error fetching protected data:', error);
+            showToast(t('extra-pack.toast.error'), 'danger')
         } finally {
         }
     };
@@ -86,9 +87,11 @@ export const ExtraPack = ({
             const { data } = await API.post<IResponse<boolean>>('/api/favorite-pack', { pack_id });
             if (data.success) {
                 setFavorite(data.data)
+                showToast(t(data.data ? 'extra-pack.toast.guardado_agregado' : 'extra-pack.toast.guardado_quitado'))
             }
         } catch (error) {
             console.error('Error fetching protected data:', error);
+            showToast(t('extra-pack.toast.error'), 'danger')
         } finally {
         }
     };
@@ -100,11 +103,7 @@ export const ExtraPack = ({
                     <button className="btn-primary font-bold"
                         disabled={loading}
                         onClick={() => {
-                            if (user !== null) {
-                                handleDownload()
-                            } else {
-                                setOpenDialogRegisterNow(true)
-                            }
+                            requireLogin(handleDownload)
                         }}
                     >
                         <div className="px-2">
@@ -118,7 +117,7 @@ export const ExtraPack = ({
                         <button
                             className="btn-primary p-3 border rounded-full border-neutral-600 cursor-pointer"
                             onClick={() => {
-                                fetchChangeFavorite(pack_id);
+                                requireLogin(() => fetchChangeFavorite(pack_id))
                             }}
                         >
                             <FaBookmark
@@ -128,7 +127,7 @@ export const ExtraPack = ({
                         <button
                             className="btn-primary p-3 border rounded-full border-neutral-600 cursor-pointer"
                             onClick={() => {
-                                fetchChangeLike(pack_id);
+                                requireLogin(() => fetchChangeLike(pack_id))
                             }}
                         >
                             <FaHeart
@@ -159,11 +158,7 @@ export const ExtraPack = ({
                             className='btn-primary w-full font-bold'
                             disabled={loading}
                             onClick={() => {
-                                if (user !== null) {
-                                    router.push(`/buy/${code}`);
-                                } else {
-                                    setOpenDialogRegisterNow(true)
-                                }
+                                requireLogin(() => router.push(`/buy/${code}`))
                             }}
                         >
                             {t('extra-pack.comprar')} ${price}
@@ -174,6 +169,7 @@ export const ExtraPack = ({
 
             <DialogRegisterNow
                 open={openDialogRegisterNow}
+                image={register_image}
                 onClose={(open) => {
                     setOpenDialogRegisterNow(open)
                 }}

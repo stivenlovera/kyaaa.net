@@ -21,6 +21,8 @@ import { repositoryLikePack } from "@/src/app/repositories/like-pack.repository"
 import { repositoryBuyPack } from "@/src/app/repositories/buy-pack.repository"
 import { repositoryFavoritePack } from "@/src/app/repositories/favorite-pack.repository"
 import { notFound } from "next/navigation"
+import { repositoryPlatform } from "@/src/app/repositories/platform.repository"
+import { PackPlatforms } from "./pack-platforms"
 
 interface PreviewPackProps {
     code: string
@@ -30,7 +32,8 @@ interface PreviewPackProps {
 
 export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) => {
     const t = await getTranslations('pack-info');
-    const pack = await repositoryPack.findPackInfo(code);
+    const user = await getCurrentUser();
+    const pack = await repositoryPack.findPackInfo(code, user !== null);
     if (pack===null) {
         notFound()
     }
@@ -59,7 +62,6 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
     })
     const totalAuthor = await repositoryAuthor.findTotal(authors);
 
-    const user = await getCurrentUser();
     // Solo las páginas que este usuario puede ver (las gratis, o todas si el pack es gratuito o lo compró).
     const pack_page = await repositoryPage.findPagesPack(code, 1, user?.user_id);
     if (pack_page === null) {
@@ -73,6 +75,7 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
         buys = await repositoryBuyPack.findBuyPerUser(user!.user_id);
         favorites = await repositoryFavoritePack.findFavoritePerUser(user!.user_id);
     }
+    const platforms = await repositoryPlatform.findByPack(pack!.pack_id);
     const isLike = likes!.find((like) => like.pack_id === pack!.pack_id);
     const isBuy = buys!.find((like) => like.pack_id === pack!.pack_id);
     const isFavorite = favorites!.find((like) => like.pack_id === pack!.pack_id);
@@ -104,16 +107,21 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                         href={`/pack/${packInfo?.code}?page=${packInfo.portada.num}`}
                         className="flex flex-row justify-center md:justify-end"
                     >
-                        <Image
-                            width={400}
-                            height={500}
-                            className='h-3/4 w-3/4 p-1'
-                            alt={`Preview ${packInfo?.name}`}
-                            fetchPriority="high"
-                            unoptimized
-                            priority
-                            src={imageDescription}
-                        />
+                        {imageDescription ? (
+                            <Image
+                                width={400}
+                                height={500}
+                                className='h-3/4 w-3/4 p-1'
+                                alt={`Preview ${packInfo?.name}`}
+                                fetchPriority="high"
+                                unoptimized
+                                priority
+                                src={imageDescription}
+                            />
+                        ) : (
+                            // Sin portada visible para este usuario (ver utils/pack-portada.ts).
+                            <div className='w-3/4 aspect-[4/5] p-1 bg-neutral-900' />
+                        )}
                     </Link>
                 </div>
                 <div className="card">
@@ -204,7 +212,9 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                         free={pack_page.is_free}
                         user_favorite={packInfo.favorite}
                         user_like={packInfo.like}
+                        register_image={packInfo.register_image}
                     ></ExtraPack>
+                    <PackPlatforms platforms={platforms} />
                 </div>
             </div>
             <div id="paginas" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 scroll-mt-16">

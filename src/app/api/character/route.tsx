@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUser } from "@/src/app/utils/auth";
+import { adminDenied } from "@/src/app/utils/auth";
 import { repositoryCharacter } from "@/src/app/repositories/character.repository";
 import { IAdminCharacter, IFormCharacter } from "@/src/app/types/character.types";
 import { IResponse } from "@/src/app/types/response";
@@ -19,9 +19,9 @@ const validate = (body: Partial<IFormCharacter>): string | null => {
 export async function POST(request: NextRequest) {
     logger.info(`api/character POST`)
     try {
-        const user = await getCurrentUser();
-        if (user === null) {
-            return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
+        const denied = await adminDenied();
+        if (denied) {
+            return denied;
         }
         const body: IFormCharacter = await request.json();
         const error = validate(body);
@@ -44,9 +44,9 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
     logger.info(`api/character PATCH`)
     try {
-        const user = await getCurrentUser();
-        if (user === null) {
-            return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
+        const denied = await adminDenied();
+        if (denied) {
+            return denied;
         }
         const body: IFormCharacter = await request.json();
         if (body.character_id === undefined) {
@@ -75,9 +75,9 @@ export async function PATCH(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
     logger.info(`api/character DELETE`)
     try {
-        const user = await getCurrentUser();
-        if (user === null) {
-            return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
+        const denied = await adminDenied();
+        if (denied) {
+            return denied;
         }
         const body: { character_id: number } = await request.json();
         if (body.character_id === undefined) {

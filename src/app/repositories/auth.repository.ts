@@ -4,8 +4,18 @@ import { IAuth, IUser } from '../types/user.type';
 import logger, { jsonLog } from '../utils/logger';
 import bcrypt from 'bcryptjs';
 import moment from 'moment';
+import { ROL } from '../utils/page-access';
 
 export const repositoryAuth = {
+    /** Si el usuario tiene el rol admin en user_rol. Se consulta en cada petición (no se guarda en el JWT). */
+    isAdmin: async (user_id: number): Promise<boolean> => {
+        const rol = await prisma.user_Rol.findFirst({
+            where: { user_id, rol_id: ROL.ADMIN },
+            select: { rol_id: true }
+        });
+        return rol !== null;
+    },
+
 
     findUserById: async (user_id: number): Promise<IUser | null> => {
         const user = await prisma.user.findFirst({

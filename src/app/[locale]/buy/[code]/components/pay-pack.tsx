@@ -31,16 +31,21 @@ export const PayPack = ({ pack }: PayPackProps) => {
                     </div>
                     <div className="card p-2 flex flex-row">
                         <div className="w-20 h-25 md:w-30 md:h-40 flex justify-center items-center ">
-                            <Image
-                                width={400}
-                                height={500}
-                                alt={`Preview ${pack.name}`}
-                                fetchPriority="high"
-                                className=""
-                                unoptimized
-                                priority
-                                src={`${urlImage}`}
-                            />
+                            {urlImage ? (
+                                <Image
+                                    width={400}
+                                    height={500}
+                                    alt={`Preview ${pack.name}`}
+                                    fetchPriority="high"
+                                    className=""
+                                    unoptimized
+                                    priority
+                                    src={urlImage}
+                                />
+                            ) : (
+                                // Sin portada visible para este usuario (ver utils/pack-portada.ts).
+                                <div className="w-full aspect-[4/5] bg-neutral-900" />
+                            )}
 
                         </div>
                         <div className="px-2 flex flex-col text-end w-full ">
@@ -66,6 +71,7 @@ export const PayPack = ({ pack }: PayPackProps) => {
                 <DialogThanks
                     openThanks={openThanks}
                     onChangeThanks={(value) => setThanks(value)}
+                    image={pack.thanks_image}
                 >
                 </DialogThanks>
             </div>

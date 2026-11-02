@@ -1,3 +1,4 @@
+import { requireAdminPage } from '@/src/app/utils/auth'
 import { notFound } from 'next/navigation'
 import { repositoryPack } from '@/src/app/repositories/pack.repository'
 import { repositoryLabel } from '@/src/app/repositories/label.repository'
@@ -10,6 +11,9 @@ import { repositoryStatePack } from '@/src/app/repositories/state-pack.repositor
 import { PackRelationsForm } from './_components/pack-relations-form'
 import { PackPagesManager } from './_components/pack-pages-manager'
 import { PackStateForm } from './_components/pack-state-form'
+import { PackPlatformsManager } from './_components/pack-platforms-manager'
+import { repositoryPlatform } from '@/src/app/repositories/platform.repository'
+import { AdminBreadcrumb } from '../../_components/breadcrumb'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,6 +24,7 @@ interface AdminPackEditPageProps {
 }
 
 export default async function Page({ searchParams }: AdminPackEditPageProps) {
+    await requireAdminPage()
     const { code } = await searchParams
     if (code === undefined) {
         notFound()
@@ -30,7 +35,7 @@ export default async function Page({ searchParams }: AdminPackEditPageProps) {
         notFound()
     }
 
-    const [labels, characters, series, authors, languages, pages, states] = await Promise.all([
+    const [labels, characters, series, authors, languages, pages, states, platforms, packPlatforms] = await Promise.all([
         repositoryLabel.findAllAndTotal(),
         repositoryCharacter.findAllAndTotal(),
         repositorySerie.findAllAndTotal(),
@@ -38,10 +43,13 @@ export default async function Page({ searchParams }: AdminPackEditPageProps) {
         repositoryLanguage.findAll(),
         repositoryPage.findAllForAdmin(pack.pack_id, pack.code),
         repositoryStatePack.findAll(),
+        repositoryPlatform.findAll(),
+        repositoryPlatform.findAllForAdmin(pack.pack_id),
     ])
 
     return (
         <div className='px-2 py-2 md:px-10 lg:px-20 xl:px-64 2xl:px-72 md:py-5 lg:py-10 xl:py-14 grid grid-cols-1 gap-4'>
+            <AdminBreadcrumb items={[{ label: 'Packs', href: '/admin/pack' }, { label: pack.name }]} />
             <div className='card'>
                 <h1 className='text-2xl md:text-3xl font-bold pb-1'>{pack.name}</h1>
                 <p className='text-sm text-neutral-400 pb-3'>{pack.pack_id}-{pack.code}</p>
@@ -67,6 +75,15 @@ export default async function Page({ searchParams }: AdminPackEditPageProps) {
                         author_ids: pack.pack_authors.map((pa) => pa.author.author_id),
                         language_ids: pack.pack_languages.map((pl) => pl.language.language_id),
                     }}
+                />
+            </div>
+            <div className='card'>
+                <h2 className='text-xl font-bold pb-1'>Pósters por plataforma</h2>
+                <p className='text-sm text-neutral-400 pb-3'>Se muestran debajo del botón comprar y redirigen a la publicación del pack en cada plataforma. Usa imágenes aptas para esas plataformas (sin contenido adulto).</p>
+                <PackPlatformsManager
+                    pack_id={pack.pack_id}
+                    platforms={platforms}
+                    items={packPlatforms}
                 />
             </div>
             <div className='card'>

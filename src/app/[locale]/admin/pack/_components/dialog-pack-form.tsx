@@ -1,9 +1,9 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FaArrowsRotate } from 'react-icons/fa6'
 import Dialog from '@/src/app/[locale]/_components/dialog'
 import { useAlert } from '@/src/providers/alertProvider'
-import { IAdminPack } from '@/src/app/types/pack.types'
+import { IAdminPack, PackMediaField } from '@/src/app/types/pack.types'
 import { IStatePack } from '@/src/app/types/state-pack.types'
 import { IResponse } from '@/src/app/types/response'
 import { generatePackCode } from '@/src/app/utils/other'
@@ -21,10 +21,57 @@ interface DialogPackFormProps {
 
 const emptyForm = { name: '', code: '', description: '', price_list: '', state: true, state_pack_id: STATE_PACK.PUBLISHED as number }
 
+const MEDIA_LABELS: Record<PackMediaField, string> = {
+    register_image: 'Imagen del modal "Registrate ahora!"',
+    thanks_image: 'Imagen del modal "Gracias por tu compra"',
+}
+
+type MediaFiles = Record<PackMediaField, File | null>
+const emptyMedia: MediaFiles = { register_image: null, thanks_image: null }
+
+interface ImageFieldProps {
+    field: PackMediaField
+    /** URL de la imagen guardada (edición). */
+    current: string | null
+    file: File | null
+    onChange: (file: File | null) => void
+    disabled: boolean
+}
+
+// Selector de imagen con vista previa: la elegida, o si no la que ya tiene el pack.
+const ImageField = ({ field, current, file, onChange, disabled }: ImageFieldProps) => {
+    const preview = useMemo(() => (file === null ? null : URL.createObjectURL(file)), [file])
+    useEffect(() => () => {
+        if (preview !== null) {
+            URL.revokeObjectURL(preview)
+        }
+    }, [preview])
+    const shown = preview ?? current
+    return (
+        <div>
+            <label htmlFor={field} className="block text-xs font-medium mb-1">{MEDIA_LABELS[field]}</label>
+            <div className='flex items-center gap-3'>
+                {shown
+                    ? <img src={shown} alt="" className='w-16 h-20 object-cover rounded bg-neutral-900' />
+                    : <div className='w-16 h-20 rounded bg-neutral-900' />}
+                <input
+                    id={field}
+                    className='w-full text-xs'
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/avif"
+                    onChange={(e) => { onChange(e.currentTarget.files?.[0] ?? null) }}
+                    disabled={disabled}
+                />
+            </div>
+        </div>
+    )
+}
+
 export const DialogPackForm = ({ open, onClose, pack, states, onSaved }: DialogPackFormProps) => {
     const { setAlert } = useAlert()
     const isEdit = pack !== null && pack !== undefined
     const [form, setForm] = useState(emptyForm)
+    const [media, setMedia] = useState<MediaFiles>(emptyMedia)
     const [error, setError] = useState<string | null>(null)
     const [isPending, setIsPending] = useState(false)
 
@@ -35,9 +82,32 @@ export const DialogPackForm = ({ open, onClose, pack, states, onSaved }: DialogP
             setForm(isEdit
                 ? { name: pack!.name, code: pack!.code, description: pack!.description, price_list: String(pack!.price_list), state: pack!.state === 1, state_pack_id: pack!.state_pack_id }
                 : { ...emptyForm, code: generatePackCode() })
+            setMedia(emptyMedia)
             setError(null)
         }
     }, [open, pack, isEdit])
+
+    // Sube las imágenes elegidas a static (packs/<code>/<campo>.<ext>); devuelve las que fallaron.
+    const uploadMedia = async (pack_id: number): Promise<string[]> => {
+        const failed: string[] = []
+        for (const field of Object.keys(media) as PackMediaField[]) {
+            const file = media[field]
+            if (file === null) {
+                continue
+            }
+            const formData = new FormData()
+            formData.append('pack_id', String(pack_id))
+            formData.append('field', field)
+            formData.append('file', file)
+            try {
+                // multipart explícito: con el Content-Type JSON por defecto, axios convertiría el FormData a JSON.
+                await API.post<IResponse<string>>('/api/pack/media', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+            } catch (err: any) {
+                failed.push(`${MEDIA_LABELS[field]} (${err?.response?.data?.message || 'error del servidor'})`)
+            }
+        }
+        return failed
+    }
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
@@ -57,7 +127,12 @@ export const DialogPackForm = ({ open, onClose, pack, states, onSaved }: DialogP
                 ? await API.patch<IResponse<IAdminPack>>('/api/pack', body)
                 : await API.post<IResponse<IAdminPack>>('/api/pack', body)
             if (data.success) {
-                setAlert({ open: true, icon: 'success', message: isEdit ? 'Pack actualizado correctamente' : 'Pack creado correctamente' })
+                // El pack ya está guardado: si falla una imagen se avisa y se cierra igual (se reintenta editando),
+                // para no volver a crear el pack.
+                const failed = await uploadMedia(data.data.pack_id)
+                setAlert(failed.length === 0
+                    ? { open: true, icon: 'success', message: isEdit ? 'Pack actualizado correctamente' : 'Pack creado correctamente' }
+                    : { open: true, icon: 'warning', message: `Pack guardado, pero no se pudo subir: ${failed.join(', ')}` })
                 onSaved()
                 onClose()
             }
@@ -189,6 +264,16 @@ export const DialogPackForm = ({ open, onClose, pack, states, onSaved }: DialogP
                         />
                         <label htmlFor="state" className="text-sm">Activo</label>
                     </div>
+                    {(Object.keys(MEDIA_LABELS) as PackMediaField[]).map((field) => (
+                        <ImageField
+                            key={field}
+                            field={field}
+                            current={isEdit ? pack![field] : null}
+                            file={media[field]}
+                            onChange={(file) => { setMedia((m) => ({ ...m, [field]: file })) }}
+                            disabled={isPending}
+                        />
+                    ))}
                     {error && <p className="text-red-500 text-xs">{error}</p>}
                     <div className='flex justify-between gap-3'>
                         <button
@@ -197,7 +282,7 @@ export const DialogPackForm = ({ open, onClose, pack, states, onSaved }: DialogP
                             onClick={onClose}
                             disabled={isPending}
                         >
-                            Cancelar
+                            Cerrar
                         </button>
                         <button
                             className="btn-primary w-full"

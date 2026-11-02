@@ -12,6 +12,8 @@ import { Splashscreen } from '../layout/components/splashcreen/splashscreen';
 import ToastProvider from '@/src/providers/toastProvider';
 import AlertProvider from '@/src/providers/alertProvider';
 import { getCurrentUser } from '../utils/auth';
+import { repositoryAuth } from '../repositories/auth.repository';
+import { profileImageUrl } from '../utils/profile-image';
 //import logger, { jsonLog } from '../utils/logger';
 
 export interface PageHomeProps {
@@ -54,7 +56,8 @@ export default async function LocaleLayout({
     // Enable static rendering
     setRequestLocale(locale);
     const user = await getCurrentUser();
-    
+    const isAdmin = user !== null && await repositoryAuth.isAdmin(user.user_id);
+
     return (
         <html className=" text-white" lang={locale}>
             <body className={`${inter.className} bg-neutral-900 min-h-screen flex flex-col`}>
@@ -64,7 +67,8 @@ export default async function LocaleLayout({
                             email: user!.email,
                             name: user!.name,
                             nick: user!.nick,
-                            image: `${process.env.NEXT_PUBLIC_STATIC_URL_S3}/img/${user!.image}`,
+                            image: profileImageUrl(user!.image),
+                            is_admin: isAdmin,
                         }}>
                             <AxiosInterceptorProvider>
                                 <AlertProvider>

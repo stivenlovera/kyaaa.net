@@ -5,8 +5,10 @@ import Image from 'next/image';
 interface DialogThanksProps {
     openThanks: boolean;
     onChangeThanks: (open: boolean) => void;
+    /** Imagen propia del pack (pack.thanks_image); si no hay, la genérica. */
+    image?: string | null;
 }
-export const DialogThanks = ({ openThanks, onChangeThanks }: DialogThanksProps) => {
+export const DialogThanks = ({ openThanks, onChangeThanks, image }: DialogThanksProps) => {
     return (
         <Dialog
             isOpen={openThanks}
@@ -17,7 +19,7 @@ export const DialogThanks = ({ openThanks, onChangeThanks }: DialogThanksProps) 
                 <div>
                     <Image
                         fetchPriority="high"
-                        src={'/img/thanks.png'}
+                        src={image ?? '/img/thanks.png'}
                         alt={``}
                         width={400}
                         height={500}
@@ -36,7 +38,7 @@ export const DialogThanks = ({ openThanks, onChangeThanks }: DialogThanksProps) 
                     </ul>
                 </div>
 
-                <div className='flex justify-between gap-3'>
+                <div className='grid grid-cols-2 gap-3'>
                     <button
                         className="btn-primary w-full"
                         type='button'
@@ -44,7 +46,6 @@ export const DialogThanks = ({ openThanks, onChangeThanks }: DialogThanksProps) 
                     >
                         Continuar
                     </button>
-                    <div></div>
                 </div>
             </div>
         </Dialog>

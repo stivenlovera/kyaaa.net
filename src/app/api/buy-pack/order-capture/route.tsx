@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
         logger.info(`/api/buy-pack/order-capture POST pago ${jsonLog(statusCapture)}`)
         logger.info(`/api/buy-pack/order-capture POST pago ${jsonLog(dataCapture)}`)
         if (statusCapture === 201 || statusCapture === 200) {
-            const pack = await repositoryPack.findPackInfo(code)
+            const pack = await repositoryPack.findPackInfo(code, user !== null)
             const buy = await repositoryBuyPack.create(
                 pack!.pack_id,
                 user.user_id,

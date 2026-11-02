@@ -1,4 +1,6 @@
-// Mueve al bucket privado los archivos de las páginas de pago (page_type 2) de todos los packs.
+// Mueve al bucket privado los archivos de las páginas de pago (page_type 2) y de registrados (page_type 3)
+// de todos los packs. Las gratis (page_type 1) no se mueven: su versión sin censura se sube aparte con
+// markwater-kyaaa (AWS_BUCKET_TARGET=PRIVATE).
 //
 //   node scripts/move-paid-pages.mjs                          simulación: solo cuenta y muestra ejemplos
 //   node scripts/move-paid-pages.mjs --apply                  copia al bucket privado y verifica cada archivo
@@ -18,7 +20,7 @@ import {
 } from '@aws-sdk/client-s3';
 import mysql from 'mysql2/promise';
 
-const PAGE_TYPE_BUY = 2;
+const PAGE_TYPES_PRIVATE = [2, 3]; // buy, registered
 const CONCURRENCY = 8;
 const CONTENT_TYPES = { avif: 'image/avif', jpeg: 'image/jpeg', jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp' };
 
@@ -64,14 +66,14 @@ const [rows] = await db.query(
        JOIN pack p ON p.pack_id = pg.pack_id
        JOIN page_size ps ON ps.page_id = pg.page_id
        JOIN size s ON s.size_id = ps.size_id
-      WHERE pg.page_type_id = ?
+      WHERE pg.page_type_id IN (?)
       ORDER BY p.code, pg.num, s.size_id`,
-    [PAGE_TYPE_BUY],
+    [PAGE_TYPES_PRIVATE],
 );
 await db.end();
 
 const objects = rows.map((r) => ({ key: `${r.code}/${r.size}/${r.num}.${r.extension}`, extension: r.extension }));
-console.log(`${apply ? 'APLICAR' : 'SIMULACIÓN'}: ${objects.length} archivos de páginas de pago`);
+console.log(`${apply ? 'APLICAR' : 'SIMULACIÓN'}: ${objects.length} archivos de páginas de pago y de registrados`);
 console.log(`  origen:  ${sourceBucket}\n  destino: ${privateBucket}${deleteSource ? '\n  se borrarán del origen los ya verificados' : ''}`);
 
 if (!apply) {

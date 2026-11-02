@@ -6,14 +6,16 @@ use `ia_kyaaa`;
 #POBLACION
 insert into `type` (type_id,name) values (1,'de pago');
 insert into `type` (type_id,name) values (2,'gratis');
-insert into page_type (page_type_id,name) values (1,'free'),(2,'buy');
+insert into page_type (page_type_id,name) values (1,'free'),(2,'buy'),(3,'registered');
+insert into rol (rol_id,name) values (1,'admin');
 insert into size (size_id, name, extension)
 values
 (1,'tumb','avif'),
 (2,'medium','avif'),
 (3,'web','avif'),
 (4,'premium-web','avif'),
-(5,'meta','jpeg');
+(5,'meta','jpeg'),
+(6,'og','jpeg');
 
 insert into label (label_id, name) values
  (1,'ahegao'),
@@ -57,6 +59,7 @@ insert into `author` (author_id,name) values
 (2,'zeroRealistic');
 insert into `language` (name) values ('solo imagen');
 insert into state_pack (state_pack_id, name) values (1,'publicado'),(2,'próximamente'),(3,'borrador');
+insert into platform (name, slug, base_url) values ('Ko-fi','ko-fi','https://ko-fi.com/'),('Patreon','patreon','https://www.patreon.com/'),('Facebook','facebook','https://www.facebook.com/'),('Instagram','instagram','https://www.instagram.com/'),('X','x','https://x.com/'),('Gumroad','gumroad','https://gumroad.com/');
 
 #POBLACION te encontre
 insert into pack (name,code,price_list) values ('te encontre','20260128202950',7.0);
