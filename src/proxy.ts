@@ -7,14 +7,20 @@ import { chainProxies } from './proxies/proxy-chain';
 export default createMiddleware(routing);
 
 // El orden de ejecución importa
-export const proxy = chainProxies([withI18n(), withAuth]);
+// withAuth va primero: si el i18n hace un rewrite (p. ej. /my-account -> /es/my-account) la cadena se corta
+// y la autenticación nunca llegaba a ejecutarse.
+export const proxy = chainProxies([withAuth, withI18n()]);
 
 
 export const config = {
   // Match all pathnames except for
   // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
   // - … the ones containing a dot (e.g. `favicon.ico`)
-  matcher: '/((?!api|es|en|trpc|_next|_vercel|.*\\..*).*)'
+  // La segunda entrada cubre las rutas protegidas/de auth con prefijo de idioma, que la primera excluye.
+  matcher: [
+    '/((?!api|es|en|trpc|_next|_vercel|.*\\..*).*)',
+    '/:locale(es|en)/:page(my-account|my-purchases|favorites|login|register)/:path*',
+  ]
 };
 /* */
 
