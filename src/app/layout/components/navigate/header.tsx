@@ -69,6 +69,8 @@ export const Header = () => {
                         alt="logo"
                         width={45}
                         height={40}
+                        // Archivo estático pequeño: servirlo tal cual evita /_next/image, que solo se cachea 2 min.
+                        unoptimized
                     />
                     <h5 className={`font-wild-words-roman self-center text-2xl font-bold px-2`} >ia.kyaaa</h5>
                 </Link>

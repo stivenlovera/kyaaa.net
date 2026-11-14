@@ -32,6 +32,14 @@ const nextConfig: NextConfig = {
     }],
 
   },
+  // Por defecto Next sirve public/ con max-age=0 y Cloudflare revalida contra el origen (Francia) en cada
+  // visita. Estos archivos cambian muy poco: un día de caché y una semana sirviendo la copia vieja mientras revalida.
+  async headers() {
+    return [{
+      source: '/img/:path*',
+      headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }],
+    }];
+  },
   async rewrites() {
     return [
       /* {
