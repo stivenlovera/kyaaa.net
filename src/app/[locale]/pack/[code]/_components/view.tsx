@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react'
 import useWindowSize from "@rooks/use-window-size"
-import Image from 'next/image';
+import { RetryImage } from "@/src/app/components/retry-image";
 
 interface ViewProps {
     image: string
@@ -40,7 +40,7 @@ export const View = ({ image, numPage, allPage, clickPreview, clickNext }: ViewP
                         }
                     }
                 }}>
-                <Image
+                <RetryImage
                     width={1300}
                     height={1700}
                     fetchPriority="high"

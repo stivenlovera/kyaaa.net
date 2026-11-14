@@ -1,7 +1,7 @@
 'use client'
 import { IPage } from '@/src/app/types/page.types'
 import { divideInBLocks } from '@/src/app/utils/other'
-import Image from 'next/image'
+import { RetryImage } from "@/src/app/components/retry-image";
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { FaAngleDown } from 'react-icons/fa'
@@ -31,7 +31,7 @@ export const More = ({ pages, code, saltos }: IMore) => {
                                 href={`/pack/${code}?page=${image.num}`}
                                 className=""
                             >
-                                <Image
+                                <RetryImage
                                     fetchPriority="high"
                                     src={imagePage}
                                     alt={`pagina ${image.num}`}

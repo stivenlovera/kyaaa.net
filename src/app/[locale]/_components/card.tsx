@@ -1,6 +1,6 @@
 'use client'
 import { useAuth } from "@/src/providers/AuthContext"
-import Image from "next/image"
+import { RetryImage } from "@/src/app/components/retry-image";
 import Link from "next/link"
 import { FaBookmark, FaCartArrowDown, FaHeart } from "react-icons/fa6"
 import { IResponse } from "../../types/response"
@@ -53,7 +53,7 @@ export const Card = ({
         >
             <div className="grid place-items-end">
                 {urlImage ? (
-                    <Image
+                    <RetryImage
                         width={400}
                         height={500}
                         alt={`Preview ${pack.name}`}

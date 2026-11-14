@@ -1,4 +1,4 @@
-import Image from "next/image"
+import { RetryImage } from "@/src/app/components/retry-image";
 import Link from "next/link"
 import { CardSection } from "../../_components/card-section"
 import moment from "moment"
@@ -108,7 +108,7 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                         className="flex flex-row justify-center md:justify-end"
                     >
                         {imageDescription ? (
-                            <Image
+                            <RetryImage
                                 width={400}
                                 height={500}
                                 className='h-3/4 w-3/4 p-1'
@@ -228,7 +228,7 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                                 href={`/pack/${packInfo?.code}?page=${image.num}`}
                                 className=""
                             >
-                                <Image
+                                <RetryImage
                                     fetchPriority="high"
                                     src={image.url}
                                     alt={`pagina ${image.num}`}
