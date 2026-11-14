@@ -42,16 +42,13 @@ export default async function Home({ params }: PageHomeProps) {
   const t = await getTranslations('home'); */
 
   const user = await getCurrentUser();
-  const packs = await repositoryPack.findPacksNew(user !== null);
-
-  let likes: ILikePack[] = []
-  let buys: IBuyPack[] = []
-  let favorites: IFavoritePack[] = []
-  if (user !== null) {
-    likes = await repositoryLikePack.findLikePerUser(user!.user_id);
-    buys = await repositoryBuyPack.findBuyPerUser(user!.user_id);
-    favorites = await repositoryFavoritePack.findFavoritePerUser(user!.user_id);
-  }
+  // Consultas independientes: se lanzan a la vez en lugar de una detrás de otra.
+  const [packs, likes, buys, favorites] = await Promise.all([
+    repositoryPack.findPacksNew(user !== null),
+    user !== null ? repositoryLikePack.findLikePerUser(user.user_id) : [] as ILikePack[],
+    user !== null ? repositoryBuyPack.findBuyPerUser(user.user_id) : [] as IBuyPack[],
+    user !== null ? repositoryFavoritePack.findFavoritePerUser(user.user_id) : [] as IFavoritePack[],
+  ]);
 
   const listNewPacks = packs!.map((pack) => {
     const isLike = likes!.find((like) => like.pack_id === pack.pack_id);
