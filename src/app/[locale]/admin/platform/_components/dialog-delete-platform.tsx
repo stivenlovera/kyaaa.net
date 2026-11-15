@@ -1,0 +1,72 @@
+'use client'
+import { useState } from 'react'
+import Dialog from '@/src/app/[locale]/_components/dialog'
+import { useAlert } from '@/src/providers/alertProvider'
+import { IAdminPlatform } from '@/src/app/types/platform.types'
+import { IResponse } from '@/src/app/types/response'
+import API from '@/src/providers/api'
+
+interface DialogDeletePlatformProps {
+    open: boolean
+    onClose: () => void
+    platform: IAdminPlatform | null
+    onDeleted: () => void
+}
+
+export const DialogDeletePlatform = ({ open, onClose, platform, onDeleted }: DialogDeletePlatformProps) => {
+    const { setAlert } = useAlert()
+    const [error, setError] = useState<string | null>(null)
+    const [isPending, setIsPending] = useState(false)
+
+    const handleClose = () => {
+        setError(null)
+        onClose()
+    }
+
+    const handleDelete = async () => {
+        if (platform === null) return
+        setError(null)
+        setIsPending(true)
+        try {
+            const { data } = await API.delete<IResponse<null>>('/api/platform', { data: { platform_id: platform.platform_id } })
+            if (data.success) {
+                setAlert({ open: true, icon: 'success', message: 'Plataforma eliminada correctamente' })
+                onDeleted()
+                handleClose()
+            }
+        } catch (err: any) {
+            setError(err?.response?.data?.message || 'Error del servidor')
+        } finally {
+            setIsPending(false)
+        }
+    }
+
+    return (
+        <Dialog isOpen={open} onClose={handleClose} title="Eliminar plataforma">
+            <div className="grid grid-cols-1 gap-4">
+                <p>
+                    ¿Seguro que quieres eliminar la plataforma <span className='font-bold'>{platform?.name}</span>? Esta acción no se puede deshacer.
+                </p>
+                {error && <p className="text-red-500 text-xs">{error}</p>}
+                <div className='flex justify-between gap-3'>
+                    <button
+                        className="btn-primary w-full"
+                        type='button'
+                        onClick={handleClose}
+                        disabled={isPending}
+                    >
+                        Cerrar
+                    </button>
+                    <button
+                        className="btn-primary w-full text-red-500"
+                        type='button'
+                        onClick={handleDelete}
+                        disabled={isPending}
+                    >
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </Dialog>
+    )
+}

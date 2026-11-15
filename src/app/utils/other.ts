@@ -41,3 +41,7 @@ export function slugify(name: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+/** 'YYYY-MM-DD' → 'DD/MM/YYYY' sin pasar por Date (evita corrimientos por zona horaria). */
+export function formatDay(value: string): string {
+  return value.split('-').reverse().join('/');
+}

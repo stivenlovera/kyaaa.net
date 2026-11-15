@@ -6,6 +6,8 @@ interface AdminPaginationProps {
     basePath: string
     page: number
     totalPages: number
+    /** Parámetros extra que se conservan al cambiar de página (p. ej. un filtro). */
+    query?: Record<string, string>
 }
 
 // Números visibles: primera, última y la actual con sus vecinas; los huecos se marcan con "…".
@@ -25,11 +27,18 @@ const visibleItems = (page: number, totalPages: number): (number | '…')[] => {
 
 const buttonClass = 'flex items-center justify-center p-2 hover:bg-gray-600 rounded-full'
 
-export const AdminPagination = ({ basePath, page, totalPages }: AdminPaginationProps) => {
+export const AdminPagination = ({ basePath, page, totalPages, query = {} }: AdminPaginationProps) => {
     if (totalPages <= 1) {
         return null
     }
-    const href = (n: number) => `${basePath}${n === 1 ? '' : `?page=${n}`}`
+    const href = (n: number) => {
+        const params = new URLSearchParams(query)
+        if (n !== 1) {
+            params.set('page', String(n))
+        }
+        const qs = params.toString()
+        return qs === '' ? basePath : `${basePath}?${qs}`
+    }
 
     return (
         <nav className='flex mx-auto flex-wrap items-center justify-center p-2'>

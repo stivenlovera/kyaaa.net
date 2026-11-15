@@ -178,6 +178,8 @@ model Platform {
   name           String
   slug           String          @unique
   base_url       String?
+  is_external    Int             @default(1)
+  is_payment     Int             @default(0)
   state          Int             @default(1)
   create_at      DateTime?
   update_at      DateTime?
@@ -203,7 +205,7 @@ model Pack_platform {
   create_at        DateTime?
   update_at        DateTime?
 
-  @@unique([pack_id, platform_id])
+  @@index([pack_id])
   @@map(name: "pack_platform")
 }
 

@@ -40,7 +40,7 @@ export const DialogDeletePlatform = ({ open, onClose, item, onDeleted }: DialogD
         <Dialog isOpen={open} onClose={onClose} title="Eliminar póster">
             <div className="grid grid-cols-1 gap-4">
                 <p>
-                    ¿Seguro que quieres eliminar el póster de <span className='font-bold'>{item?.platform.name}</span>? Se borra el registro y su contador de clics; la imagen se queda en S3. Si solo quieres ocultarlo, desactívalo.
+                    ¿Seguro que quieres eliminar el póster de <span className='font-bold'>{item?.platform.name}</span>? Se borran el registro, su contador de clics y la imagen. Si solo quieres ocultarlo, desactívalo.
                 </p>
                 {error && <p className="text-red-500 text-xs">{error}</p>}
                 <div className='flex justify-between gap-3'>

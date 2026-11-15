@@ -7,6 +7,9 @@ import {
     FaMasksTheater,
     FaFilm,
     FaTag,
+    FaGlobe,
+    FaImages,
+    FaUsers,
 } from 'react-icons/fa6'
 import { AdminBreadcrumb } from './_components/breadcrumb'
 
@@ -16,7 +19,10 @@ const sections = [
     { href: '/admin/character', label: 'Personajes', icon: FaMasksTheater },
     { href: '/admin/serie', label: 'Series', icon: FaFilm },
     { href: '/admin/label', label: 'Etiquetas', icon: FaTag },
-    { href: '/admin/votes', label: 'Votaciones', icon: FaSquarePollVertical },
+    { href: '/admin/platform', label: 'Plataformas', icon: FaGlobe },
+    { href: '/admin/pack-platform', label: 'Pósters', icon: FaImages },
+    { href: '/admin/user', label: 'Usuarios', icon: FaUsers },
+    { href: '/admin/votes', label: 'Participa', icon: FaSquarePollVertical },
 ]
 
 export default async function Page() {

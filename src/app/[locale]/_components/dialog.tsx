@@ -5,16 +5,20 @@ type ModalDialogProps = {
     isOpen: boolean
     children: React.ReactNode
     title: string
+    /** Clases del panel para cambiar su ancho (p. ej. un modal grande con scroll); por defecto 'md:w-96'. */
+    panelClassName?: string
 };
-const Dialog = ({ isOpen, onClose, children, title }: ModalDialogProps) => {
+const Dialog = ({ isOpen, onClose, children, title, panelClassName = 'md:w-96' }: ModalDialogProps) => {
     if (!isOpen) return null;
 
     return (
         <div
-            className="fixed inset-0 w-screen h-screen bg-dark-600/50 flex items-center justify-center backdrop-blur-sm p-5"
+            // z-40: por encima del contenido aunque el modal se renderice dentro de un elemento con
+            // position (p. ej. una tarjeta) y le sigan otros posicionados; los toasts (z-50) quedan encima.
+            className="fixed inset-0 z-40 w-screen h-screen bg-dark-600/50 flex items-center justify-center backdrop-blur-sm p-5"
             onClick={() => { /* onClose(false) */ }}
         >
-            <div className="bg-neutral-800 p-4 rounded-lg shadow-md shadow-black items-center relative md:w-96">
+            <div className={`bg-neutral-800 p-4 rounded-lg shadow-md shadow-black items-center relative ${panelClassName}`}>
                 <div className="flex justify-between px-3 py-2">
                     <div className="">
                         <p className="text-left text-2xl  font-bold">{title}</p>

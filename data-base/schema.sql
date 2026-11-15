@@ -95,11 +95,15 @@ CREATE TABLE `platform` (
   `name` varchar(100) NOT NULL,
   `slug` varchar(100) NOT NULL,
   `base_url` varchar(255) DEFAULT NULL,
+  `is_external` tinyint NOT NULL DEFAULT '1',
+  `is_payment` tinyint NOT NULL DEFAULT '0',
   `state` tinyint NOT NULL DEFAULT '1',
   `create_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `update_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`platform_id`),
-  UNIQUE KEY `uq_platform_slug` (`slug`)
+  UNIQUE KEY `uq_platform_slug` (`slug`),
+  CONSTRAINT `chk_platform_is_external` CHECK (`is_external` IN (0, 1)),
+  CONSTRAINT `chk_platform_is_payment` CHECK (`is_payment` IN (0, 1))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `page_type`;
@@ -323,7 +327,7 @@ CREATE TABLE `pack_platform` (
   `create_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `update_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pack_platform_id`),
-  UNIQUE KEY `uq_pack_platform` (`pack_id`,`platform_id`),
+  KEY `pack_id` (`pack_id`),
   KEY `platform_id` (`platform_id`),
   CONSTRAINT `pack_platform_ibfk_1` FOREIGN KEY (`pack_id`) REFERENCES `pack` (`pack_id`),
   CONSTRAINT `pack_platform_ibfk_2` FOREIGN KEY (`platform_id`) REFERENCES `platform` (`platform_id`)
@@ -387,6 +391,7 @@ CREATE TABLE `vote` (
   `user_id` int NOT NULL,
   `create_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `update_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`participate_pack_id`,`user_id`),
   KEY `participate_pack_id` (`participate_pack_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `vote_ibfk_1` FOREIGN KEY (`participate_pack_id`) REFERENCES `participate_pack` (`participate_pack_id`),
