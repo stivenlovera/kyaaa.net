@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { TopLoader } from './top-loader';
 import Image from 'next/image';
 import { FaAlignJustify, FaAngleRight } from "react-icons/fa";
 import { ListMenu } from '../../layout.type';
@@ -145,6 +146,10 @@ export const Header = () => {
                     onSubmit={enviar}
                 />
             </div> */}
+            {/* useSearchParams exige un límite de Suspense para no forzar el renderizado en cliente. */}
+            <Suspense fallback={null}>
+                <TopLoader />
+            </Suspense>
             <Drawer
                 openDrawer={openDrawer}
                 onDrawerClose={() => { setDrawer(false); console.log('close Navigate') }}
