@@ -42,12 +42,8 @@ export const DialogDeletePlatform = ({ open, onClose, platform, onDeleted }: Dia
     }
 
     return (
-        <Dialog isOpen={open} onClose={handleClose} title="Eliminar plataforma">
-            <div className="grid grid-cols-1 gap-4">
-                <p>
-                    ¿Seguro que quieres eliminar la plataforma <span className='font-bold'>{platform?.name}</span>? Esta acción no se puede deshacer.
-                </p>
-                {error && <p className="text-red-500 text-xs">{error}</p>}
+        <Dialog isOpen={open} onClose={handleClose} title="Eliminar plataforma"
+            footer={(
                 <div className='flex justify-between gap-3'>
                     <button
                         className="btn-primary w-full"
@@ -66,6 +62,13 @@ export const DialogDeletePlatform = ({ open, onClose, platform, onDeleted }: Dia
                         Eliminar
                     </button>
                 </div>
+            )}
+        >
+            <div className="grid grid-cols-1 gap-4">
+                <p>
+                    ¿Seguro que quieres eliminar la plataforma <span className='font-bold'>{platform?.name}</span>? Esta acción no se puede deshacer.
+                </p>
+                {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
         </Dialog>
     )

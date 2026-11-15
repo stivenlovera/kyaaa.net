@@ -34,8 +34,27 @@ export const DialogChangeEmail = ({ openChangeEmail, onChangeEmail }: DialogChan
             isOpen={openChangeEmail}
             onClose={(() => { onChangeEmail(false) })}
             title="Modificar Email"
+            footer={(
+                <div className='flex justify-between gap-3'>
+                    <button
+                        className="btn-primary w-full text-red-500"
+                        type='button'
+                        onClick={() => { onChangeEmail(false) }}
+                        disabled={isPending}
+                    >
+                        Cerrar
+                    </button>
+                    <button
+                        className="btn-primary w-full"
+                        type='submit' form='dialog-change-email'
+                        disabled={isPending}
+                    >
+                        Modificar
+                    </button>
+                </div>
+            )}
         >
-            <Form action={formAction}>
+            <Form id='dialog-change-email' action={formAction}>
                 <div className="grid grid-cols-1 gap-4">
                     <div>
                         <label
@@ -72,23 +91,6 @@ export const DialogChangeEmail = ({ openChangeEmail, onChangeEmail }: DialogChan
                             disabled={isPending}
                         />
                         {state?.errors?.new_email && <p className="text-red-500 text-xs pt-1">{state.errors.new_email}</p>}
-                    </div>
-                    <div className='flex justify-between gap-3'>
-                        <button
-                            className="btn-primary w-full text-red-500"
-                            type='button'
-                            onClick={() => { onChangeEmail(false) }}
-                            disabled={isPending}
-                        >
-                            Cerrar
-                        </button>
-                        <button
-                            className="btn-primary w-full"
-                            type='submit'
-                            disabled={isPending}
-                        >
-                            Modificar
-                        </button>
                     </div>
                 </div>
             </Form>

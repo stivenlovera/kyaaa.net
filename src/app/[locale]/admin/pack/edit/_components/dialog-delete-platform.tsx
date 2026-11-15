@@ -37,12 +37,8 @@ export const DialogDeletePlatform = ({ open, onClose, item, onDeleted }: DialogD
     }
 
     return (
-        <Dialog isOpen={open} onClose={onClose} title="Eliminar póster">
-            <div className="grid grid-cols-1 gap-4">
-                <p>
-                    ¿Seguro que quieres eliminar el póster de <span className='font-bold'>{item?.platform.name}</span>? Se borran el registro, su contador de clics y la imagen. Si solo quieres ocultarlo, desactívalo.
-                </p>
-                {error && <p className="text-red-500 text-xs">{error}</p>}
+        <Dialog isOpen={open} onClose={onClose} title="Eliminar póster"
+            footer={(
                 <div className='flex justify-between gap-3'>
                     <button
                         className="btn-primary w-full"
@@ -61,6 +57,13 @@ export const DialogDeletePlatform = ({ open, onClose, item, onDeleted }: DialogD
                         Eliminar
                     </button>
                 </div>
+            )}
+        >
+            <div className="grid grid-cols-1 gap-4">
+                <p>
+                    ¿Seguro que quieres eliminar el póster de <span className='font-bold'>{item?.platform.name}</span>? Se borran el registro, su contador de clics y la imagen. Si solo quieres ocultarlo, desactívalo.
+                </p>
+                {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
         </Dialog>
     )

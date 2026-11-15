@@ -37,12 +37,8 @@ export const DialogDeletePage = ({ open, onClose, page, onDeleted }: DialogDelet
     }
 
     return (
-        <Dialog isOpen={open} onClose={onClose} title="Eliminar página">
-            <div className="grid grid-cols-1 gap-4">
-                <p>
-                    ¿Seguro que quieres eliminar el registro de la página <span className='font-bold'>{page?.num}</span>? Esto borra el registro de la base de datos, pero no el archivo en S3. Esta acción no se puede deshacer.
-                </p>
-                {error && <p className="text-red-500 text-xs">{error}</p>}
+        <Dialog isOpen={open} onClose={onClose} title="Eliminar página"
+            footer={(
                 <div className='flex justify-between gap-3'>
                     <button
                         className="btn-primary w-full"
@@ -61,6 +57,13 @@ export const DialogDeletePage = ({ open, onClose, page, onDeleted }: DialogDelet
                         Eliminar
                     </button>
                 </div>
+            )}
+        >
+            <div className="grid grid-cols-1 gap-4">
+                <p>
+                    ¿Seguro que quieres eliminar el registro de la página <span className='font-bold'>{page?.num}</span>? Esto borra el registro de la base de datos, pero no el archivo en S3. Esta acción no se puede deshacer.
+                </p>
+                {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
         </Dialog>
     )

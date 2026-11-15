@@ -83,8 +83,19 @@ export const DialogUserForm = ({ open, onClose, user, isSelf, onSaved }: DialogU
     }
 
     return (
-        <Dialog isOpen={open} onClose={onClose} title={isEdit ? 'Editar usuario' : 'Crear usuario'} panelClassName='w-full md:w-[32rem] max-h-[90vh] overflow-y-auto'>
-            <form onSubmit={handleSubmit}>
+        <Dialog isOpen={open} onClose={onClose} title={isEdit ? 'Editar usuario' : 'Crear usuario'} panelClassName='w-full md:w-[32rem]'
+            footer={(
+                <div className='flex justify-between gap-3'>
+                    <button className="btn-primary w-full text-red-500" type='button' onClick={onClose} disabled={isPending}>
+                        Cerrar
+                    </button>
+                    <button className="btn-primary w-full" type='submit' form='dialog-user-form' disabled={isPending}>
+                        {isEdit ? 'Guardar' : 'Crear'}
+                    </button>
+                </div>
+            )}
+        >
+            <form id='dialog-user-form' onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label htmlFor="user_name" className="block text-xs font-medium mb-1">Nombre</label>
@@ -131,14 +142,6 @@ export const DialogUserForm = ({ open, onClose, user, isSelf, onSaved }: DialogU
                         {isSelf && <p className='text-xs text-neutral-400'>Es tu cuenta: no puedes quitarte el rol de administrador ni desactivarla.</p>}
                     </div>
                     {error && <p className="text-red-500 text-xs sm:col-span-2">{error}</p>}
-                    <div className='flex justify-between gap-3 sm:col-span-2'>
-                        <button className="btn-primary w-full text-red-500" type='button' onClick={onClose} disabled={isPending}>
-                            Cerrar
-                        </button>
-                        <button className="btn-primary w-full" type='submit' disabled={isPending}>
-                            {isEdit ? 'Guardar' : 'Crear'}
-                        </button>
-                    </div>
                 </div>
             </form>
         </Dialog>

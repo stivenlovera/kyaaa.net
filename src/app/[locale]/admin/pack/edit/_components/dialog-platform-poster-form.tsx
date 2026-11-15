@@ -110,9 +110,19 @@ export const DialogPlatformPosterForm = ({ open, onClose, pack_id, platforms, it
             isOpen={open}
             onClose={onClose}
             title={isEdit ? 'Editar póster' : 'Agregar póster'}
-            panelClassName='w-full md:w-[40rem] max-h-[90vh] overflow-y-auto'
+            panelClassName='w-full md:w-[40rem]'
+            footer={(
+                <div className='flex justify-between gap-3'>
+                    <button className='btn-primary w-full text-red-500' type='button' onClick={onClose} disabled={isPending}>
+                        Cerrar
+                    </button>
+                    <button className='btn-primary w-full' type='submit' form='dialog-platform-poster-form' disabled={isPending}>
+                        {isEdit ? 'Guardar cambios' : 'Agregar póster'}
+                    </button>
+                </div>
+            )}
         >
-            <form onSubmit={handleSubmit} className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+            <form id='dialog-platform-poster-form' onSubmit={handleSubmit} className='grid grid-cols-1 md:grid-cols-2 gap-3'>
                 <div>
                     <label htmlFor='platform_id' className='block text-xs font-medium mb-1'>Plataforma</label>
                     <select
@@ -215,14 +225,6 @@ export const DialogPlatformPosterForm = ({ open, onClose, pack_id, platforms, it
                     </div>
                 </div>
                 {error && <p className='text-red-500 text-xs md:col-span-2'>{error}</p>}
-                <div className='flex justify-between gap-3 md:col-span-2'>
-                    <button className='btn-primary w-full text-red-500' type='button' onClick={onClose} disabled={isPending}>
-                        Cerrar
-                    </button>
-                    <button className='btn-primary w-full' type='submit' disabled={isPending}>
-                        {isEdit ? 'Guardar cambios' : 'Agregar póster'}
-                    </button>
-                </div>
             </form>
         </Dialog>
     )

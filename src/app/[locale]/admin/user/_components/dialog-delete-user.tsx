@@ -42,7 +42,18 @@ export const DialogDeleteUser = ({ open, onClose, user, onDeleted }: DialogDelet
     }
 
     return (
-        <Dialog isOpen={open} onClose={handleClose} title="Eliminar usuario">
+        <Dialog isOpen={open} onClose={handleClose} title="Eliminar usuario"
+            footer={(
+                <div className='flex justify-between gap-3'>
+                    <button className="btn-primary w-full" type='button' onClick={handleClose} disabled={isPending}>
+                        Cerrar
+                    </button>
+                    <button className="btn-primary w-full text-red-500" type='button' onClick={handleDelete} disabled={isPending}>
+                        Eliminar
+                    </button>
+                </div>
+            )}
+        >
             <div className="grid grid-cols-1 gap-4">
                 <p>
                     ¿Seguro que quieres eliminar a <span className='font-bold'>{user?.name}</span> ({user?.email})?
@@ -52,14 +63,6 @@ export const DialogDeleteUser = ({ open, onClose, user, onDeleted }: DialogDelet
                     <p className="text-yellow-500 text-xs">Tiene {user.total_buys} compra(s): no se podrá eliminar. Desactívalo en su lugar.</p>
                 )}
                 {error && <p className="text-red-500 text-xs">{error}</p>}
-                <div className='flex justify-between gap-3'>
-                    <button className="btn-primary w-full" type='button' onClick={handleClose} disabled={isPending}>
-                        Cerrar
-                    </button>
-                    <button className="btn-primary w-full text-red-500" type='button' onClick={handleDelete} disabled={isPending}>
-                        Eliminar
-                    </button>
-                </div>
             </div>
         </Dialog>
     )

@@ -10,6 +10,10 @@ import { ILanguage } from '@/src/app/types/language.types'
 import { IResponse } from '@/src/app/types/response'
 import API from '@/src/providers/api'
 
+// Orden alfabético (A-Z) sin distinguir mayúsculas ni acentos, y con números en orden natural.
+const byName = (a: { name: string }, b: { name: string }) =>
+    a.name.localeCompare(b.name, 'es', { sensitivity: 'base', numeric: true })
+
 interface PackRelationsFormProps {
     pack_id: number
     labels: ILabel[]
@@ -37,7 +41,7 @@ const CheckboxGroup = ({
         <div className='max-h-48 overflow-y-auto border border-neutral-700 rounded-md p-2 grid grid-cols-1 sm:grid-cols-2 gap-1'>
             {items.length === 0 ? (
                 <p className='text-sm text-neutral-400'>No hay opciones registradas.</p>
-            ) : items.map((item) => (
+            ) : [...items].sort(byName).map((item) => (
                 <label key={item.id} className='flex items-center gap-2 text-sm'>
                     <input
                         type="checkbox"

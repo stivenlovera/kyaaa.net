@@ -65,8 +65,28 @@ export const DialogParticipateForm = ({ open, onClose, participate, states, onSa
     }
 
     return (
-        <Dialog isOpen={open} onClose={onClose} title={isEdit ? 'Editar participación' : 'Crear participación'}>
-            <form onSubmit={handleSubmit}>
+        <Dialog isOpen={open} onClose={onClose} title={isEdit ? 'Editar participación' : 'Crear participación'}
+            footer={(
+                <div className='flex justify-between gap-3'>
+                    <button
+                        className="btn-primary w-full text-red-500"
+                        type='button'
+                        onClick={onClose}
+                        disabled={isPending}
+                    >
+                        Cerrar
+                    </button>
+                    <button
+                        className="btn-primary w-full"
+                        type='submit' form='dialog-participate-form'
+                        disabled={isPending}
+                    >
+                        {isEdit ? 'Guardar' : 'Crear'}
+                    </button>
+                </div>
+            )}
+        >
+            <form id='dialog-participate-form' onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 gap-4">
                     <div>
                         <label htmlFor="name" className="block text-xs font-medium mb-1">Nombre</label>
@@ -136,23 +156,6 @@ export const DialogParticipateForm = ({ open, onClose, participate, states, onSa
                         </select>
                     </div>
                     {error && <p className="text-red-500 text-xs">{error}</p>}
-                    <div className='flex justify-between gap-3'>
-                        <button
-                            className="btn-primary w-full text-red-500"
-                            type='button'
-                            onClick={onClose}
-                            disabled={isPending}
-                        >
-                            Cerrar
-                        </button>
-                        <button
-                            className="btn-primary w-full"
-                            type='submit'
-                            disabled={isPending}
-                        >
-                            {isEdit ? 'Guardar' : 'Crear'}
-                        </button>
-                    </div>
                 </div>
             </form>
         </Dialog>

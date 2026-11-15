@@ -37,12 +37,8 @@ export const DialogDeleteAuthor = ({ open, onClose, author, onDeleted }: DialogD
     }
 
     return (
-        <Dialog isOpen={open} onClose={onClose} title="Eliminar autor">
-            <div className="grid grid-cols-1 gap-4">
-                <p>
-                    ¿Seguro que quieres eliminar el autor <span className='font-bold'>{author?.name}</span>? Esta acción no se puede deshacer.
-                </p>
-                {error && <p className="text-red-500 text-xs">{error}</p>}
+        <Dialog isOpen={open} onClose={onClose} title="Eliminar autor"
+            footer={(
                 <div className='flex justify-between gap-3'>
                     <button
                         className="btn-primary w-full"
@@ -61,6 +57,13 @@ export const DialogDeleteAuthor = ({ open, onClose, author, onDeleted }: DialogD
                         Eliminar
                     </button>
                 </div>
+            )}
+        >
+            <div className="grid grid-cols-1 gap-4">
+                <p>
+                    ¿Seguro que quieres eliminar el autor <span className='font-bold'>{author?.name}</span>? Esta acción no se puede deshacer.
+                </p>
+                {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
         </Dialog>
     )
