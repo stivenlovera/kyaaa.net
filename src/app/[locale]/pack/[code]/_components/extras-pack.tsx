@@ -2,7 +2,7 @@
 import { useAuth } from '@/src/providers/AuthContext';
 import { useTranslations } from 'next-intl';
 import React, { useState } from 'react'
-import { FaBookmark, FaDownload, FaHeart } from 'react-icons/fa'
+import { FaDownload, FaHeart, FaStar } from 'react-icons/fa'
 import { DialogRegisterNow } from './dialog-register-now';
 import API from '@/src/providers/api';
 import { IResponse } from '@/src/app/types/response';
@@ -123,7 +123,7 @@ export const ExtraPack = ({
                                 requireLogin(() => fetchChangeFavorite(pack_id))
                             }}
                         >
-                            <FaBookmark
+                            <FaStar
                                 className={'text-xl ' + (favorite === true ? ' text-yellow-400' : 'text-white')}
                             />
                         </button>

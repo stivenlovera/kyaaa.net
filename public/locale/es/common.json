@@ -75,7 +75,7 @@
   },
   "favoritos": {
     "titulo": "Favoritos",
-    "vacio": "Todavía no guardaste ningún pack en favoritos. Toca el marcador de un pack para guardarlo aquí.",
+    "vacio": "Todavía no guardaste ningún pack en favoritos. Toca la estrella de un pack para guardarlo aquí.",
     "explorar": "Ver nuevas entradas"
   },
   "mis_compras": {
