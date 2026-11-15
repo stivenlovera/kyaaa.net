@@ -1,4 +1,6 @@
+'use client'
 import Link from "next/link";
+import { useState } from "react";
 import { INewPacksAuth } from "../../types/pack.types";
 import { Card } from "./card";
 
@@ -7,10 +9,14 @@ interface PackGridProps {
     packs: INewPacksAuth[]
     /** Texto y enlace cuando la lista está vacía. */
     empty: { message: string, linkText: string, href: string }
+    /** En /favorites: al quitar el favorito, la tarjeta desaparece sin recargar. */
+    removeOnUnfavorite?: boolean
 }
 
 /** Título + cuadrícula de tarjetas de packs, con un mensaje si no hay ninguno. */
-export function PackGrid({ title, packs, empty }: PackGridProps) {
+export function PackGrid({ title, packs: initialPacks, empty, removeOnUnfavorite = false }: PackGridProps) {
+    const [packs, setPacks] = useState(initialPacks);
+
     return (
         <div className="px-2 py-2 md:px-10 lg:px-20 xl:px-64 2xl:px-72 md:py-5 lg:py-10 xl:py-14">
             <div className="card">
@@ -29,6 +35,9 @@ export function PackGrid({ title, packs, empty }: PackGridProps) {
                                 pack={pack}
                                 urlImage={pack.portada.url}
                                 key={pack.pack_id}
+                                onFavoriteChange={removeOnUnfavorite ? (favorite) => {
+                                    if (!favorite) setPacks((list) => list.filter((p) => p.pack_id !== pack.pack_id));
+                                } : undefined}
                             ></Card>
                         ))}
                     </div>

@@ -30,6 +30,7 @@ export default async function Page({ params }: PageHomeProps) {
             title={t('titulo')}
             packs={packs}
             empty={{ message: t('vacio'), linkText: t('explorar'), href: '/' }}
+            removeOnUnfavorite
         />
     );
 }
