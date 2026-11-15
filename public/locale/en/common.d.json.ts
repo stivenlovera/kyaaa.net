@@ -11,6 +11,7 @@ declare const messages: {
       "etiqueta": "Tags",
       "autor": "Authors",
       "inciar_sesion": "Log in",
+      "abrir_menu": "Open menu",
       "auth": {
         "mis_compra": "My purchases",
         "favorito": "Favorites",

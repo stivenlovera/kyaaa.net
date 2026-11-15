@@ -8,44 +8,62 @@ import { FaAngleDown, FaAngleUp } from 'react-icons/fa'
 
 interface ButtonUserProps {
     user: IAuth
+    /** Solo la foto redonda, sin nick ni flecha (cabecera móvil). El desplegable es el mismo. */
+    compact?: boolean
 }
 
-const ButtonUser = ({ user }: ButtonUserProps) => {
+const ButtonUser = ({ user, compact = false }: ButtonUserProps) => {
     const t = useTranslations('header.menu.auth')
     const [openMenu, setOpenMenu] = useState(false)
     const router = useRouter();
     const { signOut } = useAuth()
+    const avatar = user.image || '/img/default-profile.png'
 
     return (
         <div className='flex flex-row gap-2'>
-            <div className="relative inline-block text-left"
+            <div className={"relative text-left " + (compact ? "block" : "inline-block")}
             >
-                <button
-                    id="dropdown-button"
-                    className="btn-primary "
-                    onClick={() => { setOpenMenu(true) }}
-                >
-                    <div className='flex flex-row gap-2'>
+                {compact ? (
+                    <button
+                        className="block rounded-full border-2 border-neutral-600 hover:border-neutral-400 p-0.5 cursor-pointer"
+                        aria-label={t('mi_cuenta')}
+                        aria-expanded={openMenu}
+                        onClick={() => { setOpenMenu(true) }}
+                    >
                         <img
-                            src={user.image!.toString()}
+                            src={avatar}
                             alt="Perfil"
-                            className="w-6 h-6 rounded-full object-cover"
-                        ></img>
-                        <p className='px-1'>{user.nick}</p>
-                    </div>
-                    {openMenu ? (
-                        <FaAngleUp
-                            color='white'
-                            size={25}
+                            className="w-9 h-9 rounded-full object-cover"
                         />
-                    ) : (
-                        <FaAngleDown
-                            color='white'
-                            size={25}
-                        />
-                    )}
+                    </button>
+                ) : (
+                    <button
+                        id="dropdown-button"
+                        className="btn-primary "
+                        onClick={() => { setOpenMenu(true) }}
+                    >
+                        <div className='flex flex-row gap-2'>
+                            <img
+                                src={avatar}
+                                alt="Perfil"
+                                className="w-6 h-6 rounded-full object-cover"
+                            ></img>
+                            <p className='px-1'>{user.nick}</p>
+                        </div>
+                        {openMenu ? (
+                            <FaAngleUp
+                                color='white'
+                                size={25}
+                            />
+                        ) : (
+                            <FaAngleDown
+                                color='white'
+                                size={25}
+                            />
+                        )}
 
-                </button>
+                    </button>
+                )}
                 {openMenu ? (
                     <div
                         className='fixed inset-0 w-screen h-screen'

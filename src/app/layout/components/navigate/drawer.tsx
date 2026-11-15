@@ -65,37 +65,9 @@ const Drawer = ({ openDrawer, onDrawerClose, user }: DrawerProps) => {
                     <div className='p-1'>
                         <hr />
                         {user !== null ? (
+                            // Mis compras, Favoritos, Mi cuenta y Administrar están en el menú de la foto de perfil
+                            // (cabecera); aquí solo la navegación del sitio y cerrar sesión.
                             <div className=' '>
-                                <Link
-                                    href={'/my-purchases'}
-                                    className="block p-3 hover:text-blue-400 hover:bg-blue-950"
-                                    onClick={() => { onDrawerClose() }}
-                                >
-                                    {ta('mis_compra')}
-                                </Link>
-                                <Link
-                                    href={'/favorites'}
-                                    className="block p-3 hover:text-blue-400 hover:bg-blue-950"
-                                    onClick={() => { onDrawerClose() }}
-                                >
-                                    {ta('favorito')}
-                                </Link>
-                                <Link
-                                    href={'/my-account'}
-                                    className="block p-3 hover:text-blue-400 hover:bg-blue-950"
-                                    onClick={() => { onDrawerClose() }}
-                                >
-                                    {ta('mi_cuenta')}
-                                </Link>
-                                {user.is_admin && (
-                                    <Link
-                                        href={'/admin'}
-                                        className="block p-3 hover:text-blue-400 hover:bg-blue-950"
-                                        onClick={() => { onDrawerClose() }}
-                                    >
-                                        {ta('administrar')}
-                                    </Link>
-                                )}
                                 <button
                                     className="block p-3 hover:text-blue-400 hover:bg-blue-950  w-full"
                                     onClick={() => {

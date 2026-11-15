@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { TopLoader } from './top-loader';
 import Image from 'next/image';
-import { FaAlignJustify, FaAngleRight } from "react-icons/fa";
+import { FaAlignJustify } from "react-icons/fa";
 import { ListMenu } from '../../layout.type';
 import Drawer from './drawer';
 import { useAuth } from '@/src/providers/AuthContext';
@@ -117,27 +117,17 @@ export const Header = () => {
                     </div>
 
                 </div>
-                <button
-                    className='md:hidden lg:hidden xl:hidden p-3 rounded-lg bg-grayl-300 hover:bg-grayl-400 '
-                    onClick={() => { setDrawer(true) }}
-                >
-                    {user?.image ? (
-                        <div className='btn-primary p-0 border-2 rounded-full flex flex-row'>
-                            <div className='content-center'>
-                                <div className="w-9 h-9 rounded-full object-cover p-1">
-                                    <FaAngleRight size={30} color="white" className='' />
-                                </div>
-                            </div>
-                            <img
-                                src={`${user?.image}` || "/img/default-profile.png"}
-                                alt="Perfil"
-                                className="w-9 h-9 rounded-full object-cover p-1"
-                            />
-                        </div>
-                    ) : (
+                {/* Móvil: la foto abre el menú de la cuenta (como en escritorio) y la hamburguesa, la navegación del sitio. */}
+                <div className='md:hidden flex items-center gap-1'>
+                    {user && <ButtonUser user={user} compact />}
+                    <button
+                        className='p-3 rounded-lg bg-grayl-300 hover:bg-grayl-400'
+                        aria-label={t('abrir_menu')}
+                        onClick={() => { setDrawer(true) }}
+                    >
                         <FaAlignJustify size={30} color="white" />
-                    )}
-                </button>
+                    </button>
+                </div>
             </div>
             {/* <div className="xl:hidden font-medium flex space-x-4 p-2">
                 <Search
