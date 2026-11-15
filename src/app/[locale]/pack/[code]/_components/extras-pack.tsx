@@ -6,7 +6,11 @@ import { FaBookmark, FaDownload, FaHeart } from 'react-icons/fa'
 import { DialogRegisterNow } from './dialog-register-now';
 import API from '@/src/providers/api';
 import { IResponse } from '@/src/app/types/response';
-import { useRouter } from "@/src/app/layout/components/navigate/use-loading-router";
+import Link from 'next/link';
+
+// Un <a> no admite `disabled`: estos son los estilos `disabled:` de btn-primary aplicados a mano,
+// y además se ignoran los clics mientras dura otra acción (descarga, like…).
+const LINK_DISABLED = ' pointer-events-none cursor-not-allowed border-neutral-700 bg-neutral-950';
 import { useToast } from '@/src/providers/toastProvider';
 import { isAxiosError } from 'axios';
 
@@ -32,7 +36,6 @@ export const ExtraPack = ({
     free = false,
     register_image
 }: IExtraPackProps) => {
-    const router = useRouter();
     const t = useTranslations('pack-info');
     const { user } = useAuth()
     const { showToast } = useToast()
@@ -140,29 +143,33 @@ export const ExtraPack = ({
             {
                 user_buy ? (
                     <div className='py-2'>
-                        <button
-                            className='btn-primary w-full font-bold'
-                            disabled={loading}
-                            onClick={() => {
-                                if (user !== null) {
-                                    router.push('/my-purchases');
-                                }
-                            }}
+                        <Link
+                            href='/my-purchases'
+                            className={'btn-primary w-full font-bold' + (loading ? LINK_DISABLED : '')}
+                            aria-disabled={loading}
+                            onClick={(e) => { if (loading) e.preventDefault() }}
                         >
                             {t('extra-pack.ver_compras')}
-                        </button>
+                        </Link>
                     </div>
                 ) : free ? null : (
                     <div className='py-2'>
-                        <button
-                            className='btn-primary w-full font-bold'
-                            disabled={loading}
-                            onClick={() => {
-                                requireLogin(() => router.push(`/buy/${code}`))
+                        <Link
+                            href={`/buy/${code}`}
+                            className={'btn-primary w-full font-bold' + (loading ? LINK_DISABLED : '')}
+                            aria-disabled={loading}
+                            onClick={(e) => {
+                                // Sin sesión no se navega: se abre el modal "Registrate ahora!" como antes.
+                                if (loading) {
+                                    e.preventDefault()
+                                } else if (user === null) {
+                                    e.preventDefault()
+                                    setOpenDialogRegisterNow(true)
+                                }
                             }}
                         >
                             {t('extra-pack.comprar')} ${price}
-                        </button>
+                        </Link>
                     </div>
                 )
             }
