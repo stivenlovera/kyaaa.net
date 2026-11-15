@@ -31,6 +31,25 @@ export const DialogChangeVerifiedEmail = ({ openChangeEmail, onChangeEmail }: Di
             isOpen={openChangeEmail}
             onClose={(() => { onChangeEmail(false) })}
             title="Verificar email"
+            footer={(
+                <div className='flex justify-between gap-3'>
+                    <button
+                        className="btn-primary w-full text-red-500"
+                        type='button'
+                        onClick={() => { onChangeEmail(false) }}
+                        disabled={isPending}
+                    >
+                        Cerrar
+                    </button>
+                    <button
+                        className="btn-primary w-full"
+                        type="submit"
+                        disabled={isPending}
+                    >
+                        Enviar enlace
+                    </button>
+                </div>
+            )}
         >
             <Form
                 id="my-form"
@@ -40,23 +59,6 @@ export const DialogChangeVerifiedEmail = ({ openChangeEmail, onChangeEmail }: Di
                         Se enviara un enlace a su correo para verificar, <br /> si no recibe el correo o no lo encuentra en la bandeja, revise en spam.
                     </div>
                     <input type="text" name='test' hidden />
-                    <div className='flex justify-between gap-3'>
-                        <button
-                            className="btn-primary w-full text-red-500"
-                            type='button'
-                            onClick={() => { onChangeEmail(false) }}
-                            disabled={isPending}
-                        >
-                            Cerrar
-                        </button>
-                        <button
-                            className="btn-primary w-full"
-                            type="submit"
-                            disabled={isPending}
-                        >
-                            Enviar enlace
-                        </button>
-                    </div>
                 </div>
             </Form>
         </Dialog>

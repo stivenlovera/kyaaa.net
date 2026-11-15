@@ -42,17 +42,8 @@ export const DialogDeleteParticipate = ({ open, onClose, participate, onDeleted 
     }
 
     return (
-        <Dialog isOpen={open} onClose={handleClose} title="Eliminar participación">
-            <div className="grid grid-cols-1 gap-4">
-                <p>
-                    ¿Seguro que quieres eliminar la participación <span className='font-bold'>{participate?.name}</span>?
-                    {participate !== null && participate.total_packs > 0 && ` También se quitarán sus ${participate.total_packs} pack(s) inscritos.`}
-                    {' '}Esta acción no se puede deshacer.
-                </p>
-                {participate !== null && participate.total_votes > 0 && (
-                    <p className="text-yellow-500 text-xs">Tiene {participate.total_votes} voto(s): no se podrá eliminar.</p>
-                )}
-                {error && <p className="text-red-500 text-xs">{error}</p>}
+        <Dialog isOpen={open} onClose={handleClose} title="Eliminar participación"
+            footer={(
                 <div className='flex justify-between gap-3'>
                     <button
                         className="btn-primary w-full"
@@ -71,6 +62,18 @@ export const DialogDeleteParticipate = ({ open, onClose, participate, onDeleted 
                         Eliminar
                     </button>
                 </div>
+            )}
+        >
+            <div className="grid grid-cols-1 gap-4">
+                <p>
+                    ¿Seguro que quieres eliminar la participación <span className='font-bold'>{participate?.name}</span>?
+                    {participate !== null && participate.total_packs > 0 && ` También se quitarán sus ${participate.total_packs} pack(s) inscritos.`}
+                    {' '}Esta acción no se puede deshacer.
+                </p>
+                {participate !== null && participate.total_votes > 0 && (
+                    <p className="text-yellow-500 text-xs">Tiene {participate.total_votes} voto(s): no se podrá eliminar.</p>
+                )}
+                {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
         </Dialog>
     )

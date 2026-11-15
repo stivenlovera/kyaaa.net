@@ -37,12 +37,8 @@ export const DialogDeletePack = ({ open, onClose, pack, onDeleted }: DialogDelet
     }
 
     return (
-        <Dialog isOpen={open} onClose={onClose} title="Eliminar pack">
-            <div className="grid grid-cols-1 gap-4">
-                <p>
-                    ¿Seguro que quieres eliminar el pack <span className='font-bold'>{pack?.name}</span>? Esta acción no se puede deshacer.
-                </p>
-                {error && <p className="text-red-500 text-xs">{error}</p>}
+        <Dialog isOpen={open} onClose={onClose} title="Eliminar pack"
+            footer={(
                 <div className='flex justify-between gap-3'>
                     <button
                         className="btn-primary w-full"
@@ -61,6 +57,13 @@ export const DialogDeletePack = ({ open, onClose, pack, onDeleted }: DialogDelet
                         Eliminar
                     </button>
                 </div>
+            )}
+        >
+            <div className="grid grid-cols-1 gap-4">
+                <p>
+                    ¿Seguro que quieres eliminar el pack <span className='font-bold'>{pack?.name}</span>? Esta acción no se puede deshacer.
+                </p>
+                {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
         </Dialog>
     )

@@ -42,12 +42,8 @@ export const DialogDeleteParticipatePack = ({ open, onClose, item, onDeleted }: 
     }
 
     return (
-        <Dialog isOpen={open} onClose={handleClose} title="Quitar pack">
-            <div className="grid grid-cols-1 gap-4">
-                <p>
-                    ¿Seguro que quieres quitar el pack <span className='font-bold'>{item?.name}</span> de esta participación?
-                </p>
-                {error && <p className="text-red-500 text-xs">{error}</p>}
+        <Dialog isOpen={open} onClose={handleClose} title="Quitar pack"
+            footer={(
                 <div className='flex justify-between gap-3'>
                     <button
                         className="btn-primary w-full"
@@ -66,6 +62,13 @@ export const DialogDeleteParticipatePack = ({ open, onClose, item, onDeleted }: 
                         Quitar
                     </button>
                 </div>
+            )}
+        >
+            <div className="grid grid-cols-1 gap-4">
+                <p>
+                    ¿Seguro que quieres quitar el pack <span className='font-bold'>{item?.name}</span> de esta participación?
+                </p>
+                {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
         </Dialog>
     )

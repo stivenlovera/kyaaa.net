@@ -54,8 +54,28 @@ export const DialogLabelForm = ({ open, onClose, label, onSaved }: DialogLabelFo
     }
 
     return (
-        <Dialog isOpen={open} onClose={onClose} title={isEdit ? 'Editar etiqueta' : 'Crear etiqueta'}>
-            <form onSubmit={handleSubmit}>
+        <Dialog isOpen={open} onClose={onClose} title={isEdit ? 'Editar etiqueta' : 'Crear etiqueta'}
+            footer={(
+                <div className='flex justify-between gap-3'>
+                    <button
+                        className="btn-primary w-full text-red-500"
+                        type='button'
+                        onClick={onClose}
+                        disabled={isPending}
+                    >
+                        Cerrar
+                    </button>
+                    <button
+                        className="btn-primary w-full"
+                        type='submit' form='dialog-label-form'
+                        disabled={isPending}
+                    >
+                        {isEdit ? 'Guardar' : 'Crear'}
+                    </button>
+                </div>
+            )}
+        >
+            <form id='dialog-label-form' onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 gap-4">
                     <div>
                         <label htmlFor="name" className="block text-xs font-medium mb-1">Nombre</label>
@@ -97,23 +117,6 @@ export const DialogLabelForm = ({ open, onClose, label, onSaved }: DialogLabelFo
                         <label htmlFor="state" className="text-sm">Activa</label>
                     </div>
                     {error && <p className="text-red-500 text-xs">{error}</p>}
-                    <div className='flex justify-between gap-3'>
-                        <button
-                            className="btn-primary w-full text-red-500"
-                            type='button'
-                            onClick={onClose}
-                            disabled={isPending}
-                        >
-                            Cerrar
-                        </button>
-                        <button
-                            className="btn-primary w-full"
-                            type='submit'
-                            disabled={isPending}
-                        >
-                            {isEdit ? 'Guardar' : 'Crear'}
-                        </button>
-                    </div>
                 </div>
             </form>
         </Dialog>

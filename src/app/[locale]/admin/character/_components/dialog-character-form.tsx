@@ -54,8 +54,28 @@ export const DialogCharacterForm = ({ open, onClose, character, onSaved }: Dialo
     }
 
     return (
-        <Dialog isOpen={open} onClose={onClose} title={isEdit ? 'Editar personaje' : 'Crear personaje'}>
-            <form onSubmit={handleSubmit}>
+        <Dialog isOpen={open} onClose={onClose} title={isEdit ? 'Editar personaje' : 'Crear personaje'}
+            footer={(
+                <div className='flex justify-between gap-3'>
+                    <button
+                        className="btn-primary w-full text-red-500"
+                        type='button'
+                        onClick={onClose}
+                        disabled={isPending}
+                    >
+                        Cerrar
+                    </button>
+                    <button
+                        className="btn-primary w-full"
+                        type='submit' form='dialog-character-form'
+                        disabled={isPending}
+                    >
+                        {isEdit ? 'Guardar' : 'Crear'}
+                    </button>
+                </div>
+            )}
+        >
+            <form id='dialog-character-form' onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 gap-4">
                     <div>
                         <label htmlFor="name" className="block text-xs font-medium mb-1">Nombre</label>
@@ -97,23 +117,6 @@ export const DialogCharacterForm = ({ open, onClose, character, onSaved }: Dialo
                         <label htmlFor="state" className="text-sm">Activo</label>
                     </div>
                     {error && <p className="text-red-500 text-xs">{error}</p>}
-                    <div className='flex justify-between gap-3'>
-                        <button
-                            className="btn-primary w-full text-red-500"
-                            type='button'
-                            onClick={onClose}
-                            disabled={isPending}
-                        >
-                            Cerrar
-                        </button>
-                        <button
-                            className="btn-primary w-full"
-                            type='submit'
-                            disabled={isPending}
-                        >
-                            {isEdit ? 'Guardar' : 'Crear'}
-                        </button>
-                    </div>
                 </div>
             </form>
         </Dialog>

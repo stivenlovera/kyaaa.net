@@ -42,7 +42,7 @@ export const DialogPosterCarousel = ({ open, onClose, title, images }: DialogPos
     }
 
     return (
-        <Dialog isOpen={open} onClose={close} title={title} panelClassName='w-full md:w-[32rem] max-h-[95vh] overflow-y-auto'>
+        <Dialog isOpen={open} onClose={close} title={title} panelClassName='w-full md:w-[32rem]'>
             <div className='grid grid-cols-1 gap-3'>
                 <div
                     className='relative select-none'

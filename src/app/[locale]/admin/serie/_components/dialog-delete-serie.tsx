@@ -37,12 +37,8 @@ export const DialogDeleteSerie = ({ open, onClose, serie, onDeleted }: DialogDel
     }
 
     return (
-        <Dialog isOpen={open} onClose={onClose} title="Eliminar serie">
-            <div className="grid grid-cols-1 gap-4">
-                <p>
-                    ¿Seguro que quieres eliminar la serie <span className='font-bold'>{serie?.name}</span>? Esta acción no se puede deshacer.
-                </p>
-                {error && <p className="text-red-500 text-xs">{error}</p>}
+        <Dialog isOpen={open} onClose={onClose} title="Eliminar serie"
+            footer={(
                 <div className='flex justify-between gap-3'>
                     <button
                         className="btn-primary w-full"
@@ -61,6 +57,13 @@ export const DialogDeleteSerie = ({ open, onClose, serie, onDeleted }: DialogDel
                         Eliminar
                     </button>
                 </div>
+            )}
+        >
+            <div className="grid grid-cols-1 gap-4">
+                <p>
+                    ¿Seguro que quieres eliminar la serie <span className='font-bold'>{serie?.name}</span>? Esta acción no se puede deshacer.
+                </p>
+                {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
         </Dialog>
     )

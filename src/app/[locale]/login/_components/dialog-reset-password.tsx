@@ -36,8 +36,27 @@ export const DialogResetPassword = ({ openResetPassword, onResetPassword }: Dial
       isOpen={openResetPassword}
       onClose={(() => { onResetPassword(false) })}
       title="Recuperar contraseña"
+      footer={(
+        <div className='flex justify-between gap-3'>
+          <button
+            className="btn-primary w-full text-red-500"
+            type='button'
+            onClick={() => { onResetPassword(false) }}
+            disabled={isPending}
+          >
+            Cerrar
+          </button>
+          <button
+            className="btn-primary w-full"
+            type='submit' form='dialog-reset-password'
+            disabled={isPending}
+          >
+            Enviar enlace
+          </button>
+        </div>
+      )}
     >
-      <Form action={formAction}>
+      <Form id='dialog-reset-password' action={formAction}>
         <div className="grid grid-cols-1 gap-4">
           <div>
             Se enviara un enlace a su correo electrónico para modificar su contraseña.
@@ -59,23 +78,6 @@ export const DialogResetPassword = ({ openResetPassword, onResetPassword }: Dial
               disabled={isPending}
             />
             {state?.errors?.email && <p className="text-red-500 text-xs pt-1">{state.errors.email}</p>}
-          </div>
-          <div className='flex justify-between gap-3'>
-            <button
-              className="btn-primary w-full text-red-500"
-              type='button'
-              onClick={() => { onResetPassword(false) }}
-              disabled={isPending}
-            >
-              Cerrar
-            </button>
-            <button
-              className="btn-primary w-full"
-              type='submit'
-              disabled={isPending}
-            >
-              Enviar enlace
-            </button>
           </div>
         </div>
       </Form>

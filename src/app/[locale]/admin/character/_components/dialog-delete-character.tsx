@@ -37,12 +37,8 @@ export const DialogDeleteCharacter = ({ open, onClose, character, onDeleted }: D
     }
 
     return (
-        <Dialog isOpen={open} onClose={onClose} title="Eliminar personaje">
-            <div className="grid grid-cols-1 gap-4">
-                <p>
-                    ¿Seguro que quieres eliminar el personaje <span className='font-bold'>{character?.name}</span>? Esta acción no se puede deshacer.
-                </p>
-                {error && <p className="text-red-500 text-xs">{error}</p>}
+        <Dialog isOpen={open} onClose={onClose} title="Eliminar personaje"
+            footer={(
                 <div className='flex justify-between gap-3'>
                     <button
                         className="btn-primary w-full"
@@ -61,6 +57,13 @@ export const DialogDeleteCharacter = ({ open, onClose, character, onDeleted }: D
                         Eliminar
                     </button>
                 </div>
+            )}
+        >
+            <div className="grid grid-cols-1 gap-4">
+                <p>
+                    ¿Seguro que quieres eliminar el personaje <span className='font-bold'>{character?.name}</span>? Esta acción no se puede deshacer.
+                </p>
+                {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
         </Dialog>
     )

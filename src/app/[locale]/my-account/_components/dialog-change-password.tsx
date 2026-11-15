@@ -35,8 +35,28 @@ export const DialogChangePassword = ({ openChangePassword, onChangePassword }: D
             isOpen={openChangePassword}
             onClose={(() => { onChangePassword(false) })}
             title="Modificar Contraseña"
+            footer={(
+                <div className='flex justify-between gap-3'>
+                    <button
+                        className="btn-primary w-full text-red-500"
+                        type='button'
+                        onClick={() => { onChangePassword(false) }}
+                        disabled={isPending}
+                    >
+                        Cerrar
+                    </button>
+                    <button
+                        id="dropdown-button"
+                        className="btn-primary w-full"
+                        disabled={isPending}
+                        type='submit' form='dialog-change-password'
+                    >
+                        Confirmar
+                    </button>
+                </div>
+            )}
         >
-            <Form action={formAction}>
+            <Form id='dialog-change-password' action={formAction}>
                 <div className="grid grid-cols-1 gap-4">
                     <div>
                         <label
@@ -91,24 +111,6 @@ export const DialogChangePassword = ({ openChangePassword, onChangePassword }: D
                             disabled={isPending}
                         />
                         {state?.errors?.confirm_password && <p className="text-red-500 text-xs pt-1">{state.errors.confirm_password}</p>}
-                    </div>
-                    <div className='flex justify-between gap-3'>
-                        <button
-                            className="btn-primary w-full text-red-500"
-                            type='button'
-                            onClick={() => { onChangePassword(false) }}
-                            disabled={isPending}
-                        >
-                            Cerrar
-                        </button>
-                        <button
-                            id="dropdown-button"
-                            className="btn-primary w-full"
-                            disabled={isPending}
-                            type='submit'
-                        >
-                            Confirmar
-                        </button>
                     </div>
                 </div>
             </Form>
