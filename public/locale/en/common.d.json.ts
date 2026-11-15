@@ -77,7 +77,7 @@ declare const messages: {
   },
   "favoritos": {
     "titulo": "Favorites",
-    "vacio": "You haven’t saved any packs yet. Tap a pack’s bookmark to save it here.",
+    "vacio": "You haven’t saved any packs yet. Tap a pack’s star to save it here.",
     "explorar": "See new releases"
   },
   "mis_compras": {

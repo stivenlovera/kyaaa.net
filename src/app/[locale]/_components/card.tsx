@@ -2,7 +2,7 @@
 import { useAuth } from "@/src/providers/AuthContext"
 import { RetryImage } from "@/src/app/components/retry-image";
 import Link from "next/link"
-import { FaBookmark, FaCartArrowDown, FaHeart } from "react-icons/fa6"
+import { FaBookmark, FaHeart, FaStar } from "react-icons/fa6"
 import { IResponse } from "../../types/response"
 import { INewPacksAuth } from "../../types/pack.types"
 import API from "@/src/providers/api"
@@ -84,7 +84,7 @@ export const Card = ({
                                         //onBuy(pack_id);
                                     }}
                                 >
-                                    <FaCartArrowDown
+                                    <FaBookmark
                                         className={'text-xl ' + (buy === true ? ' text-blue-600' : 'text-white')}
                                     />
                                 </button>
@@ -98,7 +98,7 @@ export const Card = ({
                                 fetchChangeFavorite(pack.pack_id);
                             }}
                         >
-                            <FaBookmark
+                            <FaStar
                                 className={'text-xl ' + (favorite === true ? ' text-yellow-400' : 'text-white')}
                             />
                         </button>
