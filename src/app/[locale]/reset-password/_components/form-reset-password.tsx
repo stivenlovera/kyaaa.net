@@ -3,7 +3,7 @@ import { IFormUpdatePassword, initialStateFieldsFormUpdatePassword } from '@/src
 import { actionFormNewPassword } from '@/src/app/actions/actionFormNewPassword';
 import { useAlert } from '@/src/providers/alertProvider';
 import Form from 'next/form';
-import { useRouter } from 'next/navigation';
+import { useRouter } from "@/src/app/layout/components/navigate/use-loading-router";
 import React, { useActionState, useState } from 'react'
 
 interface FormResetPasswordProps {

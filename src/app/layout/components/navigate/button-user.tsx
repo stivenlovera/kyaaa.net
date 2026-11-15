@@ -2,7 +2,7 @@ import { IAuth } from '@/src/app/types/user.type'
 import { useAuth } from '@/src/providers/AuthContext'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter } from "@/src/app/layout/components/navigate/use-loading-router";
 import React, { useState } from 'react'
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa'
 

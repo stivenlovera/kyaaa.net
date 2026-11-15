@@ -1,6 +1,6 @@
 "use client"
 import { useAuth } from "@/src/providers/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/src/app/layout/components/navigate/use-loading-router";
 import { useActionState, useState } from "react";
 import Form from "next/form";
 import { IFormLogin, initialStateFormLogin } from "@/src/app/types/user.type";

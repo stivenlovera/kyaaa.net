@@ -1,7 +1,7 @@
 'use client'
 import Form from 'next/form'
 import { useActionState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from "@/src/app/layout/components/navigate/use-loading-router";
 import { useAuth } from '@/src/providers/AuthContext';
 import { IFormRegister, initialStateFormRegister } from '@/src/app/types/user.type';
 import { actionFormRegister } from '@/src/app/actions/actionFormRegister';
