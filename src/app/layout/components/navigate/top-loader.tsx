@@ -9,6 +9,18 @@ import { useEffect, useRef } from 'react';
 // Se anima tocando el estilo del elemento directamente: no hay re-render de React en cada paso.
 
 const SAFETY_TIMEOUT_MS = 15000; // por si la navegación no llega a cambiar la URL (misma página, error…)
+const START_EVENT = 'toploader:start';
+
+/** true si ir a `href` cambia de página (otra ruta o query); false si es externo, la misma URL o solo cambia el #hash. */
+export function isPageChange(href: string): boolean {
+    const url = new URL(href, location.href);
+    return url.origin === location.origin && (url.pathname !== location.pathname || url.search !== location.search);
+}
+
+/** Arranca la barra desde código, para navegaciones que no salen de un <a> (router.push en un botón). */
+export function startTopLoader() {
+    window.dispatchEvent(new Event(START_EVENT));
+}
 
 type Loader = { start: () => void, finish: () => void, dispose: () => void };
 
@@ -78,10 +90,8 @@ export function TopLoader() {
             const anchor = (event.target as Element | null)?.closest?.('a');
             if (!anchor || !anchor.href || anchor.hasAttribute('download')) return;
             if (anchor.target && anchor.target !== '_self') return;
-            const url = new URL(anchor.href, location.href);
-            if (url.origin !== location.origin) return;
-            // Mismo destino o solo cambia el #hash: no hay navegación que esperar.
-            if (url.pathname === location.pathname && url.search === location.search) return;
+            // Externo, mismo destino o solo cambia el #hash: no hay navegación que esperar.
+            if (!isPageChange(anchor.href)) return;
             l.start();
         };
         // Atrás/adelante: Next puede haber pintado ya la ruta nueva (desde su caché) antes de este evento;
@@ -95,9 +105,11 @@ export function TopLoader() {
         // Fase de captura: se ejecuta antes que el onClick de Link, que hace preventDefault.
         document.addEventListener('click', onClick, true);
         window.addEventListener('popstate', onPopState);
+        window.addEventListener(START_EVENT, l.start);
         return () => {
             document.removeEventListener('click', onClick, true);
             window.removeEventListener('popstate', onPopState);
+            window.removeEventListener(START_EVENT, l.start);
             l.dispose();
         };
     }, []);

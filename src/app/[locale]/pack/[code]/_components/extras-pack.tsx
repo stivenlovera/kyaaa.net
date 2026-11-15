@@ -6,7 +6,7 @@ import { FaBookmark, FaDownload, FaHeart } from 'react-icons/fa'
 import { DialogRegisterNow } from './dialog-register-now';
 import API from '@/src/providers/api';
 import { IResponse } from '@/src/app/types/response';
-import { useRouter } from 'next/navigation';
+import { useRouter } from "@/src/app/layout/components/navigate/use-loading-router";
 import { useToast } from '@/src/providers/toastProvider';
 import { isAxiosError } from 'axios';
 

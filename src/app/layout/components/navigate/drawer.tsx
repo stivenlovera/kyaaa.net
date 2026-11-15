@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { ListMenu } from '../../layout.type'
 import { IAuth } from '@/src/app/types/user.type'
-import { useRouter } from 'next/navigation'
+import { useRouter } from "@/src/app/layout/components/navigate/use-loading-router";
 import { useAuth } from '@/src/providers/AuthContext'
 import { useTranslations } from 'next-intl'
 interface DrawerProps {
