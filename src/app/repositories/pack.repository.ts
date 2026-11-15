@@ -1,4 +1,4 @@
-import { IAdminPack, IAdminPackPage, IListPacks, IPackForEdit, IPackInfo, IPackRelationIds, PackMediaField } from "../types/pack.types";
+import { IAdminPack, IAdminPackPage, IListPacks, IPackForEdit, IPackInfo, IPackOption, IPackRelationIds, PackMediaField } from "../types/pack.types";
 import { Prisma } from "../../../generated/prisma/client";
 import { packMediaUrl } from "../utils/pack-images";
 import { packPortada } from "../utils/pack-portada";
@@ -38,7 +38,8 @@ async function toAdminPack({ pages, ...pack }: AdminPackRow): Promise<IAdminPack
 }
 
 // Campos de un pack en los listados con tarjetas (portada, favoritos, mis compras).
-const PACK_LIST_SELECT = {
+// Campos de las tarjetas de packs (listados públicos). Lo reutilizan otros repositorios (p. ej. participate).
+export const PACK_LIST_SELECT = {
     name: true,
     description: true,
     pack_id: true,
@@ -69,9 +70,9 @@ const PACK_LIST_SELECT = {
     },
 } satisfies Prisma.PackSelect;
 
-type PackListRow = Prisma.PackGetPayload<{ select: typeof PACK_LIST_SELECT }>;
+export type PackListRow = Prisma.PackGetPayload<{ select: typeof PACK_LIST_SELECT }>;
 
-async function toListPack(p: PackListRow, loggedIn: boolean): Promise<IListPacks> {
+export async function toListPack(p: PackListRow, loggedIn: boolean): Promise<IListPacks> {
     return {
         ...p,
         portada: await packPortada(p.code, p.pages[0], loggedIn)
@@ -319,6 +320,15 @@ export const repositoryPack = {
         await prisma.pack.update({
             where: { pack_id },
             data: { [field]: key, update_at: new Date() },
+        })
+    },
+
+    // Packs (más nuevos primero) para los selectores del admin; opcionalmente solo los de un estado.
+    findOptions: async (state_pack_id?: number): Promise<IPackOption[]> => {
+        return await prisma.pack.findMany({
+            where: state_pack_id !== undefined ? { state_pack_id } : {},
+            orderBy: { pack_id: 'desc' },
+            select: { pack_id: true, name: true, code: true },
         })
     },
 

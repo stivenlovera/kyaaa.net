@@ -58,8 +58,9 @@ insert into `author` (author_id,name) values
 (1,'iaKyaaa'),
 (2,'zeroRealistic');
 insert into `language` (name) values ('solo imagen');
-insert into state_pack (state_pack_id, name) values (1,'publicado'),(2,'próximamente'),(3,'borrador');
-insert into platform (name, slug, base_url) values ('Ko-fi','ko-fi','https://ko-fi.com/'),('Patreon','patreon','https://www.patreon.com/'),('Facebook','facebook','https://www.facebook.com/'),('Instagram','instagram','https://www.instagram.com/'),('X','x','https://x.com/'),('Gumroad','gumroad','https://gumroad.com/');
+insert into state_pack (state_pack_id, name) values (1,'publicado'),(2,'próximamente'),(3,'borrador'),(4,'estreno'),(5,'por votación');
+insert into state_participate (state_participate_id, name) values (1,'borrador'),(2,'en curso'),(3,'finalizado');
+insert into platform (name, slug, base_url, is_payment) values ('Ko-fi','ko-fi','https://ko-fi.com/',1),('Patreon','patreon','https://www.patreon.com/',1),('Facebook','facebook','https://www.facebook.com/',0),('Instagram','instagram','https://www.instagram.com/',0),('X','x','https://x.com/',0),('Gumroad','gumroad','https://gumroad.com/',1);
 
 #POBLACION te encontre
 insert into pack (name,code,price_list) values ('te encontre','20260128202950',7.0);

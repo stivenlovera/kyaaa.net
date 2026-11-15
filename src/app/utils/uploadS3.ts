@@ -110,3 +110,22 @@ export async function uploadStaticObject(key: string, buffer: Buffer, contentTyp
     }));
     logger.info(`Imagen insertada: ${jsonLog({ httpStatusCode: result.$metadata.httpStatusCode, key })}`)
 }
+
+// Borra un objeto del bucket static. `key` puede traer el ?v= de caché que se guarda en BD; se ignora.
+export async function deleteStaticObject(key: string) {
+    const s3Client = new S3Client({
+        region: process.env.AWS_REGION,
+        forcePathStyle: true,
+        endpoint: process.env.AWS_ENPOINT,
+        credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+        },
+    });
+    const cleanKey = key.split('?')[0];
+    const result = await s3Client.send(new DeleteObjectCommand({
+        Bucket: process.env.AWS_BUCKET_STATIC,
+        Key: cleanKey,
+    }));
+    logger.info(`Imagen eliminada: ${jsonLog({ httpStatusCode: result.$metadata.httpStatusCode, key: cleanKey })}`)
+}

@@ -4,7 +4,8 @@ import { repositoryLikePack } from "../repositories/like-pack.repository";
 import { IListPacks, INewPacksAuth } from "../types/pack.types";
 
 /** Añade a cada pack si el usuario le dio "me gusta", lo compró o lo guardó en favoritos (para las tarjetas). */
-export async function withUserFlags(packs: IListPacks[], user_id: number): Promise<INewPacksAuth[]> {
+// Genérica: conserva los campos extra de cada pack (p. ej. `votes` en /participate).
+export async function withUserFlags<T extends IListPacks>(packs: T[], user_id: number): Promise<(T & INewPacksAuth)[]> {
     const [likes, buys, favorites] = await Promise.all([
         repositoryLikePack.findLikePerUser(user_id),
         repositoryBuyPack.findBuyPerUser(user_id),

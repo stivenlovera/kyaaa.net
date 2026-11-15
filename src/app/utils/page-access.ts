@@ -27,6 +27,21 @@ export const STATE_PACK = {
     PUBLISHED: 1,
     COMING_SOON: 2,
     DRAFT: 3,
+    PREMIERE: 4,
+    VOTING: 5,
+} as const;
+
+/**
+ * Estado de los packs que participan en las votaciones de /participate: solo esos se pueden agregar a una
+ * votación (admin), se muestran y se pueden votar.
+ */
+export const STATE_PACK_PARTICIPATE = STATE_PACK.DRAFT;
+
+/** Ids de `state_participate` (ver data-base/migrations/2026-11-15_state_participate.sql). */
+export const STATE_PARTICIPATE = {
+    DRAFT: 1,
+    ACTIVE: 2,
+    FINISHED: 3,
 } as const;
 
 // Ids de la tabla `size` que usa la web (ver data-base/population.sql). OG: imagen para redes sociales.

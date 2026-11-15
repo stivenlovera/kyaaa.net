@@ -191,3 +191,9 @@ export interface IPackRelationIds {
 export interface IFormPackRelations extends IPackRelationIds {
     pack_id: number;
 }
+/** Opción de un selector de packs en el admin. */
+export interface IPackOption {
+    pack_id: number;
+    name: string;
+    code: string;
+}
