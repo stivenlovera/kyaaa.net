@@ -10,10 +10,13 @@ import { useState } from "react"
 interface ICard {
     pack: INewPacksAuth
     urlImage: string
+    /** Se llama cuando la API confirma el cambio de favorito (p. ej. para quitar la tarjeta en /favorites). */
+    onFavoriteChange?: (favorite: boolean) => void
 }
 export const Card = ({
     pack,
-    urlImage
+    urlImage,
+    onFavoriteChange
 }: ICard) => {
     const { user } = useAuth()
     const [like, setLike] = useState<boolean>(pack.like)
@@ -39,6 +42,7 @@ export const Card = ({
             const { data } = await API.post<IResponse<boolean>>('/api/favorite-pack', { pack_id });
             if (data.success) {
                 setFavorite(data.data)
+                onFavoriteChange?.(data.data)
             }
         } catch (error) {
             console.error('Error fetching protected data:', error);
