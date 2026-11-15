@@ -87,8 +87,13 @@ export function TopLoader() {
 
         const onClick = (event: MouseEvent) => {
             if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-            const anchor = (event.target as Element | null)?.closest?.('a');
+            const target = event.target as Element | null;
+            const anchor = target?.closest?.('a');
             if (!anchor || !anchor.href || anchor.hasAttribute('download')) return;
+            // Clic en un control dentro del enlace (p. ej. los botones de favorito/me gusta de la tarjeta, que
+            // cancelan la navegación y solo llaman a la API): no hay navegación, la barra no debe arrancar.
+            const control = target?.closest?.('button, input, select, textarea, label, [role="button"]');
+            if (control && anchor.contains(control)) return;
             if (anchor.target && anchor.target !== '_self') return;
             // Externo, mismo destino o solo cambia el #hash: no hay navegación que esperar.
             if (!isPageChange(anchor.href)) return;
