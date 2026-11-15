@@ -74,6 +74,16 @@ declare const messages: {
   },
   "dialogo": {
     "cerrar": "Close"
+  },
+  "favoritos": {
+    "titulo": "Favorites",
+    "vacio": "You haven’t saved any packs yet. Tap a pack’s bookmark to save it here.",
+    "explorar": "See new releases"
+  },
+  "mis_compras": {
+    "titulo": "My purchases",
+    "vacio": "You haven’t bought any packs yet.",
+    "explorar": "See new releases"
   }
 };
 export default messages;

@@ -37,7 +37,72 @@ async function toAdminPack({ pages, ...pack }: AdminPackRow): Promise<IAdminPack
     }
 }
 
+// Campos de un pack en los listados con tarjetas (portada, favoritos, mis compras).
+const PACK_LIST_SELECT = {
+    name: true,
+    description: true,
+    pack_id: true,
+    code: true,
+    pack_serie: { select: { serie: { select: { name: true, serie_id: true } } } },
+    pack_character: { select: { character: { select: { name: true, character_id: true } } } },
+    pages: {
+        // Portada: prefiere una página gratis (page_type 1) y luego la de menor número.
+        orderBy: [{ page_type_id: 'asc' as const }, { num: 'asc' as const }],
+        take: 1,
+        select: {
+            num: true,
+            page_type_id: true,
+            page_size: {
+                where: {
+                    size_id: SIZE.TUMB
+                },
+                select: {
+                    size: {
+                        select: {
+                            extension: true,
+                            name: true
+                        }
+                    }
+                }
+            },
+        }
+    },
+} satisfies Prisma.PackSelect;
+
+type PackListRow = Prisma.PackGetPayload<{ select: typeof PACK_LIST_SELECT }>;
+
+async function toListPack(p: PackListRow, loggedIn: boolean): Promise<IListPacks> {
+    return {
+        ...p,
+        portada: await packPortada(p.code, p.pages[0], loggedIn)
+    }
+}
+
 export const repositoryPack = {
+
+    /** Packs que el usuario marcó como favoritos, el último marcado primero. Sin los que están en borrador. */
+    findPacksFavorite: async (user_id: number): Promise<IListPacks[]> => {
+        const favorites = await prisma.favorite_Pack.findMany({
+            where: { user_id, pack: { state_pack_id: { not: STATE_PACK.DRAFT } } },
+            orderBy: { create_at: 'desc' },
+            select: { pack: { select: PACK_LIST_SELECT } }
+        });
+        return Promise.all(favorites.map(({ pack }) => toListPack(pack, true)));
+    },
+
+    /**
+     * Packs que el usuario compró, la última compra primero. Sin filtrar por estado: lo comprado sigue
+     * accesible aunque el pack deje de estar publicado. Un pack aparece una vez aunque haya varias filas.
+     */
+    findPacksBought: async (user_id: number): Promise<IListPacks[]> => {
+        const buys = await prisma.buy_Pack.findMany({
+            where: { user_id },
+            orderBy: { create_at: 'desc' },
+            select: { pack: { select: PACK_LIST_SELECT } }
+        });
+        const unique = buys.filter(({ pack }, i) => buys.findIndex((b) => b.pack.pack_id === pack.pack_id) === i);
+        return Promise.all(unique.map(({ pack }) => toListPack(pack, true)));
+    },
 
     findPacksNew: async (loggedIn: boolean): Promise<IListPacks[] | null> => {
         const packs = await prisma.pack.findMany({
@@ -45,44 +110,9 @@ export const repositoryPack = {
             where: {
                 state_pack_id: STATE_PACK.PUBLISHED
             },
-            select: {
-                name: true,
-                description: true,
-                pack_id: true,
-                code: true,
-                pack_serie: { select: { serie: { select: { name: true, serie_id: true } } } },
-                pack_character: { select: { character: { select: { name: true, character_id: true } } } },
-                pages: {
-                    // Portada: prefiere una página gratis (page_type 1) y luego la de menor número.
-                    orderBy: [{ page_type_id: 'asc' }, { num: 'asc' }],
-                    take: 1,
-                    select: {
-                        num: true,
-                        page_type_id: true,
-                        page_size: {
-                            where: {
-                                size_id: 1
-                            },
-                            select: {
-                                size: {
-                                    select: {
-                                        extension: true,
-                                        name: true
-                                    }
-                                }
-                            }
-                        },
-                    }
-                },
-            }
+            select: PACK_LIST_SELECT
         });
-        const newPacks = await Promise.all(packs.map(async (p) => {
-            const pack: IListPacks = {
-                ...p,
-                portada: await packPortada(p.code, p.pages[0], loggedIn)
-            }
-            return pack
-        }))
+        const newPacks = await Promise.all(packs.map((p) => toListPack(p, loggedIn)))
         /* const serialize: IPackInfo = {
             ...pack!,
             update_at: pack!.update_at!,

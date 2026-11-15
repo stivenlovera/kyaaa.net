@@ -1,9 +1,35 @@
-export default async function Page() {
+import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
+import { routing } from "@/src/i18n/routing";
+import { repositoryPack } from "../../repositories/pack.repository";
+import { getCurrentUser } from "../../utils/auth";
+import { withUserFlags } from "../../utils/user-packs";
+import { PackGrid } from "../_components/pack-grid";
+import { PageHomeProps } from "../layout";
+
+export const dynamic = 'force-dynamic';
+
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations('favoritos');
+    return { title: t('titulo') };
+}
+
+// Packs que el usuario guardó en favoritos. El proxy ya exige sesión; esto es la segunda barrera.
+export default async function Page({ params }: PageHomeProps) {
+    const { locale } = await params;
+    const user = await getCurrentUser();
+    if (user === null) {
+        redirect(locale === routing.defaultLocale ? '/login' : `/${locale}/login`);
+    }
+    const t = await getTranslations('favoritos');
+    const packs = await withUserFlags(await repositoryPack.findPacksFavorite(user.user_id), user.user_id);
+
     return (
-        <div className="w-screen h-screen flex items-center justify-center -mt-27">
-            <div className=" pt-40 pb-2 px-2">
-                FAVORITOS
-            </div>
-        </div>
-    )
+        <PackGrid
+            title={t('titulo')}
+            packs={packs}
+            empty={{ message: t('vacio'), linkText: t('explorar'), href: '/' }}
+        />
+    );
 }
