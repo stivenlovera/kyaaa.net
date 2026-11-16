@@ -110,7 +110,7 @@ export const ParticipateVoting = ({ participate, active, status }: ParticipateVo
 
     return (
         <div>
-            <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 md:gap-3'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3'>
                 {participate.packs.map((pack) => (
                     <ParticipateCard key={pack.participate_pack_id} pack={pack} highlighted={voted === pack.participate_pack_id}>
                         {voteArea(pack.participate_pack_id)}
