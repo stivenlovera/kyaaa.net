@@ -61,7 +61,7 @@ export const Header = () => {
 
     //console.log(menu)
     return (
-        <nav className="sticky top-0 bg-neutral-800 md:px-10 xl:px-10 2xl:px-10" >
+        <nav className="sticky top-0 z-30 bg-neutral-800 md:px-10 xl:px-10 2xl:px-10" >
             <div className='flex justify-between'>
                 <Link href={"/"} className='flex justify-start p-3'>
                     <Image
