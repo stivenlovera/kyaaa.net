@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { Locale, hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Inter } from 'next/font/google';
+import { GoogleTagManager } from '@next/third-parties/google';
 import "../globals.css";
 import Header from '../layout/components/navigate/header';
 import { routing } from '@/src/i18n/routing';
@@ -60,6 +61,7 @@ export default async function LocaleLayout({
 
     return (
         <html className=" text-white" lang={locale}>
+            <GoogleTagManager gtmId="GTM-5PWHMDJ4" />
             <body className={`${inter.className} bg-neutral-900 min-h-screen flex flex-col`}>
                 <Suspense fallback={<Splashscreen></Splashscreen>}>
                     <NextIntlClientProvider>
