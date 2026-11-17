@@ -1,6 +1,6 @@
 import { IconType } from "react-icons";
 import { FaGlobe } from "react-icons/fa";
-import { SiFacebook, SiGumroad, SiInstagram, SiKofi, SiPatreon, SiX } from "react-icons/si";
+import { SiFacebook, SiGumroad, SiInstagram, SiKofi, SiPatreon, SiPixiv, SiX } from "react-icons/si";
 import { repositoryPlatform } from "@/src/app/repositories/platform.repository";
 
 // Icono por slug de la tabla platform; una plataforma nueva sin entrada aquí usa el genérico.
@@ -11,6 +11,7 @@ const ICONS: Record<string, IconType> = {
     'instagram': SiInstagram,
     'x': SiX,
     'gumroad': SiGumroad,
+    'pixiv': SiPixiv,
 };
 
 // Footer del sitio: copyright a la izquierda e iconos de las plataformas externas
