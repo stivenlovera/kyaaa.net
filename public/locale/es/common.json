@@ -7,7 +7,7 @@
       "personaje": "Personajes",
       "etiqueta": "Etiquetas",
       "autor": "Autores",
-      "canjear": "Canjear código",
+      "canjear": "Canjea un cupón",
       "inciar_sesion": "Iniciar sesión",
       "abrir_menu": "Abrir menú",
       "auth": {
@@ -124,26 +124,26 @@
     "error_voto": "No se pudo registrar el voto"
   },
   "canjear": {
-    "titulo": "Canjear código",
-    "descripcion": "¿Compraste un pack en otra plataforma (como Ko-fi)? Escribe el código que recibiste para desbloquearlo en tu cuenta.",
-    "label": "Código",
+    "titulo": "Canjea un cupón",
+    "descripcion": "¿Tienes un cupón? escríbelo aquí y canjéalo por su pack, que quedará guardado en tu cuenta.",
+    "label": "Código del cupón",
     "boton": "Canjear",
     "canjeando": "Canjeando…",
-    "exito_titulo": "¡Código canjeado!",
+    "exito_titulo": "¡Cupón canjeado!",
     "exito": "Ya tienes el pack <b>{pack}</b> en tu cuenta.",
     "ver_pack": "Ver pack",
-    "otro": "Canjear otro código",
+    "otro": "Canjear otro cupón",
     "error": {
-      "invalido": "El código no es válido. Revisa que esté bien escrito.",
-      "usado": "Este código ya fue canjeado.",
-      "caducado": "Este código caducó.",
-      "ya_tienes": "Ya tienes este pack: el código no se usó y puedes regalarlo.",
+      "invalido": "El cupón no es válido. Revisa que esté bien escrito.",
+      "usado": "Este cupón ya fue canjeado.",
+      "caducado": "Este cupón caducó.",
+      "ya_tienes": "Ya tienes este pack: el cupón no se usó y puedes regalarlo.",
       "demasiados_intentos": "Demasiados intentos. Espera unos minutos y vuelve a probar.",
-      "servidor": "No se pudo canjear el código. Inténtalo de nuevo."
+      "servidor": "No se pudo canjear el cupón. Inténtalo de nuevo."
     },
     "dialogo": {
       "titulo": "Inicia sesión para canjear",
-      "mensaje": "Para canjear tu código y guardar el pack en tu cuenta necesitas iniciar sesión. Si aún no tienes cuenta, créala gratis: tu código te estará esperando.",
+      "mensaje": "Para canjear tu cupón y guardar el pack en tu cuenta necesitas iniciar sesión. Si aún no tienes cuenta, créala gratis: tu cupón te estará esperando.",
       "inicia_sesion": "Iniciar sesión",
       "crear_cuenta": "Crear cuenta",
       "cerrar": "Cerrar"
