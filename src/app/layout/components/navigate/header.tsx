@@ -73,7 +73,7 @@ export const Header = () => {
                         // Archivo estático pequeño: servirlo tal cual evita /_next/image, que solo se cachea 2 min.
                         unoptimized
                     />
-                    <h5 className={`font-wild-words-roman self-center text-2xl font-bold px-2`} >ia.kyaaa</h5>
+                    <h5 className={`font-wild-words-roman self-center text-2xl font-bold px-2`} >kyaaa</h5>
                 </Link>
                 <div className='justify-end space-x-2 py-3'>
                     {/*  <button

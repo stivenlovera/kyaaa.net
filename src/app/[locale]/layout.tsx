@@ -79,9 +79,9 @@ export default async function LocaleLayout({
                                         <div className='flex-1'>
                                             {children}
                                         </div>
-                                        <div className='bg-neutral-800 p-2'>
-                                            Footer 2026
-                                        </div>
+                                        <footer className='bg-neutral-800 p-2'>
+                                            <p>&copy; 2027 kyaaa</p>
+                                        </footer>
                                     </ToastProvider>
                                 </AlertProvider>
                             </AxiosInterceptorProvider>
