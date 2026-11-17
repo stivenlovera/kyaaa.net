@@ -10,7 +10,7 @@ declare const messages: {
       "personaje": "Characters",
       "etiqueta": "Tags",
       "autor": "Authors",
-      "canjear": "Redeem code",
+      "canjear": "Redeem a coupon",
       "inciar_sesion": "Log in",
       "abrir_menu": "Open menu",
       "auth": {
@@ -127,26 +127,26 @@ declare const messages: {
     "error_voto": "Your vote could not be recorded"
   },
   "canjear": {
-    "titulo": "Redeem code",
-    "descripcion": "Bought a pack on another platform (like Ko-fi)? Enter the code you received to unlock it on your account.",
-    "label": "Code",
+    "titulo": "Redeem a coupon",
+    "descripcion": "Have a coupon? No matter where you got it: enter it here and redeem it for its pack, which will be saved to your account.",
+    "label": "Coupon code",
     "boton": "Redeem",
     "canjeando": "Redeeming…",
-    "exito_titulo": "Code redeemed!",
+    "exito_titulo": "Coupon redeemed!",
     "exito": "The pack <b>{pack}</b> is now on your account.",
     "ver_pack": "View pack",
-    "otro": "Redeem another code",
+    "otro": "Redeem another coupon",
     "error": {
-      "invalido": "The code is not valid. Check that it is typed correctly.",
-      "usado": "This code has already been redeemed.",
-      "caducado": "This code has expired.",
-      "ya_tienes": "You already own this pack: the code was not used and you can give it away.",
+      "invalido": "The coupon is not valid. Check that it is typed correctly.",
+      "usado": "This coupon has already been redeemed.",
+      "caducado": "This coupon has expired.",
+      "ya_tienes": "You already own this pack: the coupon was not used and you can give it away.",
       "demasiados_intentos": "Too many attempts. Wait a few minutes and try again.",
-      "servidor": "The code could not be redeemed. Please try again."
+      "servidor": "The coupon could not be redeemed. Please try again."
     },
     "dialogo": {
       "titulo": "Log in to redeem",
-      "mensaje": "To redeem your code and keep the pack on your account you need to log in. No account yet? Create one for free: your code will be waiting for you.",
+      "mensaje": "To redeem your coupon and keep the pack on your account you need to log in. No account yet? Create one for free: your coupon will be waiting for you.",
       "inicia_sesion": "Log in",
       "crear_cuenta": "Create account",
       "cerrar": "Close"
