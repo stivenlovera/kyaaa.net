@@ -1,5 +1,6 @@
 import { IBuyPack } from "../types/buy_pack.types";
 import { prisma } from "../utils/prisma";
+import { METHOD_BUY } from "../utils/method-buy";
 
 export const repositoryBuyPack = {
     findBuyPerUser: async (user_id: number): Promise<IBuyPack[]> => {
@@ -20,7 +21,7 @@ export const repositoryBuyPack = {
             data: {
                 user_id: user_id,
                 pack_id: pack_id,
-                method_buy_id: 1,
+                method_buy_id: METHOD_BUY.PAYPAL,
                 price: parseFloat(price),
                 transaction: transaction,
                 content: content

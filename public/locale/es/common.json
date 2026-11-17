@@ -7,6 +7,7 @@
       "personaje": "Personajes",
       "etiqueta": "Etiquetas",
       "autor": "Autores",
+      "canjear": "Canjear código",
       "inciar_sesion": "Iniciar sesión",
       "abrir_menu": "Abrir menú",
       "auth": {
@@ -121,5 +122,31 @@
     "voto_registrado": "¡Voto registrado!",
     "voto_quitado": "Voto quitado",
     "error_voto": "No se pudo registrar el voto"
+  },
+  "canjear": {
+    "titulo": "Canjear código",
+    "descripcion": "¿Compraste un pack en otra plataforma (como Ko-fi)? Escribe el código que recibiste para desbloquearlo en tu cuenta.",
+    "label": "Código",
+    "boton": "Canjear",
+    "canjeando": "Canjeando…",
+    "exito_titulo": "¡Código canjeado!",
+    "exito": "Ya tienes el pack <b>{pack}</b> en tu cuenta.",
+    "ver_pack": "Ver pack",
+    "otro": "Canjear otro código",
+    "error": {
+      "invalido": "El código no es válido. Revisa que esté bien escrito.",
+      "usado": "Este código ya fue canjeado.",
+      "caducado": "Este código caducó.",
+      "ya_tienes": "Ya tienes este pack: el código no se usó y puedes regalarlo.",
+      "demasiados_intentos": "Demasiados intentos. Espera unos minutos y vuelve a probar.",
+      "servidor": "No se pudo canjear el código. Inténtalo de nuevo."
+    },
+    "dialogo": {
+      "titulo": "Inicia sesión para canjear",
+      "mensaje": "Para canjear tu código y guardar el pack en tu cuenta necesitas iniciar sesión. Si aún no tienes cuenta, créala gratis: tu código te estará esperando.",
+      "inicia_sesion": "Iniciar sesión",
+      "crear_cuenta": "Crear cuenta",
+      "cerrar": "Cerrar"
+    }
   }
 }

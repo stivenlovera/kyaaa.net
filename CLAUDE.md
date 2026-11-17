@@ -45,6 +45,9 @@ Cada `page` es gratis (`page_type` 1), de registrados (3) o de pago (2); los ids
 
 La descarga del pack (`GET /api/pack/download?code=`) no arma nada: `repositoryPage.findDownloadLevel` aplica las mismas reglas de acceso y `packZipUrl` devuelve una URL firmada de 10 min a un ZIP pregenerado por markwater-kyaaa (`USE_MODE=ZIP`) en el bucket privado: `<code>/zip/full.zip` (pack gratuito o comprado) o `<code>/zip/registered.zip` (logueado sin compra). Si el ZIP no existe responde 404. Los nombres de nivel (`ZIP_LEVEL` en `page-access.ts`) son contrato con markwater-kyaaa.
 
+### Cupones
+Códigos canjeables por un pack concreto, de un solo uso y con caducidad (pensados para ventas en Ko-fi enviadas a mano). Se generan en `/admin/coupon` (tabla `coupon`) y el usuario los canjea en `/redeem` (ruta protegida; `?code=` rellena el campo). `repositoryCoupon.redeem` marca el cupón y crea la fila de `buy_pack` con `method_buy_id = METHOD_BUY.COUPON` (2) y `price` 0, así que el acceso, la descarga y "Mis compras" funcionan como con una compra de PayPal. Si el usuario ya tiene el pack, el cupón no se gasta. El formato del código está en `src/app/utils/coupon-code.ts` (se guarda sin prefijo ni guiones, se muestra como `KYA-XXXX-XXXX-XXXX`).
+
 ### Carpetas locales por funcionalidad
 Dentro de `src/app/[locale]/<ruta>/`, las carpetas con prefijo de guion bajo `_components`, `_service`, `_types` y `_hooks` son privadas de esa ruta (no son enrutables). La UI transversal vive en `src/app/layout/components/` y `src/app/components/`.
 

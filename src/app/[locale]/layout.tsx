@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import { GoogleTagManager } from '@next/third-parties/google';
 import "../globals.css";
 import Header from '../layout/components/navigate/header';
+import Footer from '../layout/components/footer/footer';
 import { routing } from '@/src/i18n/routing';
 import { AuthProvider } from '@/src/providers/AuthProvider';
 import AxiosInterceptorProvider from '@/src/providers/AxiosInterceptorProvider';
@@ -70,9 +71,7 @@ export default async function LocaleLayout({
                                         <div className='flex-1'>
                                             {children}
                                         </div>
-                                        <footer className='bg-neutral-800 p-2'>
-                                            <p>&copy; 2027 kyaaa</p>
-                                        </footer>
+                                        <Footer></Footer>
                                     </ToastProvider>
                                 </AlertProvider>
                             </AxiosInterceptorProvider>

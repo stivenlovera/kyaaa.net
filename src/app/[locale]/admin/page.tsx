@@ -10,6 +10,7 @@ import {
     FaGlobe,
     FaImages,
     FaUsers,
+    FaTicket,
 } from 'react-icons/fa6'
 import { AdminBreadcrumb } from './_components/breadcrumb'
 
@@ -23,6 +24,7 @@ const sections = [
     { href: '/admin/pack-platform', label: 'Pósters', icon: FaImages },
     { href: '/admin/user', label: 'Usuarios', icon: FaUsers },
     { href: '/admin/votes', label: 'Participa', icon: FaSquarePollVertical },
+    { href: '/admin/coupon', label: 'Cupones', icon: FaTicket },
 ]
 
 export default async function Page() {

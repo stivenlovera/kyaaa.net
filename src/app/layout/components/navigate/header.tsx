@@ -43,6 +43,10 @@ export const Header = () => {
         {
             name: t('autor'),
             url: '/author'
+        },
+        {
+            name: t('canjear'),
+            url: '/redeem'
         }
     ]);
 
