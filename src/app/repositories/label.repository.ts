@@ -14,6 +14,7 @@ export const repositoryLabel = {
         inner join pack_label on pack_label.pack_id = pack.pack_id 
         inner join label on label.label_id = pack_label.label_id
         where label.label_id in (${label_id})
+        and pack.state_pack_id = ${STATE_PACK.PUBLISHED}
         group by label.label_id; `
         const result = await prisma.$queryRawUnsafe<ICountTag[]>(query);
 
@@ -35,7 +36,7 @@ export const repositoryLabel = {
                     coalesce(packs.total,0) as total
                     from label 
                         left join (
-                        select pack_label.label_id, count(*) as total from pack_label group by pack_label.label_id
+                        select pack_label.label_id, count(*) as total from pack_label inner join pack on pack.pack_id = pack_label.pack_id where pack.state_pack_id = ${STATE_PACK.PUBLISHED} group by pack_label.label_id
                     ) as packs
                         on packs.label_id=label.label_id 
                     ;
