@@ -71,8 +71,8 @@ const Drawer = ({ openDrawer, onDrawerClose, user }: DrawerProps) => {
                             <div className=' '>
                                 <button
                                     className="block p-3 hover:text-blue-400 hover:bg-blue-950  w-full"
-                                    onClick={() => {
-                                        signOut()
+                                    onClick={async () => {
+                                        await signOut()
                                         router.push('/login');
                                         onDrawerClose()
                                     }}

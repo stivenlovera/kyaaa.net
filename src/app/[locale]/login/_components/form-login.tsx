@@ -18,6 +18,9 @@ export const FormLogin = ({ next }: { next?: string }) => {
         const result = await actionFormLogin(prevState, formData)
         if (result.success) {
             checkAuth()
+            // Vacía la caché del router: las páginas visitadas como anónimo (imágenes censuradas) no
+            // deben reutilizarse ya con sesión.
+            router.refresh()
             router.push(safeNextPath(next))
         }
         return result;
