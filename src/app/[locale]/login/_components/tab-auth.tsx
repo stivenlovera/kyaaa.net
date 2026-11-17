@@ -3,9 +3,16 @@ import { useState } from "react";
 import { FormLogin } from "./form-login";
 import { FormRegister } from "./form-register";
 
-export const TabAuth = () => {
+interface TabAuthProps {
+    /** Ruta a la que volver tras iniciar sesión o registrarse (`?next=`). */
+    next?: string
+    /** Abrir directamente la pestaña de registro (`?tab=register`). */
+    register?: boolean
+}
 
-    const [activeTab, setActiveTab] = useState(0);
+export const TabAuth = ({ next, register = false }: TabAuthProps) => {
+
+    const [activeTab, setActiveTab] = useState(register ? 1 : 0);
 
     const tabs = [
         { index: 0, title: 'INICIAR SESION', content: 'Contenido de la pestaña 1' },
@@ -31,7 +38,7 @@ export const TabAuth = () => {
 
             {/* Panel de Contenido */}
             <div className="p-5 mt-2 rounded-lg shadow">
-                {tabs[activeTab].index === 0 ? (<FormLogin></FormLogin>) : (<FormRegister></FormRegister>)}
+                {tabs[activeTab].index === 0 ? (<FormLogin next={next}></FormLogin>) : (<FormRegister next={next}></FormRegister>)}
             </div>
         </div>
     )

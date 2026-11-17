@@ -108,8 +108,8 @@ const ButtonUser = ({ user, compact = false }: ButtonUserProps) => {
                         )}
                         <button
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left cursor-pointer"
-                            onClick={() => {
-                                signOut()
+                            onClick={async () => {
+                                await signOut()
                                 router.push('/login');
                             }}
                         >
