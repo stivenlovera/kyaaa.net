@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyAccessToken } from "../app/utils/auth";
 import logger, { jsonLog } from "../app/utils/logger";
 import { routing } from "../i18n/routing";
+import { LOGIN_NEXT_PARAM, loginHref, safeNextPath } from "../app/utils/login-redirect";
 
 function splitLocale(pathname: string): { locale: string | null, path: string } {
   const [, first, ...rest] = pathname.split('/');
@@ -33,20 +34,28 @@ export async function withAuth(request: NextRequest) {
   const noProtectedPaths = ['/login', '/register'];
   const isAuthPath = noProtectedPaths.some(p => matchesPath(path, p));
 
+  // Sin sesión en una ruta protegida: a /login con `?next=` para volver aquí tras iniciar sesión.
+  const toLogin = () => NextResponse.redirect(new URL(
+    loginHref(request.nextUrl.pathname + request.nextUrl.search, { loginPath: toLocalized('/login').pathname }),
+    request.url,
+  ));
+
   if (isProtectedPath) {
     if (!token) {
-      return NextResponse.redirect(toLocalized('/login'));
+      return toLogin();
     }
     const user = await verifyAccessToken(token);
     logger.info(`proxy/withAuth user ${user}`)
     if (user === null) {
-      return NextResponse.redirect(toLocalized('/login'));
+      return toLogin();
     }
   }
   if (isAuthPath && token) {
     const user = await verifyAccessToken(token);
     if (user) {
-      return NextResponse.redirect(toLocalized('/'));
+      // Ya hay sesión: a la página de `?next=` (si es segura) o a la portada.
+      const next = safeNextPath(request.nextUrl.searchParams.get(LOGIN_NEXT_PARAM));
+      return NextResponse.redirect(next === '/' ? toLocalized('/') : new URL(next, request.url));
     }
   }
 

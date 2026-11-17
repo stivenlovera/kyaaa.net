@@ -7,7 +7,8 @@ import { IAuth } from '../app/types/user.type';
 interface AuthContextType {
     user: IAuth | null;
     signIn: (email: string, password: string) => Promise<{ success: boolean, message: string }>
-    signOut: () => void;
+    /** Cierra la sesión (borra las cookies) y vacía la caché del router. Espérala antes de navegar. */
+    signOut: () => Promise<void>;
     checkAuth: () => void;
 }
 

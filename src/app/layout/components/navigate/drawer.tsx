@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { LoginLink } from '@/src/app/components/login-link'
 import { ListMenu } from '../../layout.type'
 import { IAuth } from '@/src/app/types/user.type'
 import { useRouter } from "@/src/app/layout/components/navigate/use-loading-router";
@@ -70,8 +71,8 @@ const Drawer = ({ openDrawer, onDrawerClose, user }: DrawerProps) => {
                             <div className=' '>
                                 <button
                                     className="block p-3 hover:text-blue-400 hover:bg-blue-950  w-full"
-                                    onClick={() => {
-                                        signOut()
+                                    onClick={async () => {
+                                        await signOut()
                                         router.push('/login');
                                         onDrawerClose()
                                     }}
@@ -81,13 +82,12 @@ const Drawer = ({ openDrawer, onDrawerClose, user }: DrawerProps) => {
                             </div>
                         ) : (
                             <div className=' hover:bg-blue-950 '>
-                                <Link
-                                    href={'/login'}
+                                <LoginLink
                                     className="block p-3 hover:text-blue-400 hover:bg-blue-950"
                                     onClick={() => { onDrawerClose() }}
                                 >
                                     {t('inciar_sesion')}
-                                </Link>
+                                </LoginLink>
                             </div>
                         )}
                     </div>
