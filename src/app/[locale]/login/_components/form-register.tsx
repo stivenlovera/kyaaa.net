@@ -1,4 +1,5 @@
 'use client'
+import { safeNextPath } from '@/src/app/utils/login-redirect';
 import Form from 'next/form'
 import { useActionState } from 'react';
 import { useRouter } from "@/src/app/layout/components/navigate/use-loading-router";
@@ -6,7 +7,7 @@ import { useAuth } from '@/src/providers/AuthContext';
 import { IFormRegister, initialStateFormRegister } from '@/src/app/types/user.type';
 import { actionFormRegister } from '@/src/app/actions/actionFormRegister';
 
-export const FormRegister = () => {
+export const FormRegister = ({ next }: { next?: string }) => {
     const router = useRouter();
     const { checkAuth } = useAuth()
 
@@ -14,7 +15,7 @@ export const FormRegister = () => {
         const result = await actionFormRegister(prevState, formData)
         if (result.success) {
             checkAuth()
-            router.push('/')
+            router.push(safeNextPath(next))
         }
         return result;
     }

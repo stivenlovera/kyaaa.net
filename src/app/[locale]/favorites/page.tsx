@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { routing } from "@/src/i18n/routing";
+import { loginHref } from "@/src/app/utils/login-redirect";
 import { repositoryPack } from "../../repositories/pack.repository";
 import { getCurrentUser } from "../../utils/auth";
 import { withUserFlags } from "../../utils/user-packs";
@@ -20,7 +21,8 @@ export default async function Page({ params }: PageHomeProps) {
     const { locale } = await params;
     const user = await getCurrentUser();
     if (user === null) {
-        redirect(locale === routing.defaultLocale ? '/login' : `/${locale}/login`);
+        const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
+        redirect(loginHref(`${prefix}/favorites`, { loginPath: `${prefix}/login` }));
     }
     const t = await getTranslations('favoritos');
     const packs = await withUserFlags(await repositoryPack.findPacksFavorite(user.user_id), user.user_id);

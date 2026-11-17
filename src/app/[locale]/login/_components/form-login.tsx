@@ -1,4 +1,5 @@
 "use client"
+import { safeNextPath } from "@/src/app/utils/login-redirect";
 import { useAuth } from "@/src/providers/AuthContext";
 import { useRouter } from "@/src/app/layout/components/navigate/use-loading-router";
 import { useActionState, useState } from "react";
@@ -7,7 +8,7 @@ import { IFormLogin, initialStateFormLogin } from "@/src/app/types/user.type";
 import { DialogResetPassword } from "./dialog-reset-password";
 import { actionFormLogin } from "@/src/app/actions/actionFormLogin";
 
-export const FormLogin = () => {
+export const FormLogin = ({ next }: { next?: string }) => {
 
     const router = useRouter();
     const { checkAuth } = useAuth()
@@ -17,7 +18,7 @@ export const FormLogin = () => {
         const result = await actionFormLogin(prevState, formData)
         if (result.success) {
             checkAuth()
-            router.push('/')
+            router.push(safeNextPath(next))
         }
         return result;
     }

@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import { LoginLink } from '@/src/app/components/login-link'
 import { useTranslations } from 'next-intl'
 import Dialog from '@/src/app/[locale]/_components/dialog'
 
@@ -21,8 +22,8 @@ export const DialogLoginToVote = ({ open, onClose, reason }: DialogLoginToVotePr
                 <p>{anonymous ? t('login_mensaje') : t('verificar_mensaje')}</p>
                 {anonymous ? (
                     <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                        <Link className='btn-primary w-full font-bold' href='/login'>{t('iniciar_sesion')}</Link>
-                        <Link className='btn-primary w-full' href='/register'>{t('crear_cuenta')}</Link>
+                        <LoginLink className='btn-primary w-full font-bold'>{t('iniciar_sesion')}</LoginLink>
+                        <LoginLink className='btn-primary w-full' register>{t('crear_cuenta')}</LoginLink>
                     </div>
                 ) : (
                     <Link className='btn-primary w-full font-bold' href='/my-account'>{t('ir_mi_cuenta')}</Link>

@@ -1,7 +1,7 @@
 import Dialog from '@/src/app/[locale]/_components/dialog'
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import Link from 'next/link';
+import { LoginLink } from '@/src/app/components/login-link';
 interface DialogChangeEmailProps {
     open: boolean;
     onClose: (open: boolean) => void;
@@ -31,7 +31,7 @@ export const DialogRegisterNow = ({ open, onClose, image }: DialogChangeEmailPro
                 <div>
                     {t('mensaje')}
                     <br />
-                    <Link className='text-blue-500 text-center underline ' href={'/login'}>{t('inicia_sesion')} </Link>
+                    <LoginLink className='text-blue-500 text-center underline '>{t('inicia_sesion')} </LoginLink>
                 </div>
                 <div className='grid grid-cols-2 gap-3'>
                     <button
