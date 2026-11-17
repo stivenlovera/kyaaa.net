@@ -8,6 +8,12 @@ import { prisma } from "../utils/prisma";
 
 export const repositoryLabel = {
 
+    // Nombre para el título de /label/<slug> (la URL solo trae el slug).
+    findNameBySlug: async (slug: string): Promise<string | null> => {
+        const row = await prisma.label.findFirst({ where: { slug }, select: { name: true } })
+        return row?.name ?? null
+    },
+
     findTotal: async (label_id: number[]): Promise<ICountTag[] | null> => {
         const query = `
         select count(pack.pack_id) as count, label.name, label.slug from pack 
