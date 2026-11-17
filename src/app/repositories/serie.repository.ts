@@ -13,6 +13,7 @@ export const repositorySerie = {
         inner join pack_serie on pack_serie.pack_id = pack.pack_id 
         inner join serie on serie.serie_id = pack_serie.serie_id
         where serie.serie_id in (${serie_id})
+        and pack.state_pack_id = ${STATE_PACK.PUBLISHED}
         group by serie.serie_id; `
         const result = await prisma.$queryRawUnsafe<ICountTag[]>(query);
 
@@ -33,7 +34,11 @@ export const repositorySerie = {
                 coalesce(packs.total,0) as total
                 from serie 
                     left join (
-                    select pack_serie.serie_id, count(*) as total from pack_serie group by pack_serie.serie_id
+                    -- Solo packs publicados: es lo que lista /serie/<slug> (findAllPerSerie).
+                    select pack_serie.serie_id, count(*) as total from pack_serie
+                    inner join pack on pack.pack_id = pack_serie.pack_id
+                    where pack.state_pack_id = ${STATE_PACK.PUBLISHED}
+                    group by pack_serie.serie_id
                 ) as packs
                     on packs.serie_id=serie.serie_id 
                 ;

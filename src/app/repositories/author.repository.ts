@@ -13,6 +13,7 @@ export const repositoryAuthor = {
         inner join pack_author on pack_author.pack_id = pack.pack_id 
         inner join author on author.author_id = pack_author.author_id
         where author.author_id in (${author_id})
+        and pack.state_pack_id = ${STATE_PACK.PUBLISHED}
         group by author.author_id; `
         const result = await prisma.$queryRawUnsafe<ICountTag[]>(query);
 
@@ -33,7 +34,7 @@ export const repositoryAuthor = {
                     coalesce(packs.total,0) as total
                     from author 
                         left join (
-                        select pack_author.author_id, count(*) as total from pack_author group by pack_author.author_id
+                        select pack_author.author_id, count(*) as total from pack_author inner join pack on pack.pack_id = pack_author.pack_id where pack.state_pack_id = ${STATE_PACK.PUBLISHED} group by pack_author.author_id
                     ) as packs
                         on packs.author_id=author.author_id 
                     ;
