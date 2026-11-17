@@ -1,0 +1,3 @@
+# next-intl regenera este archivo con LF cada vez que corre `npm run dev`. Con core.autocrlf=true
+# (Windows) git lo marcaba siempre como modificado y bloqueaba pull/checkout: se fija a LF.
+public/locale/en/common.d.json.ts text eol=lf
