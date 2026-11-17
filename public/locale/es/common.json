@@ -125,7 +125,7 @@
   },
   "canjear": {
     "titulo": "Canjea un cupón",
-    "descripcion": "¿Tienes un cupón? No importa dónde lo conseguiste: escríbelo aquí y canjéalo por su pack, que quedará guardado en tu cuenta.",
+    "descripcion": "¿Tienes un cupón? Escríbelo aquí y canjéalo por su pack, que quedará guardado en tu cuenta.",
     "label": "Código del cupón",
     "boton": "Canjear",
     "canjeando": "Canjeando…",

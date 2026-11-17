@@ -128,7 +128,7 @@ declare const messages: {
   },
   "canjear": {
     "titulo": "Redeem a coupon",
-    "descripcion": "Have a coupon? No matter where you got it: enter it here and redeem it for its pack, which will be saved to your account.",
+    "descripcion": "Have a coupon? Enter it here and redeem it for its pack, which will be saved to your account.",
     "label": "Coupon code",
     "boton": "Redeem",
     "canjeando": "Redeeming…",
