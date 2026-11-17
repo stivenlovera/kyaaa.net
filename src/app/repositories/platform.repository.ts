@@ -1,4 +1,4 @@
-import { IAdminPackPlatform, IAdminPlatform, IAdminPackPostersPage, IAdminPlatformPage, IFooterPlatform, IFormPlatform, IPackPlatform, IPlatform, PosterFilter } from "../types/platform.types";
+import { IAdminPackPlatform, IAdminPlatform, IAdminPackPostersPage, IAdminPlatformPage, IFormPlatform, IPackPlatform, IPlatform, PosterFilter } from "../types/platform.types";
 import { packMediaUrl } from "../utils/pack-images";
 import { prisma } from "../utils/prisma";
 
@@ -12,15 +12,6 @@ export const repositoryPlatform = {
             where: { state: 1 },
             orderBy: { name: 'asc' },
             select: PLATFORM_SELECT,
-        })
-    },
-
-    // Plataformas externas activas (Ko-fi, Patreon, redes…), para los iconos del footer.
-    findExternal: async (): Promise<IFooterPlatform[]> => {
-        return await prisma.platform.findMany({
-            where: { state: 1, is_external: 1 },
-            orderBy: { name: 'asc' },
-            select: { platform_id: true, name: true, slug: true, base_url: true },
         })
     },
 

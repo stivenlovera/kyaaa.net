@@ -8,14 +8,6 @@ export interface IPlatform {
     is_payment: number
 }
 
-/** Plataforma externa enlazada desde el footer. */
-export interface IFooterPlatform {
-    platform_id: number
-    name: string
-    slug: string
-    base_url: string | null
-}
-
 /** Póster de un pack en una plataforma, tal como se muestra debajo del botón comprar. */
 export interface IPackPlatform {
     pack_platform_id: number
