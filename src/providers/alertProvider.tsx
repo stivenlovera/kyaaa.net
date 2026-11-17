@@ -33,10 +33,10 @@ export default function AlertProvider({ children }: { children: React.ReactNode 
     return (
         <AlertContext.Provider value={{ alert, setAlert }}>
             {alert.open ? (<div
-                className="fixed inset-0 w-screen h-screen bg-dark-600/50 flex items-center justify-center backdrop-blur-sm p-5"
+                className="fixed inset-0 z-40 w-screen h-dvh bg-dark-600/50 flex items-center justify-center backdrop-blur-sm p-5"
                 onClick={() => { setAlert({ ...alert, open: false }) }}
             >
-                <div className="bg-neutral-800 p-4 rounded-lg shadow-lg items-center relative" >
+                <div className="bg-neutral-800 p-4 rounded-lg shadow-lg relative max-w-md w-full" >
                     {/* <button
                         onClick={() => { setOpenAlert(false) }}
                         className="btn-primary-icon absolute top-4 right-4 rounded-full"
@@ -55,7 +55,7 @@ export default function AlertProvider({ children }: { children: React.ReactNode 
                                 {alert.icon === "danger" ? (<FaBan size={60} color="white" className='' />) : (<></>)}
                                 {alert.icon === "info" ? (<FaInfo size={60} color="white" className='' />) : (<></>)}
                             </div>
-                            <div className="py-6">
+                            <div className="py-6 text-center wrap-break-word">
                                 {alert.message.toLocaleUpperCase()}
                             </div>
                         </div>
