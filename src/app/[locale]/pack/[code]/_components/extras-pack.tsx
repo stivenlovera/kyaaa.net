@@ -154,22 +154,28 @@ export const ExtraPack = ({
                     </div>
                 ) : free ? null : (
                     <div className='py-2'>
-                        <Link
-                            href={`/buy/${code}`}
-                            className={'btn-primary w-full font-bold' + (loading ? LINK_DISABLED : '')}
-                            aria-disabled={loading}
-                            onClick={(e) => {
-                                // Sin sesión no se navega: se abre el modal "Registrate ahora!" como antes.
-                                if (loading) {
-                                    e.preventDefault()
-                                } else if (user === null) {
-                                    e.preventDefault()
-                                    setOpenDialogRegisterNow(true)
-                                }
-                            }}
-                        >
-                            {t('extra-pack.comprar')} ${price}
-                        </Link>
+                        {user === null ? (
+                            // Sin sesión no hay navegación: un botón (no un enlace a /buy) que abre el modal
+                            // "¡Regístrate ahora!". Con un <Link> la barra de carga arrancaba al hacer clic
+                            // (escucha los clics en <a> antes de que se cancele la navegación) y no paraba.
+                            <button
+                                type='button'
+                                className='btn-primary w-full font-bold'
+                                disabled={loading}
+                                onClick={() => { setOpenDialogRegisterNow(true) }}
+                            >
+                                {t('extra-pack.comprar')} ${price}
+                            </button>
+                        ) : (
+                            <Link
+                                href={`/buy/${code}`}
+                                className={'btn-primary w-full font-bold' + (loading ? LINK_DISABLED : '')}
+                                aria-disabled={loading}
+                                onClick={(e) => { if (loading) e.preventDefault() }}
+                            >
+                                {t('extra-pack.comprar')} ${price}
+                            </Link>
+                        )}
                     </div>
                 )
             }
