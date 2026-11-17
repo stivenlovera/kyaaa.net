@@ -200,6 +200,25 @@ CREATE TABLE `buy_pack` (
   CONSTRAINT `buy_pack_ibfk_3` FOREIGN KEY (`method_buy_id`) REFERENCES `method_buy` (`method_buy_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `coupon`;
+CREATE TABLE `coupon` (
+  `coupon_id` int NOT NULL AUTO_INCREMENT,
+  `code` varchar(32) NOT NULL,
+  `pack_id` int NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `note` varchar(250) DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
+  `redeemed_at` datetime DEFAULT NULL,
+  `create_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`coupon_id`),
+  UNIQUE KEY `uq_coupon_code` (`code`),
+  KEY `pack_id` (`pack_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `coupon_ibfk_1` FOREIGN KEY (`pack_id`) REFERENCES `pack` (`pack_id`),
+  CONSTRAINT `coupon_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 DROP TABLE IF EXISTS `favorite_pack`;
 CREATE TABLE `favorite_pack` (
   `pack_id` int NOT NULL,

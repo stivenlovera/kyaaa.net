@@ -41,6 +41,10 @@ const Drawer = ({ openDrawer, onDrawerClose, user }: DrawerProps) => {
         {
             name: t('autor'),
             url: '/author'
+        },
+        {
+            name: t('canjear'),
+            url: '/redeem'
         }
     ]);
     return (

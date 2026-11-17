@@ -43,6 +43,7 @@ model Pack {
   pack_languages    Pack_language[]
   participate_packs Participate_Pack[]
   buyPacks         Buy_Pack[]
+  coupons           Coupon[]
   favoritePacks     Favorite_Pack[]
   likePacks         Like_Pack[]
   pack_platforms    Pack_platform[]
@@ -309,6 +310,7 @@ model User {
   likePacks      Like_Pack[]
   favoritePacks  Favorite_Pack[]
   buyPacks       Buy_Pack[]
+  coupons        Coupon[]
 
   @@id([user_id])
   @@map(name: "user")
@@ -415,6 +417,25 @@ model Buy_Pack {
 
   @@id([user_id, pack_id, method_buy_id])
   @@map(name: "buy_pack")
+}
+
+// Código canjeable por un pack (uno por pack, de un solo uso, con caducidad). Ver coupon.repository.ts.
+model Coupon {
+  coupon_id   Int       @id @default(autoincrement())
+  code        String    @unique(map: "uq_coupon_code") @db.VarChar(32)
+  pack        Pack      @relation(fields: [pack_id], references: [pack_id])
+  pack_id     Int
+  expires_at  DateTime  @db.DateTime(0)
+  note        String?   @db.VarChar(250)
+  user        User?     @relation(fields: [user_id], references: [user_id])
+  user_id     Int?
+  redeemed_at DateTime? @db.DateTime(0)
+  create_at   DateTime  @default(now())
+  update_at   DateTime  @updatedAt
+
+  @@index([pack_id])
+  @@index([user_id])
+  @@map(name: "coupon")
 }
 
 model Favorite_Pack {
