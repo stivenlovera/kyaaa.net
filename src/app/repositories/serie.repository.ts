@@ -7,6 +7,12 @@ import { prisma } from "../utils/prisma";
 
 export const repositorySerie = {
 
+    // Nombre para el título de /serie/<slug> (la URL solo trae el slug).
+    findNameBySlug: async (slug: string): Promise<string | null> => {
+        const row = await prisma.serie.findFirst({ where: { slug }, select: { name: true } })
+        return row?.name ?? null
+    },
+
     findTotal: async (serie_id: number[]): Promise<ICountTag[] | null> => {
         const query = `
         select count(pack.pack_id) as count, serie.name, serie.slug from pack 

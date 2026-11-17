@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import logger, { jsonLog } from "@/src/app/utils/logger";
 import { Card } from "../../_components/card";
 import { ILikePack } from "@/src/app/types/like-pack.types";
@@ -18,6 +19,10 @@ interface PagePaginateProps {
 
 export default async function Page({ params }: PagePaginateProps) {
     const { slug } = await params;
+    const name = await repositorySerie.findNameBySlug(slug);
+    if (name === null) {
+        notFound();
+    }
     const user = await getCurrentUser();
     const listPack = await repositorySerie.findAllPerSerie(slug, user !== null)
     logger.info(`serie/${slug} ${jsonLog(listPack)}`)
@@ -48,7 +53,7 @@ export default async function Page({ params }: PagePaginateProps) {
         <div className="px-2 py-2 md:px-10 lg:px-20 xl:px-64 2xl:px-72 md:py-5 lg:py-10 xl:py-14">
             <div className="card">
                 <div className="p-3 pt-0" >
-                    <h1 className="text-center text-2xl md:text-3xl font-bold">{slug}</h1>
+                    <h1 className="text-center text-2xl md:text-3xl font-bold">{name}</h1>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-2 lg:gap-3 xl:gap-4">
                     {
