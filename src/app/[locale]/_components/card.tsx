@@ -7,6 +7,7 @@ import { IResponse } from "../../types/response"
 import { INewPacksAuth } from "../../types/pack.types"
 import API from "@/src/providers/api"
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 interface ICard {
     pack: INewPacksAuth
     urlImage: string
@@ -19,6 +20,7 @@ export const Card = ({
     onFavoriteChange
 }: ICard) => {
     const { user } = useAuth()
+    const t = useTranslations('pack-info')
     const [like, setLike] = useState<boolean>(pack.like)
     const [favorite, setFavorite] = useState<boolean>(pack.favorite)
     const [buy, setBuy] = useState<boolean>(pack.buy)
@@ -124,10 +126,10 @@ export const Card = ({
                         {pack.name.toLocaleLowerCase()}
                     </div>
                     <div className='truncate text-xs text-neutral-400'>
-                        Serie: {series || '-'}
+                        {t('serie')}: {series || '-'}
                     </div>
                     <div className='truncate text-xs text-neutral-400'>
-                        Personajes: {characters || '-'}
+                        {t('personaje')}: {characters || '-'}
                     </div>
                 </div>
             </div>
