@@ -39,19 +39,28 @@ export async function POST(request: NextRequest) {
             // PENDING (p. ej. revisión de PayPal): se da acceso igual que antes, pero queda registrado.
             logger.warn(`/api/buy-pack/order-capture POST captura en estado ${capture.status} order=${order_id}`)
         }
-        const pack = await repositoryPack.findPackInfo(code, user !== null)
-        await repositoryBuyPack.create(
-            pack!.pack_id,
-            user.user_id,
-            capture.id,
-            {
-                net: capture.seller_receivable_breakdown.net_amount.value,
-                gross: capture.seller_receivable_breakdown.gross_amount.value,
-                fee: capture.seller_receivable_breakdown.paypal_fee.value,
-                currency: capture.seller_receivable_breakdown.gross_amount.currency_code,
-            },
-            JSON.stringify(dataCapture)
-        );
+        // PayPal no siempre manda el desglose: falta en capturas PENDING y paypal_fee falta si no hubo comisión.
+        // Antes eso lanzaba un TypeError DESPUÉS de cobrar y la compra no se guardaba.
+        const breakdown = capture.seller_receivable_breakdown
+        const gross = breakdown?.gross_amount?.value ?? capture.amount.value
+        const fee = breakdown?.paypal_fee?.value ?? '0'
+        const amounts = {
+            gross,
+            fee,
+            net: breakdown?.net_amount?.value ?? (parseFloat(gross) - parseFloat(fee)).toFixed(2),
+            currency: breakdown?.gross_amount?.currency_code ?? capture.amount.currency_code,
+        }
+        try {
+            const pack = await repositoryPack.findPackInfo(code, true)
+            if (pack === null) {
+                throw new Error(`pack ${code} no encontrado`)
+            }
+            await repositoryBuyPack.create(pack.pack_id, user.user_id, capture.id, amounts, JSON.stringify(dataCapture));
+        } catch (error) {
+            // El pago YA está cobrado: este log es lo que hace falta para registrar la compra a mano.
+            logger.error(`/api/buy-pack/order-capture POST COBRADO SIN GUARDAR user=${user.user_id} code=${code} capture=${capture.id} amounts=${jsonLog(amounts)} ${jsonLog(describePayPalError(error))}`)
+            throw error
+        }
         // Sin await: el correo no debe retrasar la respuesta; sendPurchaseMails registra los fallos.
         void sendPurchaseMails(user, code, {
             method: 'paypal',
