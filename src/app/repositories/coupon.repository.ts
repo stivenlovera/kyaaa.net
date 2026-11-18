@@ -113,6 +113,8 @@ export const repositoryCoupon = {
                     user_id,
                     method_buy_id: METHOD_BUY.COUPON,
                     price: 0,
+                    gross: 0,
+                    fee: 0,
                     transaction: code,
                     content: JSON.stringify({ coupon_id: coupon.coupon_id, code }),
                 },

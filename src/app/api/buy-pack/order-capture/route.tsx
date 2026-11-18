@@ -43,8 +43,12 @@ export async function POST(request: NextRequest) {
             pack!.pack_id,
             user.user_id,
             capture.id,
-            // En buy_pack.price se guarda el neto (lo que queda tras la comisión de PayPal).
-            capture.seller_receivable_breakdown.net_amount.value,
+            {
+                net: capture.seller_receivable_breakdown.net_amount.value,
+                gross: capture.seller_receivable_breakdown.gross_amount.value,
+                fee: capture.seller_receivable_breakdown.paypal_fee.value,
+                currency: capture.seller_receivable_breakdown.gross_amount.currency_code,
+            },
             JSON.stringify(dataCapture)
         );
         // Sin await: el correo no debe retrasar la respuesta; sendPurchaseMails registra los fallos.

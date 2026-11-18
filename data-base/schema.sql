@@ -188,6 +188,9 @@ CREATE TABLE `buy_pack` (
   `user_id` int NOT NULL,
   `method_buy_id` int NOT NULL,
   `price` decimal(10,2) NOT NULL,
+  `gross` decimal(10,2) DEFAULT NULL,
+  `fee` decimal(10,2) DEFAULT NULL,
+  `currency` char(3) DEFAULT NULL,
   `transaction` varchar(200) NOT NULL,
   `content` text NOT NULL,
   `create_at` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -195,6 +198,7 @@ CREATE TABLE `buy_pack` (
   PRIMARY KEY (`pack_id`,`user_id`,`method_buy_id`),
   KEY `user_id` (`user_id`),
   KEY `method_buy_id` (`method_buy_id`),
+  KEY `create_at` (`create_at`),
   CONSTRAINT `buy_pack_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
   CONSTRAINT `buy_pack_ibfk_2` FOREIGN KEY (`pack_id`) REFERENCES `pack` (`pack_id`),
   CONSTRAINT `buy_pack_ibfk_3` FOREIGN KEY (`method_buy_id`) REFERENCES `method_buy` (`method_buy_id`)

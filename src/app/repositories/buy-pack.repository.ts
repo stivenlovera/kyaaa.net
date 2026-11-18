@@ -16,13 +16,18 @@ export const repositoryBuyPack = {
         return buys;
     },
 
-    create: async (pack_id: number, user_id: number, transaction: string, price: string, content: string): Promise<IBuyPack> => {
+    /** Compra con PayPal. `amounts` son strings tal como los devuelve PayPal (p. ej. "4.43"). */
+    create: async (pack_id: number, user_id: number, transaction: string, amounts: { net: string, gross: string, fee: string, currency: string }, content: string): Promise<IBuyPack> => {
         const like = await prisma.buy_Pack.create({
             data: {
                 user_id: user_id,
                 pack_id: pack_id,
                 method_buy_id: METHOD_BUY.PAYPAL,
-                price: parseFloat(price),
+                // price es el neto (lo que queda tras la comisión); gross lo que pagó el comprador.
+                price: parseFloat(amounts.net),
+                gross: parseFloat(amounts.gross),
+                fee: parseFloat(amounts.fee),
+                currency: amounts.currency,
                 transaction: transaction,
                 content: content
             }

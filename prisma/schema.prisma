@@ -413,12 +413,16 @@ model Buy_Pack {
   method_buy    Method_Buy @relation(fields: [method_buy_id], references: [method_buy_id])
   method_buy_id Int
   price         Decimal
+  gross         Decimal?   @db.Decimal(10, 2)
+  fee           Decimal?   @db.Decimal(10, 2)
+  currency      String?    @db.Char(3)
   transaction   String
   content       String
   create_at     DateTime   @default(now())
   update_at     DateTime   @updatedAt
 
   @@id([user_id, pack_id, method_buy_id])
+  @@index([create_at])
   @@map(name: "buy_pack")
 }
 
