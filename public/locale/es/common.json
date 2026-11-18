@@ -69,7 +69,16 @@
     "subtotal": "Subtotal",
     "total": "Total",
     "nota": "Pago seguro con PayPal. Al completarlo, el pack quedará disponible en «Mis compras».",
-    "error_pago": "No pudimos procesar el pago. Inténtalo de nuevo en unos segundos y revisa «Mis compras» antes de pagar otra vez."
+    "error_pago": "No pudimos procesar el pago. Inténtalo de nuevo en unos segundos y revisa «Mis compras» antes de pagar otra vez.",
+    "gracias": {
+      "titulo": "¡Gracias por tu compra!",
+      "mensaje": "El pack ya es tuyo. Esto es lo que tienes ahora:",
+      "ventaja_completo": "Acceso a todas las imágenes del pack, también las de pago.",
+      "ventaja_sin_censura": "Imágenes sin censura y en máxima calidad.",
+      "ventaja_descarga": "Descarga del pack completo en un ZIP.",
+      "ventaja_mis_compras": "El pack queda guardado en «Mis compras» para verlo cuando quieras.",
+      "ver_pack": "Ver mi pack"
+    }
   },
   "personaje": {
     "titulo": "Personajes"

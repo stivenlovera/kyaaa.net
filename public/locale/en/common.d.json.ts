@@ -72,7 +72,16 @@ declare const messages: {
     "subtotal": "Subtotal",
     "total": "Total",
     "nota": "Secure payment with PayPal. Once completed, the pack will be available in “My purchases”.",
-    "error_pago": "We could not process the payment. Please try again in a few seconds, and check “My purchases” before paying again."
+    "error_pago": "We could not process the payment. Please try again in a few seconds, and check “My purchases” before paying again.",
+    "gracias": {
+      "titulo": "Thank you for your purchase!",
+      "mensaje": "The pack is yours. Here is what you get:",
+      "ventaja_completo": "Access to every image in the pack, including the paid ones.",
+      "ventaja_sin_censura": "Uncensored images in full quality.",
+      "ventaja_descarga": "Download the full pack as a ZIP.",
+      "ventaja_mis_compras": "The pack stays in “My purchases” so you can see it anytime.",
+      "ver_pack": "See my pack"
+    }
   },
   "personaje": {
     "titulo": "Characters"

@@ -125,17 +125,15 @@ export const PayPack = ({ pack, totalImages }: PayPackProps) => {
                     <div className="bg-neutral-200 rounded-sm p-2">
                         <CheckoutButton
                             code={pack.code}
-                            price={pack.price_list}
                             setThanks={setThanks}
                         ></CheckoutButton>
                     </div>
                 </div>
                 <DialogThanks
-                    openThanks={openThanks}
-                    onChangeThanks={(value) => setThanks(value)}
+                    open={openThanks}
+                    code={pack.code}
                     image={pack.thanks_image}
-                >
-                </DialogThanks>
+                />
             </div>
         </PayPalScriptProvider>
     )
