@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/src/app/utils/auth";
 import { repositoryCoupon } from "@/src/app/repositories/coupon.repository";
-import { normalizeCouponCode } from "@/src/app/utils/coupon-code";
+import { formatCouponCode, normalizeCouponCode } from "@/src/app/utils/coupon-code";
+import { sendPurchaseMails } from "@/src/app/utils/purchase-mails";
 import { createRateLimit } from "@/src/app/utils/rate-limit";
 import { RedeemResult } from "@/src/app/types/coupon.types";
 import { IResponse } from "@/src/app/types/response";
@@ -50,6 +51,10 @@ export async function POST(request: NextRequest) {
             failedAttempts.hit(key);
         }
         logger.info(`api/coupon/redeem POST user=${user.user_id} result=${jsonLog(result)}`)
+        if (result.ok) {
+            // Sin await: el correo no debe retrasar la respuesta; sendPurchaseMails registra los fallos.
+            void sendPurchaseMails(user, result.pack.code, { method: 'coupon', reference: formatCouponCode(code) });
+        }
         return reply(result);
     } catch (error: any) {
         logger.error(`api/coupon/redeem POST error=> ${jsonLog(error.message)}`)
