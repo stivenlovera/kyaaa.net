@@ -70,8 +70,8 @@ export async function actionFormUpdateEmail(prevState: IFormUpdateEmail, formDat
     if (existEmail === null) {
         await repositoryAuth.updateEmail(user.user_id, new_email!.toString())
 
-        const infoEmail = await sendEmail(user!.email!, 'Modificacion de email', user!.name, notificationBeforeEmailHtml(user!.name, new_email!.toString()));
-        const infoNewEmail = await sendEmail(new_email!.toString(), 'Nuevo Email registrado', user!.name, notificationNewEmailHtml(user!.name));
+        const infoEmail = await sendEmail(user!.email!, 'El email de tu cuenta de kyaaa ha cambiado', user!.name, notificationBeforeEmailHtml(user!.name, new_email!.toString()));
+        const infoNewEmail = await sendEmail(new_email!.toString(), 'Tu nuevo email en kyaaa', user!.name, notificationNewEmailHtml(user!.name));
         logger.info(`info infoEmail ${jsonLog(infoEmail)}`)
         logger.info(`info infoNewEmail ${jsonLog(infoNewEmail)}`)
     } else {

@@ -1,71 +1,34 @@
-export const notificationUpdatePasswordHtml = (name: string): string => {
-    return `<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Welcome to kyaaa</title>
-    <style>
-      .body {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 20px;
-      }
-      .title {
-        font-weight: bold;
-        font-size: 30px;
-      }
-      .footer {
-        color: cadetblue;
-        font-size: 18px;
-      }
-      .container {
-        text-align: center;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      .flex-col {
-        display: flex;
-        flex-direction: column;
-      }
-      .img-logo {
-        width: auto !important;
-        height: auto !important;
-        max-width: 42%;
-      }
-      .card {
-        max-width: 600px;
-      }
-      .center {
-        text-align: center;
-        justify-content: center;
-        align-items: center;
-      }
-    </style>
-  </head>
-  <body class="body">
-    <div class="container">
-      <div class="card">
-        <div class="">
-          <div class="center">
-            <img
-              class="img-logo"
-              src="https://static.kyaaa.net/system/logo-email.png"
-              alt=""
-            />
-          </div>
-          <br />
-          <div class="title">Contraseña actualizada</div>
-          <div>
-            <p>¡Hola, ${name}!</p>
-            <p>
-              Se ha actualizado tu contraseña correctamente.
-            </p>
-            <p class="footer">©2026 kyaaa</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </body>
-</html>
-`
+import { detailsBox, emailLayout, escapeHtml, formatEmailDate, paragraph, siteUrl, warning } from './email-layout'
+
+export type PasswordChangeVia = 'account' | 'reset'
+
+interface NotificationUpdatePasswordParams {
+  name: string
+  email: string
+  /** Desde "Mi cuenta" (sabía la contraseña actual) o con el enlace de recuperación. */
+  via: PasswordChangeVia
+  date?: Date
 }
+
+const VIA_TEXT: Record<PasswordChangeVia, string> = {
+  account: 'Desde "Mi cuenta"',
+  reset: 'Con un enlace de recuperación de contraseña',
+}
+
+export const notificationUpdatePasswordHtml = ({ name, email, via, date = new Date() }: NotificationUpdatePasswordParams): string =>
+  emailLayout({
+    title: 'Contraseña actualizada',
+    heading: 'Tu contraseña se ha actualizado',
+    body:
+      paragraph(`¡Hola, ${escapeHtml(name)}!`) +
+      paragraph('Te confirmamos que la contraseña de tu cuenta de kyaaa se cambió correctamente. A partir de ahora tendrás que usar la nueva contraseña para iniciar sesión.') +
+      detailsBox([
+        ['Cuenta', escapeHtml(email)],
+        ['Fecha', formatEmailDate(date)],
+        ['Cómo', VIA_TEXT[via]],
+      ]) +
+      paragraph('<strong>¿Fuiste tú?</strong> No tienes que hacer nada más.') +
+      paragraph(`${warning('¿No fuiste tú?')} Alguien podría tener acceso a tu cuenta. Entra en kyaaa, usa "¿Olvidaste tu contraseña?" para crear una nueva y revisa en "Mi cuenta" que tu email siga siendo el correcto.`),
+    button: { text: 'Ir a kyaaa', url: siteUrl('/login') },
+    reason: 'Lo recibes porque es un aviso de seguridad de tu cuenta.',
+  })

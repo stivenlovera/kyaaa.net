@@ -72,7 +72,7 @@ export async function actionFormNewPassword(prevState: IFormNewPassword, formDat
     const user = await repositoryAuth.findEmail(validUser!.email)
     await repositoryAuth.updateResetPassword(validUser!.email, new_password!.toString())
 
-    const infoPassword = await sendEmail(user!.email, 'Modificacion de contraseña', user!.name, notificationUpdatePasswordHtml(user!.name));
+    const infoPassword = await sendEmail(user!.email, 'Tu contraseña de kyaaa se ha actualizado', user!.name, notificationUpdatePasswordHtml({ name: user!.name, email: user!.email, via: 'reset' }));
     logger.info(`info infoPassword ${jsonLog(infoPassword)}`)
 
     return { success: true, fields: fields, errors: {} };
