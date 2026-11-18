@@ -46,20 +46,21 @@ export const PayPack = ({ pack, totalImages }: PayPackProps) => {
             <div className="px-2 py-2 md:px-10 lg:px-20 xl:px-64 2xl:px-72 md:py-5 lg:py-10 xl:py-14 flex justify-center">
                 <div className="card w-full md:w-2xl text-sm">
                     {/* Cabecera */}
-                    <div className="flex flex-wrap items-start justify-between gap-2 pb-3 border-b border-neutral-700">
-                        <div>
+                    {/* Móvil: título y datos apilados a la izquierda. Desde sm: datos a la derecha del título. */}
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 pb-3 border-b border-neutral-700">
+                        <div className="min-w-0">
                             <h1 className="text-xl md:text-2xl font-bold">{t('titulo')}</h1>
                             <p className="text-neutral-400">{t('subtitulo')}</p>
                         </div>
-                        <dl className="text-end">
-                            <div className="flex justify-end gap-2">
-                                <dt className="text-neutral-400">{t('fecha')}:</dt>
+                        <dl className="min-w-0 sm:text-end">
+                            <div className="flex sm:justify-end gap-2">
+                                <dt className="shrink-0 text-neutral-400">{t('fecha')}:</dt>
                                 <dd>{moment().format('DD/MM/YYYY')}</dd>
                             </div>
                             {user && (
-                                <div className="flex justify-end gap-2">
-                                    <dt className="text-neutral-400">{t('cliente')}:</dt>
-                                    <dd className="break-all">{user.nick}</dd>
+                                <div className="flex sm:justify-end gap-2">
+                                    <dt className="shrink-0 text-neutral-400">{t('cliente')}:</dt>
+                                    <dd className="min-w-0 break-all">{user.nick}</dd>
                                 </div>
                             )}
                         </dl>
