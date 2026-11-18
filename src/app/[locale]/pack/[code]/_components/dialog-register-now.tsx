@@ -34,7 +34,7 @@ export const DialogRegisterNow = ({ open, onClose, image }: DialogRegisterNowPro
                 )}
                 <p>{t('mensaje')}</p>
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                    <LoginLink className='btn-primary w-full font-bold'>{t('inicia_sesion')}</LoginLink>
+                    <LoginLink className='btn-primary w-full'>{t('inicia_sesion')}</LoginLink>
                     <LoginLink className='btn-primary w-full' register>{t('crear_cuenta')}</LoginLink>
                 </div>
                 <button className='btn-primary w-full text-red-500' type='button' onClick={() => { onClose(false) }}>

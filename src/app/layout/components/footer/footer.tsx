@@ -20,7 +20,7 @@ export default async function Footer() {
     const platforms = await repositoryPlatform.findExternal();
 
     return (
-        <footer className='bg-neutral-800 p-2 flex items-center justify-between gap-4'>
+        <footer className='bg-neutral-800 p-2 flex items-center justify-between gap-4 text-sm'>
             <p>&copy; 2027 kyaaa</p>
             {platforms.length > 0 && (
                 <ul className='flex items-center gap-3'>

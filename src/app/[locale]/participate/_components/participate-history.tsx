@@ -19,7 +19,7 @@ export const ParticipateHistory = ({ count, children }: ParticipateHistoryProps)
         <div className='grid grid-cols-1 gap-4'>
             <div className='flex justify-center'>
                 <button
-                    className='btn-primary flex items-center gap-2'
+                    className='btn-primary flex'
                     type='button'
                     onClick={() => { setOpen((o) => !o) }}
                     aria-expanded={open}

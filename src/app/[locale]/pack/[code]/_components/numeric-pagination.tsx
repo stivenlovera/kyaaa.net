@@ -25,7 +25,7 @@ const visibleItems = (page: number, totalPages: number): (number | '…')[] => {
     return items
 }
 
-const buttonClass = 'flex items-center justify-center p-2 hover:bg-gray-600 rounded-full'
+const buttonClass = 'flex items-center justify-center hover:bg-gray-600 rounded-full'
 
 export const NumericPagination = ({ code, page, totalPages, anchor }: NumericPaginationProps) => {
     if (totalPages <= 1) {
@@ -34,33 +34,33 @@ export const NumericPagination = ({ code, page, totalPages, anchor }: NumericPag
     const href = (n: number) => `/pack/${code}${n === 1 ? '' : `?p=${n}`}${anchor ? `#${anchor}` : ''}`
 
     return (
-        <nav className='flex mx-auto flex-wrap items-center justify-center p-2'>
+        <nav className='flex mx-auto flex-wrap items-center justify-center p-2 text-sm'>
             {page > 1 && (<>
                 <Link href={href(1)} className={buttonClass} aria-label='Primera página'>
-                    <FaAnglesLeft className='text-xl' />
+                    <FaAnglesLeft className='text-sm m-2' />
                 </Link>
                 <Link href={href(page - 1)} className={buttonClass} aria-label='Página anterior'>
-                    <FaAngleLeft className='text-xl' />
+                    <FaAngleLeft className='text-sm m-2' />
                 </Link>
             </>)}
             {visibleItems(page, totalPages).map((item, i) => item === '…' ? (
-                <span key={`gap-${i}`} className='px-2'>…</span>
+                <span key={`gap-${i}`} className=''>…</span>
             ) : (
                 <Link
                     key={item}
                     href={href(item)}
                     aria-current={item === page ? 'page' : undefined}
-                    className={`min-w-10 text-center px-3 py-2 rounded-full hover:bg-gray-600 ${item === page ? 'bg-neutral-700 font-bold' : ''}`}
+                    className={`min-w-9 text-center py-1 rounded-full hover:bg-gray-600 ${item === page ? 'bg-neutral-700 font-bold' : ''}`}
                 >
                     {item}
                 </Link>
             ))}
             {page < totalPages && (<>
                 <Link href={href(page + 1)} className={buttonClass} aria-label='Página siguiente'>
-                    <FaAngleRight className='text-xl' />
+                    <FaAngleRight className='text-sm m-2' />
                 </Link>
                 <Link href={href(totalPages)} className={buttonClass} aria-label='Última página'>
-                    <FaAnglesRight className='text-xl' />
+                    <FaAnglesRight className='text-sm m-2' />
                 </Link>
             </>)}
         </nav>

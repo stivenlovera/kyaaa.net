@@ -58,6 +58,17 @@
   },
   "buy": {
     "titulo": "Confirm your purchase",
+    "subtitulo": "Order summary",
+    "fecha": "Date",
+    "cliente": "Customer",
+    "descripcion": "Description",
+    "cantidad": "Qty",
+    "precio": "Price",
+    "importe": "Amount",
+    "imagenes": "{count, number} images",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "nota": "Secure payment with PayPal. Once completed, the pack will be available in “My purchases”.",
     "error_pago": "We could not process the payment. Please try again in a few seconds, and check “My purchases” before paying again."
   },
   "personaje": {

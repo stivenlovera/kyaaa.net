@@ -25,7 +25,7 @@ export const ParticipateList = ({ participates, states }: ParticipateListProps) 
         <div>
             <div className='flex justify-end pb-3'>
                 <button
-                    className='btn-primary flex items-center gap-2'
+                    className='btn-primary flex'
                     type='button'
                     onClick={() => { setEditing(null) }}
                 >

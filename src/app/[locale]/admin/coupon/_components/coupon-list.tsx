@@ -91,7 +91,7 @@ export const CouponList = ({ coupons, total, packs, status, packId }: CouponList
                     </div>
                 </div>
                 <button
-                    className='btn-primary flex items-center justify-center gap-2'
+                    className='btn-primary flex'
                     type='button'
                     onClick={() => { setGenerating(true) }}
                 >

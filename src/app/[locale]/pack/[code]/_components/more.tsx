@@ -50,7 +50,7 @@ export const More = ({ pages, code, saltos }: IMore) => {
                     (pages.length - 1) > paginas.length ? (
                         <div className="py-2">
                             <button
-                                className='btn-primary w-full font-bold flex justify-center'
+                                className='btn-primary w-full flex'
                                 onClick={() => {
                                     grupos.map((grupo, i) => {
                                         if (i === more) {

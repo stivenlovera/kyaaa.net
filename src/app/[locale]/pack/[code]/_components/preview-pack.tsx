@@ -34,7 +34,7 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
     const t = await getTranslations('pack-info');
     const user = await getCurrentUser();
     const pack = await repositoryPack.findPackInfo(code, user !== null);
-    if (pack===null) {
+    if (pack === null) {
         notFound()
     }
 
@@ -129,7 +129,7 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                         <h4 className={'text-2xl font-bold'}>{packInfo?.name}</h4>
                     </div>
                     <div className="p-1">
-                        <h5 className={'text-lg '}>{packInfo?.code}</h5>
+                        <h5 className='text-sm text-neutral-400'>{packInfo?.code}</h5>
                     </div>
                     <CardSection
                         datos={packInfo!.total_series!}
@@ -162,12 +162,12 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                             route='type'
                         /> */}
                     <div className="">
-                        <div className="flex mx-auto flex-wrap py-1">
+                        <div className="flex mx-auto flex-wrap items-center py-1">
                             <div className="m-1">
-                                <h5 className="text-md font-bold">{t('paginas_gratis')}:</h5>
+                                <h5 className="text-sm font-bold">{t('paginas_gratis')}:</h5>
                             </div>
-                            <div className="mt-2">
-                                <h5 className={"text-sm mx-1 w-full "}>
+                            <div>
+                                <h5 className="text-sm mx-1 w-full">
                                     {
                                         pack_page.free === 0 ? ('') : (pack_page.free)
                                     }
@@ -176,12 +176,12 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                         </div>
                     </div>
                     <div className="">
-                        <div className="flex mx-auto flex-wrap py-1">
+                        <div className="flex mx-auto flex-wrap items-center py-1">
                             <div className="m-1">
-                                <h5 className="text-md font-bold">{t('paginas')}:</h5>
+                                <h5 className="text-sm font-bold">{t('paginas')}:</h5>
                             </div>
-                            <div className="mt-2">
-                                <h5 className={"text-sm mx-1 w-full "}>
+                            <div>
+                                <h5 className="text-sm mx-1 w-full">
                                     {
                                         pack_page.total === 0 ? ('') : (pack_page.total)
                                     }
@@ -191,12 +191,12 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                     </div>
 
                     <div className="">
-                        <div className="flex mx-auto flex-wrap py-1">
+                        <div className="flex mx-auto flex-wrap items-center py-1">
                             <div className="m-1">
-                                <h5 className="text-md font-bold">{t('actualizado')}:</h5>
+                                <h5 className="text-sm font-bold">{t('actualizado')}:</h5>
                             </div>
-                            <div className="mt-2">
-                                <h5 className={"text-sm mx-1 w-full"}>
+                            <div>
+                                <h5 className="text-sm mx-1 w-full">
                                     {
                                         packInfo?.name === '' ? ('') : (moment(packInfo!.update_at).format('DD/MM/yyyy hh:mm'))
                                     }
@@ -217,6 +217,12 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                     <PackPlatforms platforms={platforms} />
                 </div>
             </div>
+            <NumericPagination
+                code={packInfo.code}
+                page={page}
+                totalPages={totalPages}
+                anchor="paginas"
+            />
             <div id="paginas" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 scroll-mt-16">
                 {
                     pagePages.map((image) => (
@@ -243,7 +249,7 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                 }
             </div>
             {!pack_page.full_access && pack_page.total > pack_page.pages.length && (
-                <div className="flex mx-auto flex-wrap items-center justify-center gap-2 py-4 text-center">
+                <div className="flex mx-auto flex-wrap items-center justify-center gap-2 py-4 text-center text-sm">
                     <span>{t('paginas_bloqueadas', { count: pack_page.total - pack_page.pages.length })}</span>
                 </div>
             )}

@@ -14,7 +14,7 @@ export default async function Page() {
                         Esta página está pensada para la creación completa de un pack: etiquetas, personajes, series, autores, idiomas y páginas/imágenes.
                         Por ahora, para crear un pack usa el botón &quot;Crear pack&quot; del listado.
                     </p>
-                    <Link className='btn-primary inline-block' href='/admin/pack'>Volver al listado</Link>
+                    <Link className='btn-primary' href='/admin/pack'>Volver al listado</Link>
                 </div>
             </div>
         </div>
