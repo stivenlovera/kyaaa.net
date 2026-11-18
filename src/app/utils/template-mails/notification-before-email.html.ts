@@ -13,7 +13,7 @@ export const notificationBeforeEmailHtml = (name: string, new_email: string, dat
         ['Fecha', formatEmailDate(date)],
       ]) +
       paragraph('<strong>¿Fuiste tú?</strong> No tienes que hacer nada más. Recuerda verificar el nuevo email desde "Mi cuenta".') +
-      paragraph(`${warning('¿No fuiste tú?')} Alguien podría tener acceso a tu cuenta. Ponte en contacto con nosotros cuanto antes desde la web para recuperarla.`),
-    button: { text: 'Ir a kyaaa', url: siteUrl('/') },
+      paragraph(`${warning('¿No fuiste tú?')} Alguien podría tener acceso a tu cuenta. Abre un ticket de soporte cuanto antes (categoría "No puedo entrar a mi cuenta"; no hace falta iniciar sesión) y te ayudaremos a recuperarla.`),
+    button: { text: 'Reportar un problema', url: siteUrl('/support?category=cuenta') },
     reason: 'Lo recibes porque es un aviso de seguridad de la cuenta que estaba vinculada a este email.',
   })
