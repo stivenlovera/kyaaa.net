@@ -27,7 +27,7 @@ export async function withAuth(request: NextRequest) {
   const toLocalized = (target: string) => new URL(locale ? `/${locale}${target === '/' ? '' : target}` : target, request.url);
 
   // Protected routes
-  const protectedPaths = ['/my-purchases', '/favorites', '/my-account'];
+  const protectedPaths = ['/my-purchases', '/favorites', '/my-account', '/my-tickets'];
   const isProtectedPath = protectedPaths.some(p => matchesPath(path, p));
 
   // Public routes that should redirect if authenticated

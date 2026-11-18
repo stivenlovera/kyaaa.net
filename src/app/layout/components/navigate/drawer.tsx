@@ -45,6 +45,10 @@ const Drawer = ({ openDrawer, onDrawerClose, user }: DrawerProps) => {
         {
             name: t('canjear'),
             url: '/redeem'
+        },
+        {
+            name: t('soporte'),
+            url: '/support'
         }
     ]);
     return (

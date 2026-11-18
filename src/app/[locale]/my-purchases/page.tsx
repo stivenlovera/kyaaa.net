@@ -1,4 +1,6 @@
 import { Metadata } from "next";
+import Link from "next/link";
+import { FaFlag } from "react-icons/fa6";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { routing } from "@/src/i18n/routing";
@@ -25,6 +27,7 @@ export default async function Page({ params }: PageHomeProps) {
         redirect(loginHref(`${prefix}/my-purchases`, { loginPath: `${prefix}/login` }));
     }
     const t = await getTranslations('mis_compras');
+    const tSupport = await getTranslations('soporte');
     const packs = await withUserFlags(await repositoryPack.findPacksBought(user.user_id), user.user_id);
 
     return (
@@ -32,6 +35,14 @@ export default async function Page({ params }: PageHomeProps) {
             title={t('titulo')}
             packs={packs}
             empty={{ message: t('vacio'), linkText: t('explorar'), href: '/' }}
+            footer={(
+                <div className="flex justify-center pt-4 text-sm">
+                    <Link href="/support?category=pago" className="inline-flex items-center gap-1 text-neutral-400 hover:text-white hover:underline">
+                        <FaFlag aria-hidden />
+                        {tSupport('reportar_compra')}
+                    </Link>
+                </div>
+            )}
         />
     );
 }

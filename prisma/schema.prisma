@@ -44,6 +44,7 @@ model Pack {
   participate_packs Participate_Pack[]
   buyPacks         Buy_Pack[]
   coupons           Coupon[]
+  tickets           Ticket[]
   favoritePacks     Favorite_Pack[]
   likePacks         Like_Pack[]
   pack_platforms    Pack_platform[]
@@ -311,6 +312,8 @@ model User {
   favoritePacks  Favorite_Pack[]
   buyPacks       Buy_Pack[]
   coupons        Coupon[]
+  tickets        Ticket[]
+  ticketMessages Ticket_Message[]
 
   @@id([user_id])
   @@map(name: "user")
@@ -460,4 +463,42 @@ model Like_Pack {
 
   @@id([user_id, pack_id])
   @@map(name: "like_pack")
+}
+
+model Ticket {
+  ticket_id    Int              @id @default(autoincrement())
+  code         String           @unique(map: "uq_ticket_code") @db.VarChar(16)
+  access_token String           @db.VarChar(64)
+  user         User?            @relation(fields: [user_id], references: [user_id])
+  user_id      Int?
+  email        String           @db.VarChar(250)
+  category     String           @db.VarChar(32)
+  subject      String           @db.VarChar(150)
+  status       String           @default("abierto") @db.VarChar(32)
+  pack         Pack?            @relation(fields: [pack_id], references: [pack_id], onDelete: SetNull)
+  pack_id      Int?
+  closed_at    DateTime?        @db.DateTime(0)
+  create_at    DateTime         @default(now())
+  update_at    DateTime         @updatedAt
+  messages     Ticket_Message[]
+
+  @@index([user_id])
+  @@index([pack_id])
+  @@index([status])
+  @@map(name: "ticket")
+}
+
+model Ticket_Message {
+  ticket_message_id Int      @id @default(autoincrement())
+  ticket            Ticket   @relation(fields: [ticket_id], references: [ticket_id], onDelete: Cascade)
+  ticket_id         Int
+  user              User?    @relation(fields: [user_id], references: [user_id])
+  user_id           Int?
+  is_staff          Boolean  @default(false)
+  body              String   @db.Text
+  create_at         DateTime @default(now())
+
+  @@index([ticket_id])
+  @@index([user_id])
+  @@map(name: "ticket_message")
 }

@@ -15,8 +15,10 @@
         "favorito": "Favoritos",
         "mi_cuenta": "Mi cuenta",
         "cerrar_sesion": "Cerrar sesión",
-        "administrar": "Administrar"
-      }
+        "administrar": "Administrar",
+        "mis_tickets": "Mis tickets"
+      },
+      "soporte": "Soporte"
     }
   },
   "home": {
@@ -169,6 +171,74 @@
       "inicia_sesion": "Iniciar sesión",
       "crear_cuenta": "Crear cuenta",
       "cerrar": "Cerrar"
+    }
+  },
+  "soporte": {
+    "titulo": "Reportar un problema",
+    "descripcion": "Cuéntanos qué pasó y te responderemos por correo. También podrás seguir el ticket desde \"Mis tickets\".",
+    "categoria_label": "Categoría",
+    "categoria": {
+      "pago": "Pago o compra",
+      "cupon": "Cupón",
+      "descarga": "Descarga",
+      "cuenta": "No puedo entrar a mi cuenta",
+      "contenido": "Contenido de un pack",
+      "otro": "Otro"
+    },
+    "asunto_label": "Asunto",
+    "asunto_placeholder": "Resume el problema en una frase",
+    "mensaje_label": "Mensaje",
+    "mensaje_placeholder": "Explica qué pasó, qué esperabas y, si aplica, cuándo hiciste la compra.",
+    "email_label": "Tu email",
+    "email_ayuda": "Te escribiremos a este email. Usa el de tu cuenta si lo recuerdas.",
+    "pack_label": "Pack",
+    "anonimo_aviso": "Sin iniciar sesión solo puedes reportar problemas para entrar a tu cuenta. Para cualquier otro problema, <login>inicia sesión</login>.",
+    "enviar": "Enviar ticket",
+    "enviando": "Enviando…",
+    "exito_titulo": "¡Ticket enviado!",
+    "exito": "Creamos el ticket <b>{code}</b>. Te enviamos un correo con el enlace para seguirlo; te avisaremos cuando respondamos.",
+    "ver_ticket": "Ver ticket",
+    "mis_tickets": "Mis tickets",
+    "reportar": "Reportar un problema",
+    "reportar_compra": "¿Problemas con una compra? Repórtalo",
+    "reportar_cupon": "¿Tu cupón no funciona? Repórtalo",
+    "error": {
+      "categoria": "Elige una categoría.",
+      "asunto": "El asunto debe tener entre 3 y 150 caracteres.",
+      "mensaje": "El mensaje debe tener entre 10 y 4000 caracteres.",
+      "email": "Escribe un email válido.",
+      "requiere_sesion": "Inicia sesión para reportar este tipo de problema.",
+      "cerrado": "Este ticket está cerrado. Si necesitas ayuda, abre uno nuevo.",
+      "demasiados_intentos": "Enviaste demasiados mensajes. Espera un rato y vuelve a probar.",
+      "servidor": "No se pudo enviar. Inténtalo de nuevo."
+    },
+    "estado": {
+      "abierto": "Abierto",
+      "en_curso": "En curso",
+      "esperando_usuario": "Esperando tu respuesta",
+      "resuelto": "Resuelto",
+      "cerrado": "Cerrado"
+    },
+    "ticket": {
+      "titulo": "Ticket {code}",
+      "creado": "Creado el",
+      "estado": "Estado",
+      "tu": "Tú",
+      "soporte": "Soporte kyaaa",
+      "responder_label": "Tu respuesta",
+      "responder": "Enviar respuesta",
+      "enviando": "Enviando…",
+      "resuelto_aviso": "Este ticket está resuelto. Si el problema sigue, responde y lo volveremos a abrir.",
+      "cerrado_aviso": "Este ticket está cerrado. Si necesitas ayuda, abre uno nuevo.",
+      "nuevo": "Abrir un ticket nuevo",
+      "no_encontrado": "Ticket no encontrado",
+      "no_encontrado_desc": "El ticket no existe o no tienes acceso. Si lo abriste sin iniciar sesión, usa el enlace del correo que te enviamos."
+    },
+    "lista": {
+      "titulo": "Mis tickets",
+      "vacio": "No tienes tickets. Si algo no funciona, cuéntanoslo.",
+      "nuevo": "Reportar un problema",
+      "actualizado": "Actualizado el"
     }
   }
 }

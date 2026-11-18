@@ -18,8 +18,10 @@ declare const messages: {
         "favorito": "Favorites",
         "mi_cuenta": "My account",
         "cerrar_sesion": "Log out",
-        "administrar": "Manage"
-      }
+        "administrar": "Manage",
+        "mis_tickets": "My tickets"
+      },
+      "soporte": "Support"
     }
   },
   "home": {
@@ -172,6 +174,74 @@ declare const messages: {
       "inicia_sesion": "Log in",
       "crear_cuenta": "Create account",
       "cerrar": "Close"
+    }
+  },
+  "soporte": {
+    "titulo": "Report a problem",
+    "descripcion": "Tell us what happened and we will reply by email. You can also follow the ticket from \"My tickets\".",
+    "categoria_label": "Category",
+    "categoria": {
+      "pago": "Payment or purchase",
+      "cupon": "Coupon",
+      "descarga": "Download",
+      "cuenta": "I can't log in to my account",
+      "contenido": "Pack content",
+      "otro": "Other"
+    },
+    "asunto_label": "Subject",
+    "asunto_placeholder": "Sum up the problem in one sentence",
+    "mensaje_label": "Message",
+    "mensaje_placeholder": "Explain what happened, what you expected and, if relevant, when you made the purchase.",
+    "email_label": "Your email",
+    "email_ayuda": "We'll write to this email. Use your account's email if you remember it.",
+    "pack_label": "Pack",
+    "anonimo_aviso": "Without logging in you can only report problems accessing your account. For anything else, <login>log in</login>.",
+    "enviar": "Send ticket",
+    "enviando": "Sending…",
+    "exito_titulo": "Ticket sent!",
+    "exito": "We created ticket <b>{code}</b>. We sent you an email with a link to follow it; we'll let you know when we reply.",
+    "ver_ticket": "View ticket",
+    "mis_tickets": "My tickets",
+    "reportar": "Report a problem",
+    "reportar_compra": "Problems with a purchase? Report it",
+    "reportar_cupon": "Coupon not working? Report it",
+    "error": {
+      "categoria": "Choose a category.",
+      "asunto": "The subject must be 3 to 150 characters long.",
+      "mensaje": "The message must be 10 to 4000 characters long.",
+      "email": "Enter a valid email.",
+      "requiere_sesion": "Log in to report this kind of problem.",
+      "cerrado": "This ticket is closed. If you need help, open a new one.",
+      "demasiados_intentos": "You sent too many messages. Wait a while and try again.",
+      "servidor": "Couldn't send it. Please try again."
+    },
+    "estado": {
+      "abierto": "Open",
+      "en_curso": "In progress",
+      "esperando_usuario": "Waiting for your reply",
+      "resuelto": "Resolved",
+      "cerrado": "Closed"
+    },
+    "ticket": {
+      "titulo": "Ticket {code}",
+      "creado": "Created on",
+      "estado": "Status",
+      "tu": "You",
+      "soporte": "kyaaa support",
+      "responder_label": "Your reply",
+      "responder": "Send reply",
+      "enviando": "Sending…",
+      "resuelto_aviso": "This ticket is resolved. If the problem persists, reply and we'll reopen it.",
+      "cerrado_aviso": "This ticket is closed. If you need help, open a new one.",
+      "nuevo": "Open a new ticket",
+      "no_encontrado": "Ticket not found",
+      "no_encontrado_desc": "The ticket doesn't exist or you don't have access. If you opened it without logging in, use the link in the email we sent you."
+    },
+    "lista": {
+      "titulo": "My tickets",
+      "vacio": "You have no tickets. If something isn't working, let us know.",
+      "nuevo": "Report a problem",
+      "actualizado": "Updated on"
     }
   }
 };

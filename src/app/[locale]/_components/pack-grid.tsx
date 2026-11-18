@@ -11,10 +11,12 @@ interface PackGridProps {
     empty: { message: string, linkText: string, href: string }
     /** En /favorites: al quitar el favorito, la tarjeta desaparece sin recargar. */
     removeOnUnfavorite?: boolean
+    /** Contenido al pie de la tarjeta (p. ej. el enlace "Reportar un problema" de Mis compras). */
+    footer?: React.ReactNode
 }
 
 /** Título + cuadrícula de tarjetas de packs, con un mensaje si no hay ninguno. */
-export function PackGrid({ title, packs: initialPacks, empty, removeOnUnfavorite = false }: PackGridProps) {
+export function PackGrid({ title, packs: initialPacks, empty, removeOnUnfavorite = false, footer }: PackGridProps) {
     const [packs, setPacks] = useState(initialPacks);
 
     return (
@@ -42,6 +44,7 @@ export function PackGrid({ title, packs: initialPacks, empty, removeOnUnfavorite
                         ))}
                     </div>
                 )}
+                {footer}
             </div>
         </div>
     );
