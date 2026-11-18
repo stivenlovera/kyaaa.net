@@ -1,6 +1,5 @@
-import * as https from 'https';
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { NodeHttpHandler } from "@smithy/node-http-handler";
+import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { getS3Client } from './s3-client';
 import logger, { jsonLog } from './logger';
 import sharp from 'sharp';
 import { profileImageKey } from './profile-image';
@@ -13,23 +12,7 @@ export interface IFile {
 
 export async function uploadMultipleObjects(file: IFile) {
     try {
-        const agent = new https.Agent({
-            keepAlive: true,
-            maxSockets: 1000, // Adjust based on testing
-        });
-        const s3ClientImages = new S3Client({
-            requestHandler: new NodeHttpHandler({
-                httpsAgent: agent
-            }),
-            region: process.env.AWS_REGION,
-            forcePathStyle: true,
-            endpoint: process.env.AWS_ENPOINT,
-            // Replace with your AWS region
-            credentials: {
-                accessKeyId: process.env.AWS_ACCESS_KEY_ID!, // Ensure these are set in your environment
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-            },
-        });
+        const s3ClientImages = getS3Client();
 
         const command = new PutObjectCommand({
             Bucket: process.env.AWS_BUCKET_STATIC,
@@ -51,23 +34,7 @@ export async function uploadMultipleObjects(file: IFile) {
 export async function deleteMultipleObjects(file: IFile) {
     logger.info(`deleteMultipleObjects ${jsonLog(file)}`)
     try {
-        const agent = new https.Agent({
-            keepAlive: true,
-            maxSockets: 1000, // Adjust based on testing
-        });
-        const s3ClientImages = new S3Client({
-            requestHandler: new NodeHttpHandler({
-                httpsAgent: agent
-            }),
-            region: process.env.AWS_REGION,
-            forcePathStyle: true,
-            endpoint: process.env.AWS_ENPOINT,
-            // Replace with your AWS region
-            credentials: {
-                accessKeyId: process.env.AWS_ACCESS_KEY_ID!, // Ensure these are set in your environment
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-            },
-        });
+        const s3ClientImages = getS3Client();
 
         const command = new DeleteObjectCommand({
             Bucket: process.env.AWS_BUCKET_STATIC,
@@ -92,15 +59,7 @@ export async function getBufferFile(path: string) {
 }
 // Sube un archivo al bucket static con la key exacta (sin el prefijo `user/` de las fotos de perfil).
 export async function uploadStaticObject(key: string, buffer: Buffer, contentType: string) {
-    const s3Client = new S3Client({
-        region: process.env.AWS_REGION,
-        forcePathStyle: true,
-        endpoint: process.env.AWS_ENPOINT,
-        credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-        },
-    });
+    const s3Client = getS3Client();
     const result = await s3Client.send(new PutObjectCommand({
         Bucket: process.env.AWS_BUCKET_STATIC,
         Key: key,
@@ -113,15 +72,7 @@ export async function uploadStaticObject(key: string, buffer: Buffer, contentTyp
 
 // Borra un objeto del bucket static. `key` puede traer el ?v= de caché que se guarda en BD; se ignora.
 export async function deleteStaticObject(key: string) {
-    const s3Client = new S3Client({
-        region: process.env.AWS_REGION,
-        forcePathStyle: true,
-        endpoint: process.env.AWS_ENPOINT,
-        credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-        },
-    });
+    const s3Client = getS3Client();
     const cleanKey = key.split('?')[0];
     const result = await s3Client.send(new DeleteObjectCommand({
         Bucket: process.env.AWS_BUCKET_STATIC,

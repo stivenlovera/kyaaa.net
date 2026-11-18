@@ -15,7 +15,7 @@ El despliegue es CI/CD con GitHub Actions (`.github/workflows/ci-cd.yml`): en ca
 
 ## Stack
 
-Next.js 16 (App Router, `output: 'standalone'`) + React 19, TypeScript, Tailwind 4, next-intl, Prisma 7 con el adaptador del driver MariaDB, jose para JWT, almacenamiento compatible con S3 (Contabo) mediante `@aws-sdk/client-s3`, PayPal y logging con winston. El sitio es un marketplace de "packs" de imágenes (explorar, marcar favoritos/me gusta, comprar, participar/votar). Los textos de la interfaz y los mensajes de validación están mayormente en español.
+Next.js 16 (App Router, `output: 'standalone'`) + React 19, TypeScript, Tailwind 4, next-intl, Prisma 7 con el adaptador del driver MariaDB, jose para JWT, almacenamiento en Cloudflare R2 (compatible con S3; antes Contabo) mediante `@aws-sdk/client-s3`, PayPal y logging con winston. El sitio es un marketplace de "packs" de imágenes (explorar, marcar favoritos/me gusta, comprar, participar/votar). Los textos de la interfaz y los mensajes de validación están mayormente en español.
 
 ## Arquitectura
 
@@ -55,4 +55,4 @@ Dentro de `src/app/[locale]/<ruta>/`, las carpetas con prefijo de guion bajo `_c
 Todos los botones usan `btn-primary` (texto/icono + texto) o `btn-primary-icon` (solo icono, cuadrado de 44px; `rounded-full` para redondo), definidos en `src/app/globals.css`: 44px de alto mínimo, texto `text-sm` en negrita y contenido centrado. En cada uso añade solo layout (`w-full`, `flex`…) o color (`text-red-500` para acciones peligrosas), no tamaños, paddings ni fuentes.
 
 ### Otras utilidades (`src/app/utils/`)
-`uploadS3.ts` + `sharp.ts` (procesamiento y subida de imágenes; los nombres de buckets y endpoints salen del entorno — ojo: la variable se escribe `AWS_ENPOINT`), `mail.ts` + `template-mails/` (plantillas HTML de nodemailer), `logger.ts` (archivos rotativos diarios de winston en `PATH_LOGS`), `jwt.ts`. Las imágenes de S3 se sirven con `next/image`, con una entrada en `remotePatterns` de `next.config.ts` restringida a la ruta del bucket de Contabo.
+`s3-client.ts` (cliente S3 único; el proveedor sale solo del entorno — ojo: la variable se escribe `AWS_ENPOINT`; en R2 `AWS_REGION=auto`), `uploadS3.ts` + `sharp.ts` (procesamiento y subida de imágenes), `mail.ts` + `template-mails/` (plantillas HTML de nodemailer), `logger.ts` (archivos rotativos diarios de winston en `PATH_LOGS`), `jwt.ts`. Las imágenes de S3 se sirven con `next/image` (casi siempre `unoptimized`). Los buckets `public` y `static` se sirven por `public.kyaaa.net` y `static.kyaaa.net` (Custom Domains de R2); `private` **no debe tener dominio público**: solo se accede con URL firmada. `scripts/migrate-to-r2.sh` copia los buckets de Contabo a R2 con rclone.
