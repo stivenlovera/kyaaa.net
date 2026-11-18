@@ -1,4 +1,5 @@
 'use client'
+import { FaCamera, FaCircleCheck, FaEnvelope, FaEnvelopeCircleCheck, FaFloppyDisk, FaKey } from 'react-icons/fa6';
 import Form from "next/form";
 import { ChangeEvent, useActionState, useEffect, useRef, useState } from "react";
 import { IFormChangeProfile, IIsVerifiedEmail, initialStateFormChangeProfile, IUserIAuthentication, } from "../../../types/user.type";
@@ -121,7 +122,6 @@ export const FormProfile = () => {
                                         className="w-50 h-50 rounded-full object-cover"
                                     ></img>
                                 </div>
-                                {isPending.toString()}
                                 <div className="flex flex-row gap-4">
                                     <button
                                         id="dropdown-button"
@@ -130,6 +130,7 @@ export const FormProfile = () => {
                                         type="button"
                                         disabled={isPending}
                                     >
+                                        <FaCamera aria-hidden />
                                         Subir foto
                                     </button>
                                     <input
@@ -199,6 +200,7 @@ export const FormProfile = () => {
                                             type='button'
                                             disabled={isPending}
                                         >
+                                            <FaEnvelopeCircleCheck aria-hidden />
                                             Verificar
                                         </button>
                                     ) : (<button
@@ -206,6 +208,7 @@ export const FormProfile = () => {
                                         type='button'
                                         disabled
                                     >
+                                        <FaCircleCheck aria-hidden />
                                         Verificado correctamente
                                     </button>)
                                 }
@@ -217,6 +220,7 @@ export const FormProfile = () => {
                                     type='button'
                                     disabled={isPending}
                                 >
+                                    <FaEnvelope aria-hidden />
                                     Modificar email
                                 </button>
                             </div>
@@ -227,6 +231,7 @@ export const FormProfile = () => {
                                     type='button'
                                     disabled={isPending}
                                 >
+                                    <FaKey aria-hidden />
                                     Modificar Contraseña
                                 </button>
                             </div>
@@ -238,6 +243,7 @@ export const FormProfile = () => {
                             type="submit"
                             disabled={isPending}
                         >
+                            <FaFloppyDisk aria-hidden />
                             Guardar
                         </button>
                     </div>

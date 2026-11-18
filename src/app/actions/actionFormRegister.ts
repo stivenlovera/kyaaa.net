@@ -103,7 +103,7 @@ export async function actionFormRegister(prevState: IFormRegister, formData: For
     const refreshToken = await generateRefreshToken(payload);
 
     // Set mail
-    const infoEmail = await sendEmail(user!.email!, 'Bienvenido a la aplicación', user!.name, welcomeEmailHtml(user!.name));
+    const infoEmail = await sendEmail(user!.email!, '¡Bienvenido a kyaaa!', user!.name, welcomeEmailHtml(user!.name));
     logger.info(`info sendEmail ${jsonLog(infoEmail)}`)
 
     // Set cookies

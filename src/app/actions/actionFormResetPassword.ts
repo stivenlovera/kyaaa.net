@@ -45,7 +45,7 @@ export async function actionFormResetPassword(prevState: IFormResetPassword, for
     });
     const url = `${process.env.URL_BASE}/reset-password?code=${accessToken}`;
 
-    const infoEmail = await sendEmail(email!.toString(), 'Recuperar contraseña', getUser!.name, notificationResetPasswordHtml(getUser!.name, url));
+    const infoEmail = await sendEmail(email!.toString(), 'Recupera tu contraseña de kyaaa', getUser!.name, notificationResetPasswordHtml(getUser!.name, url));
     logger.info(`info infoEmail ${jsonLog(infoEmail)}`)
     return { success: true, fields: fields, errors: {} };
 }

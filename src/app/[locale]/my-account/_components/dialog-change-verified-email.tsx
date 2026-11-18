@@ -1,3 +1,4 @@
+import { FaPaperPlane, FaXmark } from 'react-icons/fa6';
 import Dialog from '@/src/app/[locale]/_components/dialog'
 import { actionFormVerifiedEmail } from '@/src/app/actions/actionFormVerifiedEmail';
 import { useAlert } from '@/src/providers/alertProvider';
@@ -20,6 +21,12 @@ export const DialogChangeVerifiedEmail = ({ openChangeEmail, onChangeEmail }: Di
                 icon: "success"
             })
             onChangeEmail(false)
+        } else {
+            setAlert({
+                message: "No se pudo enviar el enlace, inténtalo de nuevo más tarde",
+                open: true,
+                icon: "danger"
+            })
         }
         return result;
     }
@@ -39,20 +46,23 @@ export const DialogChangeVerifiedEmail = ({ openChangeEmail, onChangeEmail }: Di
                         onClick={() => { onChangeEmail(false) }}
                         disabled={isPending}
                     >
+                        <FaXmark aria-hidden />
                         Cerrar
                     </button>
                     <button
                         className="btn-primary w-full"
                         type="submit"
+                        form="dialog-verified-email"
                         disabled={isPending}
                     >
+                        <FaPaperPlane aria-hidden />
                         Enviar enlace
                     </button>
                 </div>
             )}
         >
             <Form
-                id="my-form"
+                id="dialog-verified-email"
                 action={formAction}>
                 <div className="grid grid-cols-1 gap-4">
                     <div>

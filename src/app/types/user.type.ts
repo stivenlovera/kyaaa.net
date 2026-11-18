@@ -71,11 +71,11 @@ export const initialStateFormRegister: IFormRegister = {
     errors: {},
     success: false,
     fields: {
-        name: 'ali stiven lovera huarachi',
-        email: 'stivenlovera@gmail.com',
-        password: '12345',
-        confirm_password: '12345',
-        term_use: true,
+        name: '',
+        email: '',
+        password: '',
+        confirm_password: '',
+        term_use: false,
     }
 }
 
@@ -99,8 +99,8 @@ export const initialStateFormLogin: IFormLogin = {
     errors: {},
     success: false,
     fields: {
-        email: "stivenlovera@gmail.com",
-        password: "12345"
+        email: '',
+        password: ''
     },
 }
 
