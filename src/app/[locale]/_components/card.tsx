@@ -122,7 +122,7 @@ export const Card = ({
 
             <div className=''>
                 <div className='flex flex-col basis-full bg-gray-800 p-1'>
-                    <div className='line-clamp-2 hover:line-clamp-none sm:text-10 xl:text-12'>
+                    <div className='line-clamp-2 hover:line-clamp-none text-sm'>
                         {pack.name.toLocaleLowerCase()}
                     </div>
                     <div className='truncate text-xs text-neutral-400'>
