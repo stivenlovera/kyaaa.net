@@ -44,7 +44,7 @@ declare const messages: {
       "ver_compras": "See purchases",
       "dialogo_descargar": {
         "titulo": "Register now!",
-        "mensaje": "Log in with your email and password, or sign up, to download or purchase this pack.",
+        "mensaje": "Log in with your email and password, or sign up, to remove the censorship, save, download or purchase this pack.",
         "inicia_sesion": "Log in",
         "crear_cuenta": "Create account",
         "cerrar": "Close"
