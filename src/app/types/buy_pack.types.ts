@@ -88,7 +88,7 @@ export interface Capture {
   amount: Amount
   final_capture: boolean
   seller_protection: SellerProtection
-  seller_receivable_breakdown: SellerReceivableBreakdown
+  seller_receivable_breakdown?: SellerReceivableBreakdown
   links: Link[]
   create_time: string
   update_time: string
@@ -106,7 +106,7 @@ export interface SellerProtection {
 
 export interface SellerReceivableBreakdown {
   gross_amount: GrossAmount
-  paypal_fee: PaypalFee
+  paypal_fee?: PaypalFee
   net_amount: NetAmount
 }
 
