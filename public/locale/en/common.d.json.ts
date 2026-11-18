@@ -125,6 +125,7 @@ declare const messages: {
     "ir_mi_cuenta": "Go to my account",
     "serie": "Series",
     "personajes": "Characters",
+    "etiquetas": "Tags",
     "ver_imagenes": "See images of {name}",
     "imagen_n": "Image {n, number} of {total, number}",
     "anterior": "Previous",

@@ -122,6 +122,7 @@
     "ir_mi_cuenta": "Ir a mi cuenta",
     "serie": "Serie",
     "personajes": "Personajes",
+    "etiquetas": "Etiquetas",
     "ver_imagenes": "Ver imágenes de {name}",
     "imagen_n": "Imagen {n, number} de {total, number}",
     "anterior": "Anterior",

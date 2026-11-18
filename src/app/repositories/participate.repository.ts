@@ -53,6 +53,7 @@ const PARTICIPATE_PACK_CARD_SELECT = {
         select: {
             ...PACK_LIST_SELECT,
             state_pack_id: true,
+            pack_label: { select: { label: { select: { name: true, label_id: true } } } },
             // Pósters activos: el carrusel del modal y la portada de respaldo (ver toParticipatePackCard).
             pack_platforms: {
                 where: { state: 1, platform: { state: 1 } },
@@ -70,7 +71,7 @@ type ParticipatePackCardRow = Prisma.Participate_PackGetPayload<{ select: typeof
 // póster, la tarjeta muestra un hueco en lugar de la imagen. Los pósters van además completos para el
 // carrusel del modal.
 async function toParticipatePackCard(row: ParticipatePackCardRow, loggedIn: boolean): Promise<IParticipatePackCard> {
-    const { pack_platforms, ...packRow } = row.pack
+    const { pack_platforms, pack_label, ...packRow } = row.pack
     const listPack: IListPacks = packRow.pages.length > 0
         ? await toListPack(packRow, loggedIn)
         : { ...packRow, portada: { num: '', extension: '', name: '', url: '' } }
@@ -79,6 +80,7 @@ async function toParticipatePackCard(row: ParticipatePackCardRow, loggedIn: bool
         ...listPack,
         portada: { ...listPack.portada, url: listPack.portada.url || posters[0] || '' },
         posters,
+        pack_label,
         participate_pack_id: row.participate_pack_id,
         votes: row._count.votes,
     }
