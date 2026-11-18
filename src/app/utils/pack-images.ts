@@ -7,9 +7,10 @@
 //   (ver repositoryPage.findPagesPack); esta función solo firma.
 // - Si AWS_BUCKET_PACKS_PRIVATE no está definida, todo se sirve con la URL pública. Así el código se
 //   puede desplegar antes de mover los archivos al bucket privado (scripts/move-paid-pages.mjs).
-import { GetObjectCommand, HeadObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { GetObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { ZipLevel } from './page-access';
+import { getS3Client as getClient } from './s3-client';
 
 // Un lector puede pasar horas en el visor sin recargar la página, por eso el margen es amplio.
 export const SIGNED_URL_TTL_SECONDS = 6 * 60 * 60;
@@ -24,21 +25,6 @@ export interface IPackImageSource {
     extension: string
     /** Servir la versión censurada del bucket público (solo existe para páginas gratis, page_type 1). */
     censored: boolean
-}
-
-let client: S3Client | undefined;
-
-function getClient(): S3Client {
-    client ??= new S3Client({
-        region: process.env.AWS_REGION,
-        forcePathStyle: true,
-        endpoint: process.env.AWS_ENPOINT,
-        credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-        },
-    });
-    return client;
 }
 
 /** URL de una imagen de los modales del pack (pack.thanks_image / pack.register_image), en el bucket static. */
