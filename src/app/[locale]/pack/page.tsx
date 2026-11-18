@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { packInfo } from './_service/code.service';
 import logger from '../../utils/logger';
 
@@ -13,8 +14,8 @@ export async function generateMetadata({ params }: PagePaginateProps): Promise<M
     const pack = await packInfo(code);
     if (pack === null) {
         return {
-            title: "Pagina no encontra",
-            description: "No hay informacion",
+            title: (await getTranslations('errores'))('not_found.titulo'),
+            robots: { index: false },
         };
     }
     return {

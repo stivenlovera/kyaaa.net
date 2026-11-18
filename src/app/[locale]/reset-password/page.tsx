@@ -1,86 +1,54 @@
-import Image from "next/image";
-import { getCurrentUser, verifyAccessTokenTemp } from "../../utils/auth";
-import logger, { jsonLog } from "../../utils/logger";
 import Link from "next/link";
-import { repositoryAuth } from "../../repositories/auth.repository";
+import { FaArrowRightToBracket, FaHouse, FaKey, FaLinkSlash } from "react-icons/fa6";
+import { verifyAccessTokenTemp } from "../../utils/auth";
+import logger, { jsonLog } from "../../utils/logger";
+import { ErrorScreen } from "@/src/app/components/error-screen";
 import { FormResetPassword } from "./_components/form-reset-password";
 
-interface IVerifiedEmail {
+interface IResetPassword {
     searchParams: Promise<{
         code: string
     }>,
 }
-export default async function Page({ searchParams }: IVerifiedEmail) {
+
+// Destino del enlace del correo "Recupera tu contraseña": si el token es válido, formulario para elegir
+// la contraseña nueva; si caducó, cómo pedir otro.
+export default async function Page({ searchParams }: IResetPassword) {
     const { code } = await searchParams;
     const valid = await verifyAccessTokenTemp(code)
-    logger.info(`/verified-email data token ${jsonLog(valid)}`);
-
-    const user = await getCurrentUser()
+    logger.info(`/reset-password data token ${jsonLog(valid)}`);
 
     if (valid === null) {
         return (
-            <div className="flex items-center justify-center h-dvs md:h-screen">
-                <div className="p-4 w-full sm:w-3xl">
-                    <div className="card">
-                        <div className="flex justify-center">
-                            <Image
-                                fetchPriority="high"
-                                src={'/img/link-no-valid.png'}
-                                alt={``}
-                                width={400}
-                                height={500}
-                                unoptimized
-                                className=""
-                            />
-                        </div>
-                        <div className="text-center text-3xl font-bold py-3">
-                            Enlace no valido
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-    else {
-        return (
-            <div className="flex items-center justify-center h-dvs md:h-screen">
-                <div className="p-4 w-full sm:w-3xl">
-                    <div className="card">
-                        <div className="flex justify-center">
-                            <Image
-                                fetchPriority="high"
-                                src={'/img/verified-succes.png'}
-                                alt={``}
-                                width={400}
-                                height={500}
-                                unoptimized
-                                className=""
-                            />
-                        </div>
-                        <div className="flex justify-center">
-                            <div className="max-w-96 p-3">
-                                <FormResetPassword
-                                    email={valid.email}
-                                    code={code}
-                                ></FormResetPassword>
-                            </div>
-
-                        </div>
-                        <div className="flex justify-center">
-                            {user !== null ? (
-                                <p>volver a <Link href="/" className="text-blue-500 underline">pagina principal</Link></p>
-                            )
-                                :
-                                (
-                                    <p>inicia session entrando <Link href="/" className="text-blue-500 underline">aqui</Link></p>
-                                )}
-                        </div>
-
-                    </div>
-                </div>
-            </div>
+            <ErrorScreen
+                icon={FaLinkSlash}
+                title="Enlace no válido"
+                message='El enlace para restablecer la contraseña caducó o ya se usó. Pide uno nuevo desde "¿Olvidaste tu contraseña?" en la pantalla de inicio de sesión.'
+            >
+                <Link href="/login" className="btn-primary w-full">
+                    <FaArrowRightToBracket aria-hidden />
+                    Pedir otro enlace
+                </Link>
+                <Link href="/" className="btn-primary w-full">
+                    <FaHouse aria-hidden />
+                    Ir al inicio
+                </Link>
+            </ErrorScreen>
         )
     }
 
-
+    return (
+        <div className="flex flex-1 items-center justify-center px-4 py-10 md:py-20">
+            <div className="card w-full max-w-md grid grid-cols-1 gap-4">
+                <div className="text-center">
+                    <FaKey className="mx-auto text-4xl text-neutral-300" aria-hidden />
+                    <h1 className="pt-4 text-xl md:text-2xl font-bold">Crea una nueva contraseña</h1>
+                    <p className="pt-2 text-sm text-neutral-400 break-all">
+                        Para la cuenta <span className="font-bold text-neutral-200">{valid.email}</span>
+                    </p>
+                </div>
+                <FormResetPassword code={code} />
+            </div>
+        </div>
+    )
 }

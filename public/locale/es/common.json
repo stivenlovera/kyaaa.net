@@ -240,5 +240,20 @@
       "nuevo": "Reportar un problema",
       "actualizado": "Actualizado el"
     }
+  },
+  "errores": {
+    "inicio": "Ir al inicio",
+    "explorar": "Explorar series",
+    "reportar": "¿Crees que es un error? Repórtalo",
+    "not_found": {
+      "titulo": "No encontramos esta página",
+      "mensaje": "Puede que el enlace esté mal escrito, que el pack ya no esté disponible o que la página se haya movido."
+    },
+    "error": {
+      "titulo": "Algo salió mal",
+      "mensaje": "Tuvimos un problema al cargar esta página. Prueba de nuevo; si sigue fallando, avísanos.",
+      "reintentar": "Reintentar",
+      "referencia": "Referencia del error: {digest}"
+    }
   }
 }

@@ -5,13 +5,13 @@ import { useAlert } from '@/src/providers/alertProvider';
 import Form from 'next/form';
 import { useRouter } from "@/src/app/layout/components/navigate/use-loading-router";
 import React, { useActionState, useState } from 'react'
+import { FaCheck } from 'react-icons/fa6'
 
 interface FormResetPasswordProps {
-    email: string
     code: string
 }
 
-export const FormResetPassword = ({ email, code }: FormResetPasswordProps) => {
+export const FormResetPassword = ({ code }: FormResetPasswordProps) => {
     const [formChangePassword, setFormChangePassword] = useState<IFormUpdatePassword>(initialStateFieldsFormUpdatePassword);
     const { setAlert } = useAlert()
     const router = useRouter()
@@ -21,11 +21,11 @@ export const FormResetPassword = ({ email, code }: FormResetPasswordProps) => {
         if (result.success) {
             setFormChangePassword(initialStateFieldsFormUpdatePassword)
             setAlert({
-                message: "Contraseña establecida correctamenta",
+                message: "Contraseña actualizada. Ya puedes iniciar sesión con ella.",
                 open: true,
                 icon: "success"
             })
-            router.push('/')
+            router.push('/login')
         }
         return result;
     }
@@ -34,9 +34,6 @@ export const FormResetPassword = ({ email, code }: FormResetPasswordProps) => {
     return (
         <Form action={formAction}>
             <div className="grid grid-cols-1 gap-4">
-                <div>
-                    Establecer nueva contraseña para el usuario con email: {email}
-                </div>
                 <input
                     name="code"
                     defaultValue={code}
@@ -53,7 +50,7 @@ export const FormResetPassword = ({ email, code }: FormResetPasswordProps) => {
                     <input
                         id="new_password"
                         className='w-full'
-                        placeholder='Nuevo contraseña'
+                        placeholder='Nueva contraseña'
                         name="new_password"
                         defaultValue={formChangePassword.fields.new_password}
                         onKeyUp={(e) => { setFormChangePassword({ ...formChangePassword, fields: { ...formChangePassword.fields, new_password: e.currentTarget.value } }) }}
@@ -87,7 +84,8 @@ export const FormResetPassword = ({ email, code }: FormResetPasswordProps) => {
                         disabled={isPending}
                         type='submit'
                     >
-                        Confirmar
+                        <FaCheck aria-hidden />
+                        Guardar contraseña
                     </button>
                 </div>
             </div>

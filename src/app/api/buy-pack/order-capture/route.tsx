@@ -31,7 +31,8 @@ export async function POST(request: NextRequest) {
             logger.error(`/api/buy-pack/order-capture POST captura no completada status=${statusCapture} order=${order_id}`)
             return NextResponse.json(
                 { success: false, message: 'No se pudo confirmar el pago' },
-                { status: 502 }
+                // 500 y no 502: Cloudflare reemplaza los 502 del origen por su propia página.
+                { status: 500 }
             );
         }
         if (capture.status !== 'COMPLETED') {
