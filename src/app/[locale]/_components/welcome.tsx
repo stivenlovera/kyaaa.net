@@ -7,7 +7,7 @@ export const Welcome = () => {
 
     return (
         user !== null ? (
-            <div className='text-lg md:text-xl font-bold py-3'>{t('bienvenida.title', { nick: user?.nick })} </div>
+            <div className='text-sm md:text-xl py-3'>{t('bienvenida.title', { nick: user?.nick })} </div>
         ) : (<></>)
     )
 }

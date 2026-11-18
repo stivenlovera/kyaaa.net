@@ -22,6 +22,7 @@ export const ParticipateCard = ({ pack, highlighted = false, children }: Partici
     const [open, setOpen] = useState(false)
     const series = pack.pack_serie.map((s) => s.serie.name).join(', ')
     const characters = pack.pack_character.map((c) => c.character.name).join(', ')
+    const labels = pack.pack_label.map((l) => l.label.name).join(', ')
     const hasPosters = pack.posters.length > 0
 
     return (
@@ -64,6 +65,9 @@ export const ParticipateCard = ({ pack, highlighted = false, children }: Partici
                 </div>
                 <div className='truncate text-xs text-neutral-400'>
                     {t('personajes')}: {characters || '-'}
+                </div>
+                <div className='truncate text-xs text-neutral-400'>
+                    {t('etiquetas')}: {labels || '-'}
                 </div>
                 {children !== undefined && <div className='mt-auto pt-1 flex flex-col gap-1'>{children}</div>}
             </div>

@@ -1,4 +1,4 @@
-import { IListPacks } from "./pack.types";
+import { IListPacks, PackLabel } from "./pack.types";
 
 export interface IStateParticipate {
     state_participate_id: number;
@@ -52,6 +52,7 @@ export interface IParticipatePackCard extends IListPacks {
     votes: number;
     /** URLs completas de los pósters activos, en orden. */
     posters: string[];
+    pack_label: PackLabel[];
 }
 
 /** Participación visible en /participate (en curso o finalizada) con sus packs. */
