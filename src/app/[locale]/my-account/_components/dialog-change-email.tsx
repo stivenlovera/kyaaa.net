@@ -1,3 +1,4 @@
+import { FaPenToSquare, FaXmark } from 'react-icons/fa6';
 import Dialog from '@/src/app/[locale]/_components/dialog'
 import { IFormUpdateEmail, initialStateFieldsFormUpdateEmail } from '@/src/app/types/user.type';
 import { actionFormUpdateEmail } from '@/src/app/actions/actionFormUpdateEmail';
@@ -42,6 +43,7 @@ export const DialogChangeEmail = ({ openChangeEmail, onChangeEmail }: DialogChan
                         onClick={() => { onChangeEmail(false) }}
                         disabled={isPending}
                     >
+                        <FaXmark aria-hidden />
                         Cerrar
                     </button>
                     <button
@@ -49,6 +51,7 @@ export const DialogChangeEmail = ({ openChangeEmail, onChangeEmail }: DialogChan
                         type='submit' form='dialog-change-email'
                         disabled={isPending}
                     >
+                        <FaPenToSquare aria-hidden />
                         Modificar
                     </button>
                 </div>

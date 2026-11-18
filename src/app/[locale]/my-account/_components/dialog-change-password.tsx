@@ -1,3 +1,4 @@
+import { FaCheck, FaXmark } from 'react-icons/fa6';
 import Dialog from '@/src/app/[locale]/_components/dialog'
 import { IFormUpdatePassword, initialStateFieldsFormUpdatePassword } from '@/src/app/types/user.type';
 import { actionFormUpdatePassword } from '@/src/app/actions/actionFormUpdatePassword';
@@ -43,6 +44,7 @@ export const DialogChangePassword = ({ openChangePassword, onChangePassword }: D
                         onClick={() => { onChangePassword(false) }}
                         disabled={isPending}
                     >
+                        <FaXmark aria-hidden />
                         Cerrar
                     </button>
                     <button
@@ -51,6 +53,7 @@ export const DialogChangePassword = ({ openChangePassword, onChangePassword }: D
                         disabled={isPending}
                         type='submit' form='dialog-change-password'
                     >
+                        <FaCheck aria-hidden />
                         Confirmar
                     </button>
                 </div>
