@@ -89,7 +89,7 @@ export const ParticipateVoting = ({ participate, active, status }: ParticipateVo
                 </div>
                 {active && (
                     <button
-                        className={`btn-primary w-full flex items-center justify-center gap-2 text-sm ${isVoted ? 'text-green-400' : ''}`}
+                        className={`btn-primary w-full flex ${isVoted ? 'text-green-400' : ''}`}
                         type='button'
                         onClick={() => {
                             if (status === 'verified') {

@@ -56,7 +56,7 @@ export const RedeemForm = ({ initialCode }: { initialCode: string }) => {
                 <FaTicket className='text-5xl mx-auto text-green-500' />
                 <h1 className='text-2xl font-bold'>{t('exito_titulo')}</h1>
                 <p>{t.rich('exito', { pack: redeemed.name, b: (chunks) => <span className='font-bold'>{chunks}</span> })}</p>
-                <Link href={`/pack/${redeemed.code}`} className='btn-primary w-full font-bold'>{t('ver_pack')}</Link>
+                <Link href={`/pack/${redeemed.code}`} className='btn-primary w-full'>{t('ver_pack')}</Link>
                 <button
                     type='button'
                     className='btn-primary w-full'
@@ -93,7 +93,7 @@ export const RedeemForm = ({ initialCode }: { initialCode: string }) => {
                 />
                 {error && <p className='text-red-500 text-xs pt-1'>{t(`error.${error}`)}</p>}
             </div>
-            <button className='btn-primary w-full font-bold' type='submit' disabled={isPending || (user !== null && code.trim() === '')}>
+            <button className='btn-primary w-full' type='submit' disabled={isPending || (user !== null && code.trim() === '')}>
                 {isPending ? t('canjeando') : t('boton')}
             </button>
             <DialogLoginToRedeem open={openLogin} onClose={() => { setOpenLogin(false) }} />

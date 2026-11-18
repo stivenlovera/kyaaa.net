@@ -85,7 +85,7 @@ export const PackPosterList = ({ packs, filter }: PackPosterListProps) => {
                                 <td className='p-2'>
                                     <div className='flex justify-end'>
                                         <Link
-                                            className='btn-primary flex items-center gap-2 whitespace-nowrap'
+                                            className='btn-primary flex whitespace-nowrap'
                                             href={`/admin/pack-platform/edit?code=${pack.code}`}
                                         >
                                             <FaImages /> Gestionar

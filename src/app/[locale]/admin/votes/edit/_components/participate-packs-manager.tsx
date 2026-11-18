@@ -69,7 +69,7 @@ export const ParticipatePacksManager = ({ participate_id, packs, items }: Partic
                         ))}
                     </select>
                 </div>
-                <button className='btn-primary flex items-center justify-center gap-2' type='submit' disabled={isPending || packId === 0}>
+                <button className='btn-primary flex' type='submit' disabled={isPending || packId === 0}>
                     <FaPlus /> Agregar pack
                 </button>
             </form>

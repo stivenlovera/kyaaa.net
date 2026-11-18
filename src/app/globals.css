@@ -26,12 +26,16 @@
   @apply items-center justify-center p-2 md:p-5 lg:p-7 xl:p-7 border border-neutral-700 rounded-lg shadow-md;
 }
 
+/* Botones: un solo estilo para todo el proyecto. Alto mínimo 44px (min-h-11), texto 14px en negrita,
+   contenido centrado y separación de 8px entre icono y texto. En cada uso solo se añade el layout
+   (w-full, flex…) o el color (text-red-500 para acciones peligrosas); no tamaños ni fuentes. */
 @utility btn-primary {
-  @apply bg-neutral-800 hover:text-neutral-100 border-2 border-neutral-600 hover:bg-neutral-700 inline-flex justify-center rounded-md shadow-sm px-2 py-2 font-medium focus:outline-none cursor-pointer disabled:border-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-950;
+  @apply bg-neutral-800 hover:text-neutral-100 border-2 border-neutral-600 hover:bg-neutral-700 inline-flex items-center justify-center gap-2 min-h-11 rounded-md shadow-sm px-4 py-2 text-sm font-bold focus:outline-none focus-visible:border-neutral-400 cursor-pointer disabled:border-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-950;
 }
 
+/* Botón solo con icono: cuadrado de 44px (redondo con rounded-full). */
 @utility btn-primary-icon {
-  @apply bg-neutral-800 hover:text-neutral-100 border-2 border-neutral-600 hover:bg-neutral-700 inline-flex justify-center rounded-md shadow-sm p-2 font-medium focus:outline-none cursor-pointer disabled:border-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-900;
+  @apply bg-neutral-800 hover:text-neutral-100 border-2 border-neutral-600 hover:bg-neutral-700 inline-flex items-center justify-center size-11 shrink-0 rounded-md shadow-sm focus:outline-none focus-visible:border-neutral-400 cursor-pointer disabled:border-neutral-700 disabled:cursor-not-allowed disabled:bg-neutral-950;
 }
 
 /* @utility input {

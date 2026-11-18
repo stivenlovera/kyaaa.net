@@ -22,11 +22,11 @@ export const DialogLoginToVote = ({ open, onClose, reason }: DialogLoginToVotePr
                 <p>{anonymous ? t('login_mensaje') : t('verificar_mensaje')}</p>
                 {anonymous ? (
                     <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                        <LoginLink className='btn-primary w-full font-bold'>{t('iniciar_sesion')}</LoginLink>
+                        <LoginLink className='btn-primary w-full'>{t('iniciar_sesion')}</LoginLink>
                         <LoginLink className='btn-primary w-full' register>{t('crear_cuenta')}</LoginLink>
                     </div>
                 ) : (
-                    <Link className='btn-primary w-full font-bold' href='/my-account'>{t('ir_mi_cuenta')}</Link>
+                    <Link className='btn-primary w-full' href='/my-account'>{t('ir_mi_cuenta')}</Link>
                 )}
                 <button className='btn-primary w-full text-red-500' type='button' onClick={onClose}>
                     {t('cerrar')}

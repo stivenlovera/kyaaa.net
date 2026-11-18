@@ -51,5 +51,8 @@ Códigos canjeables por un pack concreto, de un solo uso y con caducidad (pensad
 ### Carpetas locales por funcionalidad
 Dentro de `src/app/[locale]/<ruta>/`, las carpetas con prefijo de guion bajo `_components`, `_service`, `_types` y `_hooks` son privadas de esa ruta (no son enrutables). La UI transversal vive en `src/app/layout/components/` y `src/app/components/`.
 
+### Botones
+Todos los botones usan `btn-primary` (texto/icono + texto) o `btn-primary-icon` (solo icono, cuadrado de 44px; `rounded-full` para redondo), definidos en `src/app/globals.css`: 44px de alto mínimo, texto `text-sm` en negrita y contenido centrado. En cada uso añade solo layout (`w-full`, `flex`…) o color (`text-red-500` para acciones peligrosas), no tamaños, paddings ni fuentes.
+
 ### Otras utilidades (`src/app/utils/`)
 `uploadS3.ts` + `sharp.ts` (procesamiento y subida de imágenes; los nombres de buckets y endpoints salen del entorno — ojo: la variable se escribe `AWS_ENPOINT`), `mail.ts` + `template-mails/` (plantillas HTML de nodemailer), `logger.ts` (archivos rotativos diarios de winston en `PATH_LOGS`), `jwt.ts`. Las imágenes de S3 se sirven con `next/image`, con una entrada en `remotePatterns` de `next.config.ts` restringida a la ruta del bucket de Contabo.

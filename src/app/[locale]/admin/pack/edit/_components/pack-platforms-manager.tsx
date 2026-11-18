@@ -25,7 +25,7 @@ export const PackPlatformsManager = ({ pack_id, platforms, items }: PackPlatform
     return (
         <div className='grid grid-cols-1 gap-4'>
             <div className='flex justify-end'>
-                <button className='btn-primary flex items-center gap-2' type='button' onClick={() => { setEditing(null) }}>
+                <button className='btn-primary flex' type='button' onClick={() => { setEditing(null) }}>
                     <FaPlus /> Agregar póster
                 </button>
             </div>

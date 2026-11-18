@@ -48,7 +48,7 @@ function ToastItem({ toast, onClose }: { toast: IToast, onClose: (id: number) =>
       </div>
       <button
         onClick={() => { onClose(toast.id) }}
-        className="btn-primary-icon rounded-lg p-1"
+        className="btn-primary-icon size-7 rounded-lg"
         aria-label="Cerrar"
       >
         <FaTimes size={14} color="white" />

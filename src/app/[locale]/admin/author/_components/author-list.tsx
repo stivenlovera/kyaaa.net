@@ -22,7 +22,7 @@ export const AuthorList = ({ authors }: AuthorListProps) => {
         <div>
             <div className='flex justify-end pb-3'>
                 <button
-                    className='btn-primary flex items-center gap-2'
+                    className='btn-primary flex'
                     type='button'
                     onClick={() => { setEditingAuthor(null) }}
                 >

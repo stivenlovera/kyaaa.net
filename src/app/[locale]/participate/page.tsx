@@ -77,7 +77,7 @@ export default async function ParticipatePage() {
             {current.length === 0 ? (
                 <div className="card flex flex-col items-center gap-4 py-10 text-center">
                     <p className="text-neutral-400">{t('vacio')}</p>
-                    <Link href="/" className="btn-primary font-bold">{t('explorar')}</Link>
+                    <Link href="/" className="btn-primary">{t('explorar')}</Link>
                 </div>
             ) : current.map(renderSection)}
 

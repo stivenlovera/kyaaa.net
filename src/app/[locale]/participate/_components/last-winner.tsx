@@ -42,7 +42,7 @@ export async function LastWinner({ winner }: LastWinnerProps) {
                         <span className="text-sm font-bold w-10 text-right">{percent}%</span>
                     </div>
                     {published ? (
-                        <Link className="btn-primary w-full text-sm font-bold" href={`/pack/${pack.code}`}>
+                        <Link className="btn-primary w-full" href={`/pack/${pack.code}`}>
                             {t('ver_pack')}
                         </Link>
                     ) : (

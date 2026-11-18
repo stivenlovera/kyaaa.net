@@ -22,7 +22,7 @@ const PlatformSection = ({ title, items }: { title: string, items: IPackPlatform
     }
     return (
         <div className="py-2">
-            <h5 className="text-md font-bold m-1">{title}:</h5>
+            <h5 className="text-sm font-bold m-1">{title}:</h5>
             {/* 4 pósters por fila en móvil y 5 desde md. */}
             <div className="grid grid-cols-4 md:grid-cols-5 gap-2">
                 {items.map((item) => (

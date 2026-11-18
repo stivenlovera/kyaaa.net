@@ -26,7 +26,7 @@ export function PackGrid({ title, packs: initialPacks, empty, removeOnUnfavorite
                 {packs.length === 0 ? (
                     <div className="flex flex-col items-center gap-4 py-10 text-center">
                         <p className="text-neutral-400">{empty.message}</p>
-                        <Link href={empty.href} className="btn-primary font-bold">{empty.linkText}</Link>
+                        <Link href={empty.href} className="btn-primary">{empty.linkText}</Link>
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-2 lg:gap-3 xl:gap-4">

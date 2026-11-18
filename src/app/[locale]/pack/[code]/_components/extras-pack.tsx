@@ -99,11 +99,12 @@ export const ExtraPack = ({
         }
     };
 
+    // Tamaños y fuente salen de btn-primary / btn-primary-icon (globals.css): 44px de alto, texto 14px.
     return (
         <div>
             <div className="">
                 <div className="flex justify-between gap-2">
-                    <button className="btn-primary font-bold"
+                    <button className="btn-primary"
                         disabled={loading}
                         onClick={() => {
                             requireLogin(handleDownload)
@@ -118,7 +119,7 @@ export const ExtraPack = ({
                     </button>
                     <div className="col-start-1 row-start-1 flex items-start justify-end gap-1">
                         <button
-                            className="btn-primary p-3 border rounded-full border-neutral-600 cursor-pointer"
+                            className="btn-primary-icon rounded-full"
                             onClick={() => {
                                 requireLogin(() => fetchChangeFavorite(pack_id))
                             }}
@@ -128,7 +129,7 @@ export const ExtraPack = ({
                             />
                         </button>
                         <button
-                            className="btn-primary p-3 border rounded-full border-neutral-600 cursor-pointer"
+                            className="btn-primary-icon rounded-full"
                             onClick={() => {
                                 requireLogin(() => fetchChangeLike(pack_id))
                             }}
@@ -145,7 +146,7 @@ export const ExtraPack = ({
                     <div className='py-2'>
                         <Link
                             href='/my-purchases'
-                            className={'btn-primary w-full font-bold' + (loading ? LINK_DISABLED : '')}
+                            className={'btn-primary w-full' + (loading ? LINK_DISABLED : '')}
                             aria-disabled={loading}
                             onClick={(e) => { if (loading) e.preventDefault() }}
                         >
@@ -160,7 +161,7 @@ export const ExtraPack = ({
                             // (escucha los clics en <a> antes de que se cancele la navegación) y no paraba.
                             <button
                                 type='button'
-                                className='btn-primary w-full font-bold'
+                                className='btn-primary w-full'
                                 disabled={loading}
                                 onClick={() => { setOpenDialogRegisterNow(true) }}
                             >
@@ -169,7 +170,7 @@ export const ExtraPack = ({
                         ) : (
                             <Link
                                 href={`/buy/${code}`}
-                                className={'btn-primary w-full font-bold' + (loading ? LINK_DISABLED : '')}
+                                className={'btn-primary w-full' + (loading ? LINK_DISABLED : '')}
                                 aria-disabled={loading}
                                 onClick={(e) => { if (loading) e.preventDefault() }}
                             >
