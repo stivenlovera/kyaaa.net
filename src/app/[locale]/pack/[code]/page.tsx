@@ -1,6 +1,7 @@
 import { repositoryPack } from '@/src/app/repositories/pack.repository';
 import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import logger, { jsonLog } from '@/src/app/utils/logger';
 import { ViewPage } from './_components/preview-page';
 import { repositoryPage } from '@/src/app/repositories/pages.repository';
@@ -27,8 +28,8 @@ export async function generateMetadata({ params }: PagePaginateProps): Promise<M
     const pack = await repositoryPack.findPackMeta(code);
     if (pack === null) {
         return {
-            title: "Pagina no encontra",
-            description: "No hay informacion",
+            title: (await getTranslations('errores'))('not_found.titulo'),
+            robots: { index: false },
         };
     }
     // Todas las páginas del visor (?page=N) comparten la ficha del pack como URL canónica.

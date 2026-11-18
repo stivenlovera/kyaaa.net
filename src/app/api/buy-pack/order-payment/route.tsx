@@ -60,10 +60,13 @@ export async function POST(request: NextRequest) {
         );
     }
     catch (error: any) {
-        logger.error(`/api/buy-pack/order-payment POST ${jsonLog(describePayPalError(error))}`)
+        const detail = describePayPalError(error)
+        logger.error(`/api/buy-pack/order-payment POST ${jsonLog(detail)}`)
+        // 500 y no 502: Cloudflare reemplaza los 502 del origen por su propia página y el cliente no veía este JSON.
+        // Se devuelve el debug id de PayPal (no es secreto) para poder buscar el error en los logs o en PayPal.
         return NextResponse.json(
-            { success: false, message: 'No se pudo crear la orden de pago' },
-            { status: 502 }
+            { success: false, message: 'No se pudo crear la orden de pago', debug_id: 'debug_id' in detail ? detail.debug_id : undefined },
+            { status: 500 }
         );
     }
 }

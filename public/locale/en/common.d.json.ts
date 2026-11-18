@@ -243,6 +243,21 @@ declare const messages: {
       "nuevo": "Report a problem",
       "actualizado": "Updated on"
     }
+  },
+  "errores": {
+    "inicio": "Go to home",
+    "explorar": "Browse series",
+    "reportar": "Think this is a mistake? Report it",
+    "not_found": {
+      "titulo": "We couldn't find this page",
+      "mensaje": "The link may be mistyped, the pack may no longer be available or the page may have moved."
+    },
+    "error": {
+      "titulo": "Something went wrong",
+      "mensaje": "We had a problem loading this page. Try again; if it keeps failing, let us know.",
+      "reintentar": "Try again",
+      "referencia": "Error reference: {digest}"
+    }
   }
 };
 export default messages;
