@@ -4,3 +4,4 @@ public/locale/en/common.d.json.ts text eol=lf
 # El generador copia el JSON tal cual: si el JSON se descarga con CRLF, el .d.json.ts sale mixto
 # (y vuelve a aparecer como modificado). Los JSON de mensajes también van fijos a LF.
 public/locale/*/common.json text eol=lf
+*.sh text eol=lf
