@@ -127,6 +127,42 @@ export const repositoryPack = {
         return newPacks || null;
     },
 
+    // Nombre e imagen para los correos (compra, canje): la primera página gratis en tamaño `medium` del
+    // bucket público (`https://public.kyaaa.net/<code>/medium/<num>.<ext>`), censurada y sin firma, porque
+    // el correo se abre fuera de la web y sin sesión.
+    findPackEmail: async (code: string): Promise<{ name: string, image: string | null } | null> => {
+        const pack = await prisma.pack.findFirst({
+            where: { code: code },
+            select: {
+                name: true,
+                pages: {
+                    where: {
+                        page_type_id: PAGE_TYPE.FREE,
+                        page_size: { some: { size_id: SIZE.MEDIUM } }
+                    },
+                    orderBy: { num: 'asc' },
+                    take: 1,
+                    select: {
+                        num: true,
+                        page_size: {
+                            where: { size_id: SIZE.MEDIUM },
+                            select: { size: { select: { name: true, extension: true } } }
+                        }
+                    }
+                }
+            }
+        });
+        if (pack === null) {
+            return null;
+        }
+        const page = pack.pages[0];
+        const size = page?.page_size[0]?.size;
+        return {
+            name: pack.name,
+            image: size ? `${process.env.NEXT_PUBLIC_PACKS_URL_S3}/${code}/${size.name}/${page.num}.${size.extension}` : null,
+        };
+    },
+
     // Datos para los metadatos (título, descripción, og:image). La imagen es la versión censurada del
     // bucket público (`<code>/og/<num>.jpeg`): la ven los rastreadores de redes sociales, sin sesión.
     findPackMeta: async (code: string): Promise<{ name: string, description: string, image: string | null } | null> => {
