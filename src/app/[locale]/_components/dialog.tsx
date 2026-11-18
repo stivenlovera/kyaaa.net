@@ -27,10 +27,10 @@ const Dialog = ({ isOpen, onClose, children, title, panelClassName = 'md:w-96', 
         >
             <div className={`bg-neutral-800 p-4 rounded-lg shadow-md shadow-black relative flex flex-col max-h-full max-w-full ${panelClassName}`}>
                 <div className="flex justify-between px-3 py-2 shrink-0">
-                    <p className="text-left text-2xl font-bold">{title}</p>
+                    <p className="text-left text-lg font-bold">{title}</p>
                 </div>
                 <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-                    <div className="p-3">
+                    <div className="p-3 text-sm">
                         {children}
                     </div>
                 </div>
