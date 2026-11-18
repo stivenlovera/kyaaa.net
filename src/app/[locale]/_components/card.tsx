@@ -8,6 +8,7 @@ import { INewPacksAuth } from "../../types/pack.types"
 import API from "@/src/providers/api"
 import { useState } from "react"
 import { useTranslations } from "next-intl"
+import { useToast } from "@/src/providers/toastProvider"
 interface ICard {
     pack: INewPacksAuth
     urlImage: string
@@ -21,6 +22,7 @@ export const Card = ({
 }: ICard) => {
     const { user } = useAuth()
     const t = useTranslations('pack-info')
+    const { showToast } = useToast()
     const [like, setLike] = useState<boolean>(pack.like)
     const [favorite, setFavorite] = useState<boolean>(pack.favorite)
     const [buy, setBuy] = useState<boolean>(pack.buy)
@@ -32,10 +34,13 @@ export const Card = ({
             const { data } = await API.post<IResponse<boolean>>('/api/like-pack', { pack_id });
             if (data.success) {
                 setLike(data.data)
+                showToast(t(data.data ? 'extra-pack.toast.like_agregado' : 'extra-pack.toast.like_quitado'))
+            } else {
+                showToast(t('extra-pack.toast.error'), 'danger')
             }
         } catch (error) {
             console.error('Error fetching protected data:', error);
-        } finally {
+            showToast(t('extra-pack.toast.error'), 'danger')
         }
     };
 
@@ -45,10 +50,13 @@ export const Card = ({
             if (data.success) {
                 setFavorite(data.data)
                 onFavoriteChange?.(data.data)
+                showToast(t(data.data ? 'extra-pack.toast.guardado_agregado' : 'extra-pack.toast.guardado_quitado'))
+            } else {
+                showToast(t('extra-pack.toast.error'), 'danger')
             }
         } catch (error) {
             console.error('Error fetching protected data:', error);
-        } finally {
+            showToast(t('extra-pack.toast.error'), 'danger')
         }
     };
 
@@ -78,22 +86,21 @@ export const Card = ({
                         {
                             buy ? (
                                 <button
-                                    className="p-2 border rounded-full bg-neutral-950/60 border-neutral-600 disabled:bg-neutral-950/80"
-                                    disabled={true}
+                                    className="p-1.5 border rounded-full bg-neutral-950/60 border-neutral-600 cursor-pointer"
                                     onClick={(event) => {
                                         event.stopPropagation();
                                         event.preventDefault();
-                                        //onBuy(pack_id);
+                                        showToast(t('extra-pack.toast.comprado'), 'info')
                                     }}
                                 >
                                     <FaBookmark
-                                        className={'text-xl ' + (buy === true ? ' text-blue-600' : 'text-white')}
+                                        className={'text-base ' + (buy === true ? ' text-blue-600' : 'text-white')}
                                     />
                                 </button>
                             ) : (<></>)
                         }
                         <button
-                            className="p-2 border rounded-full bg-neutral-950/60 border-neutral-600 cursor-pointer"
+                            className="p-1.5 border rounded-full bg-neutral-950/60 border-neutral-600 cursor-pointer"
                             onClick={(event) => {
                                 event.stopPropagation();
                                 event.preventDefault();
@@ -101,11 +108,11 @@ export const Card = ({
                             }}
                         >
                             <FaStar
-                                className={'text-xl ' + (favorite === true ? ' text-yellow-400' : 'text-white')}
+                                className={'text-base ' + (favorite === true ? ' text-yellow-400' : 'text-white')}
                             />
                         </button>
                         <button
-                            className="p-2 border rounded-full bg-neutral-950/60 border-neutral-600 cursor-pointer"
+                            className="p-1.5 border rounded-full bg-neutral-950/60 border-neutral-600 cursor-pointer"
                             onClick={(event) => {
                                 event.stopPropagation();
                                 event.preventDefault();
@@ -113,7 +120,7 @@ export const Card = ({
                             }}
                         >
                             <FaHeart
-                                className={'text-xl ' + (like === true ? ' text-red-600' : 'text-white')}
+                                className={'text-base ' + (like === true ? ' text-red-600' : 'text-white')}
                             />
                         </button>
                     </div>

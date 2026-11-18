@@ -52,7 +52,8 @@
         "guardado_agregado": "Pack guardado en favoritos",
         "guardado_quitado": "Pack quitado de favoritos",
         "error": "No se pudo completar la acción, inténtalo de nuevo",
-        "descarga_no_disponible": "La descarga de este pack aún no está disponible"
+        "descarga_no_disponible": "La descarga de este pack aún no está disponible",
+        "comprado": "Ya compraste este pack"
       }
     }
   },
