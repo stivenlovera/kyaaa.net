@@ -2,6 +2,7 @@ import { repositoryPack } from "@/src/app/repositories/pack.repository";
 import { getCurrentUser } from "@/src/app/utils/auth";
 import { notFound } from "next/navigation";
 import { PayPack } from "./components/pay-pack";
+import { repositoryPage } from "@/src/app/repositories/pages.repository";
 
 export const dynamic = "force-dynamic";
 interface PageProps {
@@ -26,7 +27,9 @@ export default async function Page({ params }: PageProps) {
         notFound()
     }
     
+    const totalImages = await repositoryPage.countByPack(pack.pack_id);
+
     return (
-        <PayPack pack={pack}></PayPack>
+        <PayPack pack={pack} totalImages={totalImages}></PayPack>
     )
 }

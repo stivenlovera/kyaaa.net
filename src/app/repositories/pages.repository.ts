@@ -118,6 +118,11 @@ export const repositoryPage = {
      * ZIP que puede descargar un usuario logueado (mismas reglas que findPagesPack): el completo si el
      * pack es gratuito o lo compró; si no, el de páginas gratis y de registrados. null si el pack no existe.
      */
+    /** Número total de imágenes del pack (todas, sin filtrar por acceso). */
+    countByPack: async (pack_id: number): Promise<number> => {
+        return await prisma.page.count({ where: { pack_id } });
+    },
+
     findDownloadLevel: async (code: string, user_id: number): Promise<{ code: string, level: ZipLevel } | null> => {
         const access = await findPackAccess(code, user_id);
         if (access === null) {
