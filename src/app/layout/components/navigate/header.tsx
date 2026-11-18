@@ -47,6 +47,10 @@ export const Header = () => {
         {
             name: t('canjear'),
             url: '/redeem'
+        },
+        {
+            name: t('soporte'),
+            url: '/support'
         }
     ]);
 

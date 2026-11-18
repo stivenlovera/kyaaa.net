@@ -14,6 +14,7 @@ type ErrorKey = Extract<RedeemResult, { ok: false }>['error'] | 'demasiados_inte
 
 export const RedeemForm = ({ initialCode }: { initialCode: string }) => {
     const t = useTranslations('canjear')
+    const tSupport = useTranslations('soporte')
     const [code, setCode] = useState(initialCode)
     const [error, setError] = useState<ErrorKey | null>(null)
     const [redeemed, setRedeemed] = useState<{ code: string, name: string } | null>(null)
@@ -92,6 +93,11 @@ export const RedeemForm = ({ initialCode }: { initialCode: string }) => {
                     autoFocus
                 />
                 {error && <p className='text-red-500 text-xs pt-1'>{t(`error.${error}`)}</p>}
+                {error && error !== 'ya_tienes' && (
+                    <Link href='/support?category=cupon' className='inline-block text-xs text-neutral-400 hover:text-white hover:underline pt-1'>
+                        {tSupport('reportar_cupon')}
+                    </Link>
+                )}
             </div>
             <button className='btn-primary w-full' type='submit' disabled={isPending || (user !== null && code.trim() === '')}>
                 {isPending ? t('canjeando') : t('boton')}

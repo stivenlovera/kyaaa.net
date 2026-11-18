@@ -93,6 +93,12 @@ const ButtonUser = ({ user, compact = false }: ButtonUserProps) => {
                             {t('favorito')}
                         </Link>
                         <Link
+                            href={'/my-tickets'}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                            {t('mis_tickets')}
+                        </Link>
+                        <Link
                             href={'/my-account'}
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >

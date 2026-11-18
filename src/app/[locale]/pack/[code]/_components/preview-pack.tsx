@@ -23,6 +23,7 @@ import { repositoryFavoritePack } from "@/src/app/repositories/favorite-pack.rep
 import { notFound } from "next/navigation"
 import { repositoryPlatform } from "@/src/app/repositories/platform.repository"
 import { PackPlatforms } from "./pack-platforms"
+import { FaFlag } from "react-icons/fa6"
 
 interface PreviewPackProps {
     code: string
@@ -32,6 +33,7 @@ interface PreviewPackProps {
 
 export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) => {
     const t = await getTranslations('pack-info');
+    const tSupport = await getTranslations('soporte');
     const user = await getCurrentUser();
     const pack = await repositoryPack.findPackInfo(code, user !== null);
     if (pack === null) {
@@ -215,6 +217,15 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                         register_image={packInfo.register_image}
                     ></ExtraPack>
                     <PackPlatforms platforms={platforms} />
+                    <div className="flex justify-end pt-2">
+                        <Link
+                            href={`/support?category=contenido&pack=${encodeURIComponent(code)}`}
+                            className="inline-flex items-center gap-1 text-xs text-neutral-400 hover:text-white hover:underline"
+                        >
+                            <FaFlag aria-hidden />
+                            {tSupport('reportar')}
+                        </Link>
+                    </div>
                 </div>
             </div>
             <NumericPagination
