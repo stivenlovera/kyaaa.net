@@ -1,4 +1,6 @@
 import { IPayPalCheckOrder } from "@/src/app/types/buy_pack.types";
+import { repositoryBuyPack } from "@/src/app/repositories/buy-pack.repository";
+import { repositoryPack } from "@/src/app/repositories/pack.repository";
 import { getCurrentUser } from "@/src/app/utils/auth";
 import logger, { jsonLog } from "@/src/app/utils/logger";
 import { describePayPalError, paypalPost } from "@/src/app/utils/paypal";
@@ -7,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
     logger.info(`api/buy-pack/order-payment POST `)
     try {
-        const { code, price }: { code: string, price: number } = await request.json();
+        const { code }: { code: string } = await request.json();
         logger.info(`/api/buy-pack/order-payment POST code ${jsonLog(code)} `)
 
         const user = await getCurrentUser();
@@ -19,13 +21,29 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Segunda barrera contra pagar dos veces el mismo pack (la página /buy ya redirige si está comprado).
+        const pack = await repositoryPack.findPackInfo(code, true);
+        if (pack === null) {
+            return NextResponse.json(
+                { success: false, message: 'Pack no encontrado' },
+                { status: 404 }
+            );
+        }
+        if (await repositoryBuyPack.verfiedLikeForUser(user.user_id, pack.pack_id) !== null) {
+            return NextResponse.json(
+                { success: false, message: 'Ya compraste este pack' },
+                { status: 409 }
+            );
+        }
+
         const { data: dataOrder } = await paypalPost<IPayPalCheckOrder>('/v2/checkout/orders', {
             intent: 'CAPTURE',
             purchase_units: [
                 {
                     amount: {
-                        currency_code: 'USD', // Or your desired currency
-                        value: price
+                        currency_code: 'USD',
+                        // Precio de la BD, nunca el que manda el navegador (se podía cambiar y pagar menos).
+                        value: pack.price_list.toFixed(2)
                     }
                 }
             ]

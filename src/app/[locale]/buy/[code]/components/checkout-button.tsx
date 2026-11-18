@@ -6,10 +6,9 @@ import { useState } from "react";
 
 interface CheckoutButtonProps {
     code: string
-    price: number
     setThanks: (value: boolean) => void
 }
-export const CheckoutButton = ({ code, price, setThanks }: CheckoutButtonProps) => {
+export const CheckoutButton = ({ code, setThanks }: CheckoutButtonProps) => {
     const t = useTranslations('buy');
     const [error, setError] = useState<boolean>(false)
     const createOrder = async () => {
@@ -17,7 +16,7 @@ export const CheckoutButton = ({ code, price, setThanks }: CheckoutButtonProps) 
         const response = await fetch("/api/buy-pack/order-payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code: code, price: price })
+            body: JSON.stringify({ code: code })
         });
         const data = await response.json() as IResponse<IPayPalCheckOrder>;
         if (!response.ok || !data.success) {
@@ -34,8 +33,8 @@ export const CheckoutButton = ({ code, price, setThanks }: CheckoutButtonProps) 
         });
         const orderData = await response.json();
         if (orderData.success === true) {
+            // El modal de gracias lleva al pack (/pack/<code>) al continuar.
             setThanks(true)
-            //router.push(`/pack/${code}`)
         } else {
             setError(true)
         }
