@@ -81,6 +81,7 @@
       "aviso_exchange": "If you pay from an exchange (Binance, Bybit…), check the amount that will be received, not the one sent: its withdrawal fee may be taken from what you send and the payment would be incomplete.",
       "error": "We could not open the crypto payment. Please try again in a few seconds.",
       "titulo": "Cryptocurrency payment",
+      "pendiente_pago": "Complete the payment in the NOWPayments tab. This page will update by itself once it is confirmed; no need to reload it.",
       "esperando": "We are waiting for the network to confirm the payment. It can take from a few minutes up to an hour; you do not need to stay on this page.",
       "estado": "Payment status: {status}",
       "completado": "Payment confirmed! The pack is yours.",

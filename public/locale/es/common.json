@@ -81,6 +81,7 @@
       "aviso_exchange": "Si pagas desde un exchange (Binance, Bybit…), fíjate en el importe que se recibe, no en el que se envía: su comisión de retiro puede descontarse del envío y el pago quedaría incompleto.",
       "error": "No pudimos abrir el pago con cripto. Inténtalo de nuevo en unos segundos.",
       "titulo": "Pago con criptomonedas",
+      "pendiente_pago": "Completa el pago en la pestaña de NOWPayments. Esta página se actualizará sola cuando se confirme; no hace falta que la recargues.",
       "esperando": "Estamos esperando la confirmación de la red. Puede tardar desde unos minutos hasta una hora; no hace falta que te quedes en esta página.",
       "estado": "Estado del pago: {status}",
       "completado": "¡Pago confirmado! El pack ya es tuyo.",
