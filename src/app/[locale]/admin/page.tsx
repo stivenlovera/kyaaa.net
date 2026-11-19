@@ -13,6 +13,7 @@ import {
     FaTicket,
     FaHeadset,
     FaChartLine,
+    FaBitcoin,
 } from 'react-icons/fa6'
 import { AdminBreadcrumb } from './_components/breadcrumb'
 
@@ -29,6 +30,7 @@ const sections = [
     { href: '/admin/coupon', label: 'Cupones', icon: FaTicket },
     { href: '/admin/ticket', label: 'Tickets', icon: FaHeadset },
     { href: '/admin/sales', label: 'Ventas', icon: FaChartLine },
+    { href: '/admin/crypto', label: 'Pagos cripto', icon: FaBitcoin },
 ]
 
 export default async function Page() {
