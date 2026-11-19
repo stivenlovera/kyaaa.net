@@ -1,13 +1,15 @@
 import { repositoryAuth } from "@/src/app/repositories/auth.repository";
 import { repositoryPaymentOrder } from "@/src/app/repositories/payment-order.repository";
 import logger, { jsonLog } from "@/src/app/utils/logger";
-import { INowPaymentsIpn, NOWPAYMENTS_STATUS, verifyIpnSignature } from "@/src/app/utils/nowpayments";
+import { INowPaymentsIpn, NOWPAYMENTS_STATUS, paidRatio, partialTolerance, verifyIpnSignature } from "@/src/app/utils/nowpayments";
 import { sendPurchaseMails } from "@/src/app/utils/purchase-mails";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Webhook (IPN) de NOWPayments. Es público: lo que lo protege es la firma x-nowpayments-sig.
- * Puede llegar varias veces y en cualquier orden, así que todo es idempotente. Solo `finished` crea la compra.
+ * Puede llegar varias veces y en cualquier orden, así que todo es idempotente.
+ * Crea la compra con `finished`, o con `partially_paid` si lo recibido llega a la tolerancia
+ * (NOWPAYMENTS_PARTIAL_TOLERANCE, por defecto 95 %): p. ej. cuando un exchange descuenta su comisión de retiro.
  * Responde 200 a todo aviso con firma válida (aunque se ignore) para que NOWPayments no lo reintente.
  */
 export async function POST(request: NextRequest) {
@@ -36,11 +38,16 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: true }, { status: 200 });
         }
 
-        if (payload.payment_status !== NOWPAYMENTS_STATUS.FINISHED) {
+        const isFinished = payload.payment_status === NOWPAYMENTS_STATUS.FINISHED;
+        const isPartial = payload.payment_status === NOWPAYMENTS_STATUS.PARTIALLY_PAID;
+        // Fracción de lo pedido que llegó (en la misma cripto, así no depende del tipo de cambio). 1 si no se puede calcular.
+        const ratio = isPartial ? paidRatio(payload) : 1;
+
+        if (!isFinished && !(isPartial && ratio !== null && ratio >= partialTolerance())) {
             await repositoryPaymentOrder.updateStatus(order.payment_order_id, payload.payment_status, paymentId, raw);
-            if (payload.payment_status === NOWPAYMENTS_STATUS.PARTIALLY_PAID) {
-                // El comprador mandó menos de lo debido: no se da el pack; hay que resolverlo a mano desde el panel de NOWPayments.
-                logger.warn(`/api/buy-pack/nowpayments-ipn PAGO PARCIAL order=${order.payment_order_id} payment=${paymentId} ${jsonLog(payload)}`)
+            if (isPartial) {
+                // Falta demasiado: no se da el pack; hay que resolverlo a mano (que envíe la diferencia o devolverlo).
+                logger.warn(`/api/buy-pack/nowpayments-ipn PAGO PARCIAL order=${order.payment_order_id} payment=${paymentId} recibido=${ratio === null ? '?' : (ratio * 100).toFixed(1) + '%'} pay_amount=${payload.pay_amount} actually_paid=${payload.actually_paid} ${payload.pay_currency ?? ''}`)
             }
             return NextResponse.json({ success: true }, { status: 200 });
         }
@@ -53,7 +60,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: true }, { status: 200 });
         }
 
-        const result = await repositoryPaymentOrder.complete(order.payment_order_id, paymentId, raw, { gross: price, currency: order.currency });
+        // Bruto: lo que pagó realmente (en un parcial aceptado, la parte proporcional del precio).
+        const gross = Math.round(price * Math.min(ratio ?? 1, 1) * 100) / 100;
+        if (isPartial) {
+            logger.warn(`/api/buy-pack/nowpayments-ipn PARCIAL ACEPTADO order=${order.payment_order_id} payment=${paymentId} recibido=${((ratio ?? 1) * 100).toFixed(1)}% bruto=${gross} ${order.currency}`)
+        }
+
+        const result = await repositoryPaymentOrder.complete(order.payment_order_id, paymentId, raw, { gross, currency: order.currency });
         logger.info(`/api/buy-pack/nowpayments-ipn order=${order.payment_order_id} ${result}`)
         if (result === 'already_owned') {
             logger.warn(`/api/buy-pack/nowpayments-ipn COBRADO DOS VECES: el usuario ${order.user_id} ya tenía el pack ${order.pack_code} (order=${order.payment_order_id}, payment=${paymentId})`)
@@ -63,7 +76,7 @@ export async function POST(request: NextRequest) {
             if (buyer !== null) {
                 void sendPurchaseMails(buyer, order.pack_code, {
                     method: 'nowpayments',
-                    amount: price.toFixed(2),
+                    amount: gross.toFixed(2),
                     currency: order.currency,
                     reference: paymentId,
                 })
