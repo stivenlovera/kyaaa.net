@@ -1,5 +1,7 @@
 import { prisma } from "../utils/prisma";
 import { METHOD_BUY } from "../utils/method-buy";
+import { Prisma } from "../../../generated/prisma/client";
+import { AdminPaymentFilter, IAdminPaymentOrder, IAdminPaymentPage } from "../types/payment-order.types";
 
 // Intentos de pago de pasarelas asíncronas (NOWPayments). Ver data-base/migrations/2026-11-21_nowpayments.sql.
 
@@ -28,6 +30,50 @@ const SELECT = {
 const toOrder = <T extends { amount: { toNumber: () => number }, pack: { code: string } }>({ pack, ...row }: T) =>
     ({ ...row, pack_code: pack.code, amount: row.amount.toNumber() });
 
+const ADMIN_SELECT = {
+    payment_order_id: true,
+    amount: true,
+    currency: true,
+    status: true,
+    payment_id: true,
+    content: true,
+    completed_at: true,
+    create_at: true,
+    user: { select: { user_id: true, nick: true, email: true } },
+    pack: { select: { pack_id: true, code: true, name: true } },
+} satisfies Prisma.Payment_OrderSelect;
+
+const numberOrNull = (value: unknown): number | null => {
+    const n = Number(value);
+    return value == null || value === '' || !Number.isFinite(n) ? null : n;
+};
+
+/** Importes del último IPN guardado en content (JSON de NOWPayments). */
+export const paidFromContent = (content: string | null): IAdminPaymentOrder['paid'] => {
+    if (!content) return null;
+    try {
+        const ipn = JSON.parse(content);
+        return {
+            fiat: numberOrNull(ipn.actually_paid_at_fiat),
+            crypto: numberOrNull(ipn.actually_paid),
+            expected: numberOrNull(ipn.pay_amount),
+            pay_currency: typeof ipn.pay_currency === 'string' ? ipn.pay_currency : null,
+        };
+    } catch {
+        return null;
+    }
+};
+
+const adminWhere = (filter: AdminPaymentFilter): Prisma.Payment_OrderWhereInput => {
+    switch (filter) {
+        case 'partial': return { completed_at: null, status: { in: ['partially_paid', 'amount_mismatch'] } };
+        // Sin entregar, salvo los que nunca recibieron un aviso (invoices abiertos y abandonados).
+        case 'open': return { completed_at: null, payment_id: { not: null } };
+        case 'completed': return { completed_at: { not: null } };
+        default: return {};
+    }
+};
+
 export type CompleteResult = 'completed' | 'already_completed' | 'already_owned';
 
 export const repositoryPaymentOrder = {
@@ -54,6 +100,33 @@ export const repositoryPaymentOrder = {
             where: { payment_order_id, completed_at: null },
             data: { status, payment_id, content },
         });
+    },
+
+    findAdminPaginated: async (page: number, pageSize: number, filter: AdminPaymentFilter): Promise<IAdminPaymentPage> => {
+        const where = adminWhere(filter);
+        const [rows, total] = await Promise.all([
+            prisma.payment_Order.findMany({
+                where,
+                orderBy: { payment_order_id: 'desc' },
+                skip: (page - 1) * pageSize,
+                take: pageSize,
+                select: ADMIN_SELECT,
+            }),
+            prisma.payment_Order.count({ where }),
+        ]);
+        return {
+            orders: rows.map(({ content, amount, ...row }) => ({ ...row, amount: amount.toNumber(), paid: paidFromContent(content) })),
+            total,
+        };
+    },
+
+    /** Para entregar a mano desde /admin/crypto: payment_id y último JSON del IPN. */
+    findForDelivery: async (payment_order_id: number) => {
+        const row = await prisma.payment_Order.findUnique({
+            where: { payment_order_id },
+            select: { ...SELECT, payment_id: true, content: true },
+        });
+        return row ? { ...toOrder(row), payment_id: row.payment_id, content: row.content } : null;
     },
 
     /**
