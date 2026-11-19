@@ -75,3 +75,25 @@ Todos los botones usan `btn-primary` (texto/icono + texto) o `btn-primary-icon` 
 
 ### Otras utilidades (`src/app/utils/`)
 `s3-client.ts` (cliente S3 único; el proveedor sale solo del entorno — ojo: la variable se escribe `AWS_ENPOINT`; en R2 `AWS_REGION=auto`), `uploadS3.ts` + `sharp.ts` (procesamiento y subida de imágenes), `mail.ts` + `template-mails/` (plantillas HTML de nodemailer), `logger.ts` (archivos rotativos diarios de winston en `PATH_LOGS`), `jwt.ts`. Las imágenes de S3 se sirven con `next/image` (casi siempre `unoptimized`). Los buckets `public` y `static` se sirven por `public.kyaaa.net` y `static.kyaaa.net` (Custom Domains de R2); `private` **no debe tener dominio público**: solo se accede con URL firmada. `scripts/migrate-to-r2.sh` copia los buckets de Contabo a R2 con rclone.
+
+### Protección de imágenes contra hotlinking (Cloudflare WAF)
+R2 **no implementa bucket policies** (`GetBucketPolicy`/`PutBucketPolicy` responden `NotImplemented`), así que las policies por `aws:Referer` de la etapa en Contabo se eliminaron. La restricción vive ahora fuera del código, en una *Custom rule* del WAF de la zona `kyaaa.net` (Security → WAF → Custom rules, acción **Block**):
+
+```
+(http.host in {"public.kyaaa.net" "static.kyaaa.net"}
+ and not http.request.uri.path contains "/og/"
+ and not starts_with(http.request.uri.path, "/system/")
+ and http.referer ne ""
+ and not starts_with(http.referer, "https://kyaaa.net")
+ and not starts_with(http.referer, "https://www.kyaaa.net")
+ and not starts_with(http.referer, "https://ia.kyaaa.net")
+ and not starts_with(http.referer, "https://ia-kyaaa-net.caprover.stivenlovera.dev")
+ and not starts_with(http.referer, "http://localhost:3000")
+ and not starts_with(http.referer, "http://192.168.1.135:3000"))
+```
+
+- Bloquea con 403 cuando otra web incrusta imágenes de `public` o `static`. Las peticiones **sin** Referer pasan (abrir la URL directa, apps, clientes de correo). El WAF actúa antes del caché, así que también bloquea los `HIT`.
+- Excepciones: `*/og/*` (imágenes `og:image` para los rastreadores de redes sociales) y `static.kyaaa.net/system/*` (assets que se usan fuera del sitio, p. ej. el logo de los correos en `template-mails/email-layout.ts`, porque algunos webmails mandan su propio dominio como Referer).
+- **Al añadir funcionalidades:** una imagen que se deba ver fuera de kyaaa.net (correos, embeds, OG, otro dominio o subdominio nuevo) va en `static` bajo `/system/` o necesita una excepción nueva en la regla; un dominio nuevo del sitio debe sumarse a la lista de Referers permitidos. Usa `starts_with` y no `contains` (con `contains "kyaaa.net"` bastaría `https://evil.com/?kyaaa.net`). No cambies la `Referrer-Policy` del sitio a `no-referrer`: las imágenes dejarían de llevar Referer (pasarían igual, pero la protección no serviría).
+- El acceso por `r2.dev` debe seguir **desactivado** en los buckets; si no, esa URL se salta el WAF.
+- Comprobación rápida: `curl -s -o /dev/null -w "%{http_code}" -H "Referer: https://evil.com/" https://public.kyaaa.net/<code>/medium/001.avif` → 403; con `Referer: https://kyaaa.net/` → 200.
