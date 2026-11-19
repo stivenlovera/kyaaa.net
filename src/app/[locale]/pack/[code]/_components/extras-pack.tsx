@@ -1,6 +1,7 @@
 'use client'
 import { useAuth } from '@/src/providers/AuthContext';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { formatPrice } from '@/src/app/utils/money';
 import React, { useState } from 'react'
 import { FaDownload, FaHeart, FaStar } from 'react-icons/fa'
 import { DialogRegisterNow } from './dialog-register-now';
@@ -37,6 +38,9 @@ export const ExtraPack = ({
     register_image
 }: IExtraPackProps) => {
     const t = useTranslations('pack-info');
+    const locale = useLocale()
+    // Mismo formato que el resumen de /buy: 7,00 $ (es) / $7.00 (en).
+    const priceLabel = formatPrice(price, locale)
     const { user } = useAuth()
     const { showToast } = useToast()
     const [like, setLike] = useState(user_like)
@@ -165,7 +169,7 @@ export const ExtraPack = ({
                                 disabled={loading}
                                 onClick={() => { setOpenDialogRegisterNow(true) }}
                             >
-                                {t('extra-pack.comprar')} ${price}
+                                {t('extra-pack.comprar')} {priceLabel}
                             </button>
                         ) : (
                             <Link
@@ -174,7 +178,7 @@ export const ExtraPack = ({
                                 aria-disabled={loading}
                                 onClick={(e) => { if (loading) e.preventDefault() }}
                             >
-                                {t('extra-pack.comprar')} ${price}
+                                {t('extra-pack.comprar')} {priceLabel}
                             </Link>
                         )}
                     </div>
