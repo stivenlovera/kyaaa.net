@@ -124,14 +124,15 @@ export const PayPack = ({ pack, totalImages }: PayPackProps) => {
 
                     {/* Pago */}
                     <p className="text-xs text-neutral-400 pt-4 pb-2">{t('nota')}</p>
+                    {/* Cripto primero, luego PayPal. */}
+                    <div className="pb-6 mb-6 border-b border-neutral-700">
+                        <CryptoButton code={pack.code} />
+                    </div>
                     <div className="bg-neutral-200 rounded-sm p-2">
                         <CheckoutButton
                             code={pack.code}
                             setThanks={setThanks}
                         ></CheckoutButton>
-                    </div>
-                    <div className="pt-3">
-                        <CryptoButton code={pack.code} />
                     </div>
                 </div>
                 <DialogThanks
