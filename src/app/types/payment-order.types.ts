@@ -1,7 +1,7 @@
 // Pagos con cripto (tabla payment_order) para /admin/crypto.
 
-/** Filtros de la lista: parciales sin entregar (por defecto), todos los sin entregar, entregados o todos. */
-export const ADMIN_PAYMENT_FILTERS = ['partial', 'open', 'completed', 'all'] as const;
+/** Filtros de la lista: parciales sin entregar (por defecto), todos los sin entregar, entregados, devueltos o todos. */
+export const ADMIN_PAYMENT_FILTERS = ['partial', 'open', 'completed', 'refunded', 'all'] as const;
 export type AdminPaymentFilter = typeof ADMIN_PAYMENT_FILTERS[number];
 
 export const isAdminPaymentFilter = (value: unknown): value is AdminPaymentFilter =>
@@ -27,6 +27,8 @@ export interface IAdminPaymentOrder {
         pay_currency: string | null
     } | null
     completed_at: Date | null
+    /** Devolución marcada a mano en /admin/crypto (null si no se devolvió así). */
+    refund: { txid: string, note: string | null, at: Date } | null
     create_at: Date
 }
 

@@ -37,6 +37,11 @@ export async function POST(request: NextRequest) {
             logger.error(`/api/buy-pack/nowpayments-ipn orden desconocida ${jsonLog(payload)}`)
             return NextResponse.json({ success: true }, { status: 200 });
         }
+        if (order.refunded_at !== null) {
+            // Ya se devolvió a mano desde /admin/crypto: no se entrega el pack. Si el comprador envió más fondos, hay que revisarlo.
+            logger.warn(`/api/buy-pack/nowpayments-ipn AVISO SOBRE ORDEN DEVUELTA order=${order.payment_order_id} payment=${paymentId} status=${payload.payment_status} ${jsonLog(payload)}`)
+            return NextResponse.json({ success: true }, { status: 200 });
+        }
 
         const isFinished = payload.payment_status === NOWPAYMENTS_STATUS.FINISHED;
         const isPartial = payload.payment_status === NOWPAYMENTS_STATUS.PARTIALLY_PAID;

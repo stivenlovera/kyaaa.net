@@ -446,6 +446,9 @@ model Payment_Order {
   payment_id       String?    @db.VarChar(100)
   content          String?    @db.Text
   completed_at     DateTime?
+  refund_txid      String?    @db.VarChar(150)
+  refund_note      String?    @db.VarChar(250)
+  refunded_at      DateTime?
   create_at        DateTime   @default(now())
   update_at        DateTime   @updatedAt
 
