@@ -35,7 +35,7 @@ export interface INowPaymentsInvoiceRequest {
     ipn_callback_url: string
     success_url: string
     cancel_url: string
-    /** Fija el tipo de cambio mientras el pago está abierto: el importe en cripto no cambia. */
+    /** Fija el tipo de cambio mientras el pago está abierto. No se usa: sube mucho el mínimo (ver nowpayments-invoice). */
     is_fixed_rate?: boolean
 }
 

@@ -44,8 +44,10 @@ export async function POST(request: NextRequest) {
             ipn_callback_url: `${site}/api/buy-pack/nowpayments-ipn`,
             success_url: `${site}${prefix}/buy/${pack.code}/crypto?order=${order.payment_order_id}`,
             cancel_url: `${site}${prefix}/buy/${pack.code}`,
-            // Sin tipo fijo, si el comprador tarda en enviar, lo que copió puede quedarse corto (partially_paid).
-            is_fixed_rate: true,
+            // Sin is_fixed_rate: el tipo fijo sube el mínimo de NOWPayments a ~7 USD en todas las redes
+            // (USDT BSC → USDT BSC: 0.07 USD sin él, 6.72 con él) y los packs de 5 USD fallaban con
+            // "amountTo is too small". Los desfases pequeños los cubren la tolerancia del webhook y la
+            // "Cobertura del pago" del panel de NOWPayments.
         });
         await repositoryPaymentOrder.setExternalId(order.payment_order_id, String(invoice.id));
         logger.info(`/api/buy-pack/nowpayments-invoice POST order=${order.payment_order_id} invoice=${invoice.id}`)
