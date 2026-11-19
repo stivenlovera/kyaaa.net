@@ -5,6 +5,7 @@
 // - NOWPAYMENTS_API_URL: https://api.nowpayments.io (sin /v1).
 // - NOWPAYMENTS_API_KEY: cabecera x-api-key.
 // - NOWPAYMENTS_IPN_SECRET: firma de los webhooks (cabecera x-nowpayments-sig).
+// - NOWPAYMENTS_PARTIAL_TOLERANCE (opcional): % mínimo recibido para aceptar un `partially_paid`. Por defecto 95.
 //
 // La firma sigue el SDK oficial (NowPaymentsIO/nowpayments-sdk-nodejs, src/ipn.js): HMAC-SHA512 con el
 // IPN secret sobre JSON.stringify del cuerpo con las claves ordenadas recursivamente.
@@ -34,6 +35,8 @@ export interface INowPaymentsInvoiceRequest {
     ipn_callback_url: string
     success_url: string
     cancel_url: string
+    /** Fija el tipo de cambio mientras el pago está abierto: el importe en cripto no cambia. */
+    is_fixed_rate?: boolean
 }
 
 export interface INowPaymentsInvoice {
@@ -57,6 +60,25 @@ export interface INowPaymentsIpn {
     pay_currency?: string
     outcome_amount?: number | string
     outcome_currency?: string
+}
+
+const DEFAULT_PARTIAL_TOLERANCE = 95;
+
+/** Fracción mínima (0-1) de lo pedido que tiene que llegar para aceptar un pago parcial. */
+export function partialTolerance(): number {
+    const percent = Number(process.env.NOWPAYMENTS_PARTIAL_TOLERANCE);
+    const value = Number.isFinite(percent) && percent > 0 && percent <= 100 ? percent : DEFAULT_PARTIAL_TOLERANCE;
+    return value / 100;
+}
+
+/** Fracción de pay_amount que llegó (actually_paid / pay_amount, ambos en la cripto elegida). null si faltan datos. */
+export function paidRatio(payload: INowPaymentsIpn): number | null {
+    const expected = Number(payload.pay_amount);
+    const paid = Number(payload.actually_paid);
+    if (!Number.isFinite(expected) || !Number.isFinite(paid) || expected <= 0) {
+        return null;
+    }
+    return paid / expected;
 }
 
 /** Resumen seguro de un error de NOWPayments: sin cabeceras de la petición, que llevan la API key. */

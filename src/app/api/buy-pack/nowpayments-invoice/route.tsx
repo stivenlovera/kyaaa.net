@@ -44,6 +44,8 @@ export async function POST(request: NextRequest) {
             ipn_callback_url: `${site}/api/buy-pack/nowpayments-ipn`,
             success_url: `${site}${prefix}/buy/${pack.code}/crypto?order=${order.payment_order_id}`,
             cancel_url: `${site}${prefix}/buy/${pack.code}`,
+            // Sin tipo fijo, si el comprador tarda en enviar, lo que copió puede quedarse corto (partially_paid).
+            is_fixed_rate: true,
         });
         await repositoryPaymentOrder.setExternalId(order.payment_order_id, String(invoice.id));
         logger.info(`/api/buy-pack/nowpayments-invoice POST order=${order.payment_order_id} invoice=${invoice.id}`)

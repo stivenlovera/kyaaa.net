@@ -30,7 +30,9 @@ export const CryptoStatus = ({ orderId, code, name, thanksImage }: CryptoStatusP
     const [state, setState] = useState<IStatus | null>(null);
     const [notFound, setNotFound] = useState(false);
 
-    const done = state !== null && (state.completed || FAILED.includes(state.status) || state.status === 'partially_paid');
+    // Un pago parcial sigue consultándose: si el comprador envía la diferencia pasa a `finished`.
+    const done = state !== null && (state.completed || FAILED.includes(state.status));
+    const partial = state !== null && !state.completed && state.status === 'partially_paid';
 
     useEffect(() => {
         if (done || notFound) {
@@ -70,7 +72,7 @@ export const CryptoStatus = ({ orderId, code, name, thanksImage }: CryptoStatusP
 
                 {!notFound && state?.completed && <p className="text-green-500 font-bold">{t('completado')}</p>}
 
-                {!notFound && state !== null && !state.completed && state.status === 'partially_paid' && (
+                {!notFound && partial && (
                     <p role="alert" className="text-red-500">{t('parcial')}</p>
                 )}
 
@@ -78,7 +80,7 @@ export const CryptoStatus = ({ orderId, code, name, thanksImage }: CryptoStatusP
                     <p role="alert" className="text-red-500">{t('fallido', { status: state.status })}</p>
                 )}
 
-                {!notFound && !done && (
+                {!notFound && !done && !partial && (
                     <div className="grid gap-2" aria-live="polite">
                         <div className="h-1 w-full overflow-hidden rounded bg-neutral-800">
                             <div className="h-full w-1/3 animate-pulse rounded bg-neutral-300" />
@@ -90,7 +92,7 @@ export const CryptoStatus = ({ orderId, code, name, thanksImage }: CryptoStatusP
 
                 <div className="flex flex-wrap gap-2">
                     <Link href={`${prefix}/pack/${code}`} className="btn-primary">{t('volver')}</Link>
-                    {(notFound || (done && !state?.completed)) && (
+                    {(notFound || partial || (done && !state?.completed)) && (
                         <Link href={support} className="btn-primary">{t('reportar')}</Link>
                     )}
                 </div>

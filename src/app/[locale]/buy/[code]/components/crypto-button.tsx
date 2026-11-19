@@ -44,6 +44,7 @@ export const CryptoButton = ({ code }: CryptoButtonProps) => {
                 {loading ? t('abriendo') : t('boton')}
             </button>
             <p className="text-center text-xs text-neutral-400">{t('aviso')}</p>
+            <p className="text-center text-xs text-amber-600">{t('aviso_exchange')}</p>
             {error && (
                 <p role="alert" className="text-center text-sm text-red-500">{t('error')}</p>
             )}
