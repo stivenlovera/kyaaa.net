@@ -40,14 +40,14 @@ export async function POST(request: NextRequest) {
 
         const isFinished = payload.payment_status === NOWPAYMENTS_STATUS.FINISHED;
         const isPartial = payload.payment_status === NOWPAYMENTS_STATUS.PARTIALLY_PAID;
-        // Fracción de lo pedido que llegó (en la misma cripto, así no depende del tipo de cambio). 1 si no se puede calcular.
+        // Fracción del precio que pagó el comprador (ver paidRatio). 1 si no es un parcial.
         const ratio = isPartial ? paidRatio(payload) : 1;
 
         if (!isFinished && !(isPartial && ratio !== null && ratio >= partialTolerance())) {
             await repositoryPaymentOrder.updateStatus(order.payment_order_id, payload.payment_status, paymentId, raw);
             if (isPartial) {
                 // Falta demasiado: no se da el pack; hay que resolverlo a mano (que envíe la diferencia o devolverlo).
-                logger.warn(`/api/buy-pack/nowpayments-ipn PAGO PARCIAL order=${order.payment_order_id} payment=${paymentId} recibido=${ratio === null ? '?' : (ratio * 100).toFixed(1) + '%'} pay_amount=${payload.pay_amount} actually_paid=${payload.actually_paid} ${payload.pay_currency ?? ''}`)
+                logger.warn(`/api/buy-pack/nowpayments-ipn PAGO PARCIAL order=${order.payment_order_id} payment=${paymentId} recibido=${ratio === null ? '?' : (ratio * 100).toFixed(1) + '%'} pay_amount=${payload.pay_amount} actually_paid=${payload.actually_paid} ${payload.pay_currency ?? ''} actually_paid_at_fiat=${payload.actually_paid_at_fiat} price_amount=${payload.price_amount}`)
             }
             return NextResponse.json({ success: true }, { status: 200 });
         }

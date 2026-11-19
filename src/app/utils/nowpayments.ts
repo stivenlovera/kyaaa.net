@@ -57,6 +57,8 @@ export interface INowPaymentsIpn {
     price_currency: string
     pay_amount?: number | string
     actually_paid?: number | string
+    /** Lo recibido convertido a la moneda del precio (USD). */
+    actually_paid_at_fiat?: number | string
     pay_currency?: string
     outcome_amount?: number | string
     outcome_currency?: string
@@ -71,8 +73,18 @@ export function partialTolerance(): number {
     return value / 100;
 }
 
-/** Fracción de pay_amount que llegó (actually_paid / pay_amount, ambos en la cripto elegida). null si faltan datos. */
+/**
+ * Fracción del precio del pack que pagó el comprador: actually_paid_at_fiat / price_amount.
+ * No se mide contra pay_amount porque NOWPayments le suma sus comisiones de red (p. ej. en USDT ERC20 pidió
+ * 7.48 USDT por un pack de 7 USD), y un pago de 6.85 USD quedaba en el 92 % y no se entregaba.
+ * Si falta el dato en fiat, se usa actually_paid / pay_amount (en la cripto). null si no se puede calcular.
+ */
 export function paidRatio(payload: INowPaymentsIpn): number | null {
+    const fiat = Number(payload.actually_paid_at_fiat);
+    const price = Number(payload.price_amount);
+    if (payload.actually_paid_at_fiat != null && Number.isFinite(fiat) && Number.isFinite(price) && price > 0) {
+        return fiat / price;
+    }
     const expected = Number(payload.pay_amount);
     const paid = Number(payload.actually_paid);
     if (!Number.isFinite(expected) || !Number.isFinite(paid) || expected <= 0) {
