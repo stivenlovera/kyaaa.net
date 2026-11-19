@@ -41,9 +41,9 @@ export default async function Page({ searchParams }: AdminSalesPageProps) {
     const exportHref = `/api/sales/export?${new URLSearchParams(query).toString()}`
 
     const cards = [
-        { label: 'Ventas (PayPal)', value: String(summary.sales) },
+        { label: 'Ventas pagadas', value: String(summary.sales) },
         { label: 'Bruto', value: money(summary.gross), hint: 'Lo que pagaron los compradores' },
-        { label: 'Comisión PayPal', value: money(summary.fee) },
+        { label: 'Comisión', value: money(summary.fee), hint: 'PayPal; la de NOWPayments no se incluye' },
         { label: 'Neto', value: money(summary.net), hint: 'Lo que te queda' },
         { label: 'Cupones canjeados', value: String(summary.coupons) },
     ]
@@ -120,7 +120,7 @@ export default async function Page({ searchParams }: AdminSalesPageProps) {
                                             {sale.user.nick}
                                             <span className='block text-xs text-neutral-400'>{sale.user.email}</span>
                                         </td>
-                                        <td className='p-2 whitespace-nowrap'>{sale.method === 'coupon' ? 'Cupón' : 'PayPal'}</td>
+                                        <td className='p-2 whitespace-nowrap'>{sale.method === 'coupon' ? 'Cupón' : sale.method === 'nowpayments' ? 'Cripto' : 'PayPal'}</td>
                                         <td className='p-2 text-right tabular-nums'>{money(sale.gross)}</td>
                                         <td className='p-2 text-right tabular-nums text-neutral-400'>{money(sale.fee)}</td>
                                         <td className='p-2 text-right tabular-nums font-bold'>{money(sale.net)}</td>

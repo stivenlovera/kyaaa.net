@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
             s.pack.name,
             s.user.nick,
             s.user.email,
-            s.method === 'coupon' ? 'cupon' : 'paypal',
+            s.method === 'coupon' ? 'cupon' : s.method,
             s.gross.toFixed(2),
             s.fee.toFixed(2),
             s.net.toFixed(2),

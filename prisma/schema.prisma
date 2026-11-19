@@ -43,6 +43,7 @@ model Pack {
   pack_languages    Pack_language[]
   participate_packs Participate_Pack[]
   buyPacks         Buy_Pack[]
+  paymentOrders    Payment_Order[]
   coupons           Coupon[]
   tickets           Ticket[]
   favoritePacks     Favorite_Pack[]
@@ -311,6 +312,7 @@ model User {
   likePacks      Like_Pack[]
   favoritePacks  Favorite_Pack[]
   buyPacks       Buy_Pack[]
+  paymentOrders  Payment_Order[]
   coupons        Coupon[]
   tickets        Ticket[]
   ticketMessages Ticket_Message[]
@@ -400,6 +402,7 @@ model Method_Buy {
   create_at     DateTime   @default(now())
   update_at     DateTime   @updatedAt
   buyPacks      Buy_Pack[]
+  paymentOrders Payment_Order[]
 
   @@id([method_buy_id])
   @@map(name: "method_buy")
@@ -424,6 +427,33 @@ model Buy_Pack {
   @@id([user_id, pack_id, method_buy_id])
   @@index([create_at])
   @@map(name: "buy_pack")
+}
+
+// Intento de pago de una pasarela asíncrona (NOWPayments): se crea al abrir el pago y el webhook lo
+// completa. Ver data-base/migrations/2026-11-21_nowpayments.sql y payment-order.repository.ts.
+model Payment_Order {
+  payment_order_id Int        @default(autoincrement())
+  user             User       @relation(fields: [user_id], references: [user_id])
+  user_id          Int
+  pack             Pack       @relation(fields: [pack_id], references: [pack_id])
+  pack_id          Int
+  method_buy       Method_Buy @relation(fields: [method_buy_id], references: [method_buy_id])
+  method_buy_id    Int
+  amount           Decimal    @db.Decimal(10, 2)
+  currency         String     @db.Char(3)
+  status           String     @default("created") @db.VarChar(30)
+  external_id      String?    @db.VarChar(100)
+  payment_id       String?    @db.VarChar(100)
+  content          String?    @db.Text
+  completed_at     DateTime?
+  create_at        DateTime   @default(now())
+  update_at        DateTime   @updatedAt
+
+  @@id([payment_order_id])
+  @@index([user_id])
+  @@index([pack_id])
+  @@index([method_buy_id])
+  @@map(name: "payment_order")
 }
 
 // Código canjeable por un pack (uno por pack, de un solo uso, con caducidad). Ver coupon.repository.ts.

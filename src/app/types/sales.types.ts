@@ -1,6 +1,6 @@
 // Ventas para /admin/sales (tabla buy_pack). Importes en número con 2 decimales.
 
-export const SALE_METHODS = ['paypal', 'coupon'] as const;
+export const SALE_METHODS = ['paypal', 'nowpayments', 'coupon'] as const;
 export type SaleMethod = typeof SALE_METHODS[number];
 
 export const isSaleMethod = (value: unknown): value is SaleMethod =>
@@ -21,12 +21,12 @@ export interface ISale {
     method: SaleMethod
     /** Lo que pagó el comprador. */
     gross: number
-    /** Comisión de PayPal. */
+    /** Comisión de la pasarela (0 si se desconoce, como en NOWPayments). */
     fee: number
     /** Lo que queda (buy_pack.price). */
     net: number
     currency: string
-    /** ID de la captura de PayPal o código del cupón. */
+    /** ID de la captura de PayPal, del pago de NOWPayments o código del cupón. */
     transaction: string
     create_at: Date
 }
@@ -37,7 +37,7 @@ export interface ISalesPage {
 }
 
 export interface ISalesSummary {
-    /** Ventas con PayPal. */
+    /** Ventas pagadas (PayPal y NOWPayments). */
     sales: number
     /** Cupones canjeados. */
     coupons: number

@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import moment from "moment";
 import { CheckoutButton } from "./checkout-button";
+import { CryptoButton } from "./crypto-button";
 import { useState } from "react";
 import { DialogThanks } from "./dialog-thanks";
 import { useAuth } from "@/src/providers/AuthContext";
@@ -128,6 +129,9 @@ export const PayPack = ({ pack, totalImages }: PayPackProps) => {
                             code={pack.code}
                             setThanks={setThanks}
                         ></CheckoutButton>
+                    </div>
+                    <div className="pt-3">
+                        <CryptoButton code={pack.code} />
                     </div>
                 </div>
                 <DialogThanks

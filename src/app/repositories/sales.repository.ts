@@ -23,7 +23,14 @@ type SaleRow = Prisma.Buy_PackGetPayload<{ select: typeof SALE_SELECT }>;
 
 const num = (value: Prisma.Decimal | null | undefined): number => value == null ? 0 : Number(value);
 
-const methodOf = (method_buy_id: number): SaleMethod => method_buy_id === METHOD_BUY.COUPON ? 'coupon' : 'paypal';
+const METHOD_IDS: Record<SaleMethod, number> = {
+    paypal: METHOD_BUY.PAYPAL,
+    nowpayments: METHOD_BUY.NOWPAYMENTS,
+    coupon: METHOD_BUY.COUPON,
+};
+
+const methodOf = (method_buy_id: number): SaleMethod =>
+    (Object.keys(METHOD_IDS) as SaleMethod[]).find((m) => METHOD_IDS[m] === method_buy_id) ?? 'paypal';
 
 const toSale = (row: SaleRow): ISale => {
     const net = num(row.price);
@@ -43,7 +50,7 @@ const toSale = (row: SaleRow): ISale => {
 const whereOf = ({ from, to, pack_id, method }: ISalesFilter): Prisma.Buy_PackWhereInput => ({
     ...(from || to ? { create_at: { ...(from ? { gte: from } : {}), ...(to ? { lt: to } : {}) } } : {}),
     ...(pack_id !== undefined ? { pack_id } : {}),
-    ...(method ? { method_buy_id: method === 'coupon' ? METHOD_BUY.COUPON : METHOD_BUY.PAYPAL } : {}),
+    ...(method ? { method_buy_id: METHOD_IDS[method] } : {}),
 });
 
 /** Máximo de filas del CSV: de sobra para un periodo; evita cargar toda la tabla por error. */
@@ -104,9 +111,11 @@ export const repositorySales = {
 
     /** Packs con más ventas en el periodo (sin contar cupones). */
     topPacks: async (filter: ISalesFilter, limit = 5): Promise<ITopPack[]> => {
+        const where = whereOf(filter);
         const groups = await prisma.buy_Pack.groupBy({
             by: ['pack_id'],
-            where: { ...whereOf(filter), method_buy_id: METHOD_BUY.PAYPAL },
+            // Con filtro de método se respeta; sin él, todas las ventas pagadas.
+            where: filter.method ? where : { ...where, method_buy_id: { not: METHOD_BUY.COUPON } },
             _count: { _all: true },
             _sum: { gross: true },
             orderBy: [{ _count: { pack_id: 'desc' } }, { _sum: { gross: 'desc' } }],
