@@ -9,6 +9,7 @@ import { CryptoButton } from "./crypto-button";
 import { useState } from "react";
 import { DialogThanks } from "./dialog-thanks";
 import { useAuth } from "@/src/providers/AuthContext";
+import { formatPrice, PRICE_CURRENCY } from "@/src/app/utils/money";
 
 interface PayPackProps {
     pack: IPackInfo
@@ -16,7 +17,7 @@ interface PayPackProps {
     totalImages: number
 }
 
-const CURRENCY = 'USD';
+const CURRENCY = PRICE_CURRENCY;
 
 // Resumen de la compra con formato de factura: un solo concepto (el pack) y totales con dos decimales.
 export const PayPack = ({ pack, totalImages }: PayPackProps) => {
@@ -30,14 +31,8 @@ export const PayPack = ({ pack, totalImages }: PayPackProps) => {
         intent: "capture",
     };
 
-    // $5.00 (en) / $5,00 (es): siempre dos decimales; la moneda se indica aparte.
-    const money = (value: number) => new Intl.NumberFormat(locale, {
-        style: 'currency',
-        currency: CURRENCY,
-        currencyDisplay: 'narrowSymbol',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(Number(value));
+    // $7.00 (en) / 7,00 $ (es): siempre dos decimales; la moneda se indica aparte.
+    const money = (value: number) => formatPrice(value, locale, CURRENCY);
 
     const price = Number(pack.price_list);
     const urlImage = pack.portada.url
