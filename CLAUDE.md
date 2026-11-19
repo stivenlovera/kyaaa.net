@@ -51,6 +51,14 @@ Códigos canjeables por un pack concreto, de un solo uso y con caducidad (pensad
 ### Correos de compra
 Tras capturar un pago (`/api/buy-pack/order-capture`) o canjear un cupón (`/api/coupon/redeem`) se envía al comprador una confirmación y, si está definida la variable de servidor `SALES_EMAIL`, un aviso de venta (`src/app/utils/purchase-mails.ts`, sin await). El correo muestra el importe bruto (`capture.amount`). En `buy_pack`, `price` es el neto (tras la comisión de PayPal), `gross` lo que pagó el comprador, `fee` la comisión y `currency` la moneda; en los cupones `price`, `gross` y `fee` son 0. `order-capture` responde `success: false` si PayPal no devuelve una captura.
 
+### Pagos con cripto (NOWPayments)
+Segundo botón en `/buy/<code>` (`crypto-button.tsx`). Usa la página de pago alojada (*invoice*) y, a diferencia de PayPal, se confirma de forma asíncrona:
+1. `POST /api/buy-pack/nowpayments-invoice` crea una fila en `payment_order` (usuario, pack, precio de la BD) y el invoice con `order_id = payment_order_id`; el navegador va a `invoice_url`.
+2. NOWPayments llama al webhook público `POST /api/buy-pack/nowpayments-ipn`, que verifica `x-nowpayments-sig` (HMAC-SHA512 del JSON con claves ordenadas, `src/app/utils/nowpayments.ts`), guarda el estado y, solo con `finished` y si el importe/moneda coinciden con la orden, crea la fila de `buy_pack` (`method_buy_id = METHOD_BUY.NOWPAYMENTS` = 3) y envía los correos. Es idempotente (`repositoryPaymentOrder.complete`, en transacción); `partially_paid` no da el pack y queda en el log para resolverlo a mano.
+3. La vuelta (`/buy/<code>/crypto?order=<id>`) consulta `GET /api/buy-pack/nowpayments-status` cada 10 s.
+
+En `buy_pack` de NOWPayments `price = gross` y `fee` NULL (la comisión no llega en USD). Variables de servidor: `NOWPAYMENTS_API_URL` (`https://api.nowpayments.io`), `NOWPAYMENTS_API_KEY`, `NOWPAYMENTS_IPN_SECRET`; las URLs de vuelta y del webhook salen de `URL_BASE`. Si Cloudflare tiene Bot Fight Mode/WAF, el webhook necesita una excepción. Esquema en `data-base/migrations/2026-11-21_nowpayments.sql`.
+
 ### Ventas (`/admin/sales`)
 Resumen (ventas, bruto, comisión, neto, cupones), packs más vendidos y tabla paginada de `buy_pack`, filtrados por rango de fechas (por defecto el mes en curso; `?all=1` sin límite), pack y método. `GET /api/sales/export` descarga el CSV con los mismos filtros. El filtro se interpreta en `src/app/utils/sales-filter.ts` (fechas en hora del servidor) y las consultas están en `repositorySales`. Las ventas anteriores a la migración `2026-11-20_buy_pack_gross_fee.sql` se rellenaron desde el JSON de PayPal; si alguna quedó con `gross` NULL, se muestra el neto como bruto.
 

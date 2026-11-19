@@ -1,15 +1,15 @@
 import { detailsBox, emailLayout, escapeHtml, EMAIL_COLOR, formatEmailDate, paragraph, siteUrl } from './email-layout'
 
-// Correos de compra: confirmación al comprador (PayPal o cupón) y aviso de venta (SALES_EMAIL).
+// Correos de compra: confirmación al comprador (PayPal, cripto o cupón) y aviso de venta (SALES_EMAIL).
 
 export interface PurchaseMailData {
   pack: { code: string, name: string, image: string | null }
-  /** 'paypal': importe y transacción de PayPal; 'coupon': código canjeado. */
-  method: 'paypal' | 'coupon'
-  /** Importe pagado (bruto), p. ej. "4.99" (solo PayPal). */
+  /** 'paypal' / 'nowpayments': importe y transacción; 'coupon': código canjeado. */
+  method: 'paypal' | 'nowpayments' | 'coupon'
+  /** Importe pagado (bruto), p. ej. "4.99" (no en cupones). */
   amount?: string
   currency?: string
-  /** ID de la captura de PayPal o código del cupón (ya formateado). */
+  /** ID de la captura de PayPal, id del pago de NOWPayments o código del cupón (ya formateado). */
   reference: string
   date?: Date
 }
@@ -26,9 +26,9 @@ const formatAmount = (amount: string | undefined, currency: string | undefined):
 
 const rows = (data: PurchaseMailData): [string, string][] => [
   ['Pack', `${escapeHtml(data.pack.name)} (${escapeHtml(data.pack.code)})`],
-  ...(data.method === 'paypal'
-    ? [['Importe', formatAmount(data.amount, data.currency)], ['Pago', 'PayPal'], ['Transacción', escapeHtml(data.reference)]] as [string, string][]
-    : [['Cupón', escapeHtml(data.reference)]] as [string, string][]),
+  ...(data.method === 'coupon'
+    ? [['Cupón', escapeHtml(data.reference)]] as [string, string][]
+    : [['Importe', formatAmount(data.amount, data.currency)], ['Pago', data.method === 'paypal' ? 'PayPal' : 'Criptomonedas (NOWPayments)'], ['Transacción', escapeHtml(data.reference)]] as [string, string][]),
   ['Fecha', formatEmailDate(data.date)],
 ]
 
@@ -48,7 +48,7 @@ export const purchaseConfirmationHtml = (name: string, data: PurchaseMailData): 
       detailsBox(rows(data)) +
       paragraph('Puedes ver todas sus páginas y descargarlo completo desde la página del pack. Lo encontrarás siempre en ' + link(siteUrl('/my-purchases'), '"Mis compras"') + '.') +
       paragraph(`¿Algún problema con ${isCoupon ? 'el canje' : 'tu compra'}? ${link(supportUrl, 'Repórtalo aquí')} y te ayudaremos.`) +
-      (isCoupon ? '' : paragraph(`<span style="color:${EMAIL_COLOR.muted};font-size:12px;">PayPal te envía además su propio recibo del pago.</span>`)),
+      (data.method !== 'paypal' ? '' : paragraph(`<span style="color:${EMAIL_COLOR.muted};font-size:12px;">PayPal te envía además su propio recibo del pago.</span>`)),
     button: { text: 'Ver pack y descargar', url: siteUrl(`/pack/${data.pack.code}`) },
     reason: isCoupon
       ? 'Lo recibes porque canjeaste un cupón en kyaaa.'

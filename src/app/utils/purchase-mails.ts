@@ -3,7 +3,7 @@ import logger, { jsonLog } from "./logger";
 import { sendEmail } from "./mail";
 import { PurchaseMailData, purchaseConfirmationHtml, saleStaffHtml } from "./template-mails/notification-purchase-html";
 
-// Correos tras una compra (PayPal) o un canje de cupón. Se llaman sin await: la compra ya está guardada y
+// Correos tras una compra (PayPal o NOWPayments) o un canje de cupón. Se llaman sin await: la compra ya está guardada y
 // un fallo del SMTP no debe afectar a la respuesta; los errores quedan en el log.
 
 interface Buyer {

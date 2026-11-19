@@ -89,6 +89,7 @@ export const SalesFilters = ({ values, packs, presets }: SalesFiltersProps) => {
                     >
                         <option value=''>Todos</option>
                         <option value='paypal'>PayPal</option>
+                        <option value='nowpayments'>Cripto (NOWPayments)</option>
                         <option value='coupon'>Cupón</option>
                     </select>
                 </div>
