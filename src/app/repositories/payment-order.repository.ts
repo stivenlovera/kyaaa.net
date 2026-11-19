@@ -15,6 +15,8 @@ export interface IPaymentOrder {
     currency: string
     status: string
     completed_at: Date | null
+    /** Devolución marcada a mano: la orden ya no se completa aunque lleguen más avisos. */
+    refunded_at: Date | null
 }
 
 const SELECT = {
@@ -25,6 +27,7 @@ const SELECT = {
     currency: true,
     status: true,
     completed_at: true,
+    refunded_at: true,
     pack: { select: { code: true } },
 } as const;
 
@@ -39,6 +42,9 @@ const ADMIN_SELECT = {
     payment_id: true,
     content: true,
     completed_at: true,
+    refund_txid: true,
+    refund_note: true,
+    refunded_at: true,
     create_at: true,
     user: { select: { user_id: true, nick: true, email: true } },
     pack: { select: { pack_id: true, code: true, name: true } },
@@ -67,10 +73,12 @@ export const paidFromContent = (content: string | null): IAdminPaymentOrder['pai
 
 const adminWhere = (filter: AdminPaymentFilter): Prisma.Payment_OrderWhereInput => {
     switch (filter) {
-        case 'partial': return { completed_at: null, status: { in: ['partially_paid', 'amount_mismatch'] } };
-        // Sin entregar, salvo los que nunca recibieron un aviso (invoices abiertos y abandonados).
-        case 'open': return { completed_at: null, payment_id: { not: null } };
+        case 'partial': return { completed_at: null, refunded_at: null, status: { in: ['partially_paid', 'amount_mismatch'] } };
+        // Sin entregar ni devolver, salvo los que nunca recibieron un aviso (invoices abiertos y abandonados).
+        case 'open': return { completed_at: null, refunded_at: null, status: { not: 'refunded' }, payment_id: { not: null } };
         case 'completed': return { completed_at: { not: null } };
+        // Devueltos a mano o por NOWPayments.
+        case 'refunded': return { OR: [{ refunded_at: { not: null } }, { status: 'refunded' }] };
         default: return {};
     }
 };
@@ -95,10 +103,10 @@ export const repositoryPaymentOrder = {
         return row ? toOrder(row) : null;
     },
 
-    /** Guarda el último aviso de la pasarela (no toca las órdenes ya completadas). */
+    /** Guarda el último aviso de la pasarela (no toca las órdenes ya completadas ni las devueltas a mano). */
     updateStatus: async (payment_order_id: number, status: string, payment_id: string, content: string): Promise<void> => {
         await prisma.payment_Order.updateMany({
-            where: { payment_order_id, completed_at: null },
+            where: { payment_order_id, completed_at: null, refunded_at: null },
             data: { status, payment_id, content },
         });
     },
@@ -116,7 +124,12 @@ export const repositoryPaymentOrder = {
             prisma.payment_Order.count({ where }),
         ]);
         return {
-            orders: rows.map(({ content, amount, ...row }) => ({ ...row, amount: amount.toNumber(), paid: paidFromContent(content) })),
+            orders: rows.map(({ content, amount, refund_txid, refund_note, refunded_at, ...row }) => ({
+                ...row,
+                amount: amount.toNumber(),
+                paid: paidFromContent(content),
+                refund: refunded_at !== null ? { txid: refund_txid ?? '', note: refund_note, at: refunded_at } : null,
+            })),
             total,
         };
     },
@@ -131,13 +144,26 @@ export const repositoryPaymentOrder = {
     },
 
     /**
+     * Deja constancia de una devolución hecha fuera de kyaaa.net (NOWPayments o exchange). No mueve dinero.
+     * Solo para órdenes sin entregar ni devolver; devuelve false si no se pudo marcar.
+     */
+    markRefunded: async (payment_order_id: number, txid: string, note: string | null): Promise<boolean> => {
+        const marked = await prisma.payment_Order.updateMany({
+            where: { payment_order_id, completed_at: null, refunded_at: null },
+            data: { status: 'refunded', refund_txid: txid, refund_note: note, refunded_at: new Date() },
+        });
+        return marked.count > 0;
+    },
+
+    /**
      * Marca la orden como pagada y crea la compra, en una transacción. Idempotente: un IPN repetido devuelve
      * 'already_completed'. Si el usuario ya tenía el pack (p. ej. lo pagó también con PayPal) no se crea otra fila.
      */
     complete: async (payment_order_id: number, payment_id: string, content: string, amounts: ISaleAmounts): Promise<CompleteResult> => {
         return prisma.$transaction(async (tx) => {
             const marked = await tx.payment_Order.updateMany({
-                where: { payment_order_id, completed_at: null },
+                // Una orden devuelta a mano no se completa: cuenta como 'already_completed' (no se entrega).
+                where: { payment_order_id, completed_at: null, refunded_at: null },
                 data: { status: 'finished', payment_id, content, completed_at: new Date() },
             });
             if (marked.count === 0) {

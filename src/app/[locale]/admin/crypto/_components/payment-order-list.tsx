@@ -1,11 +1,12 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { FaCheck } from 'react-icons/fa6'
+import { FaCheck, FaRotateLeft } from 'react-icons/fa6'
 import { useRouter } from '@/src/app/layout/components/navigate/use-loading-router'
 import { LocalDate } from '@/src/app/components/local-date'
 import { AdminPaymentFilter, IAdminPaymentOrder } from '@/src/app/types/payment-order.types'
 import { DialogDeliverPayment } from './dialog-deliver-payment'
+import { DialogRefundPayment } from './dialog-refund-payment'
 
 interface PaymentOrderListProps {
     orders: IAdminPaymentOrder[]
@@ -17,6 +18,7 @@ const FILTER_LABEL: Record<AdminPaymentFilter, string> = {
     partial: 'Parciales sin entregar',
     open: 'Sin entregar (con pago)',
     completed: 'Entregados',
+    refunded: 'Devueltos',
     all: 'Todos',
 }
 
@@ -43,6 +45,7 @@ export const paidPercent = (order: IAdminPaymentOrder): number | null =>
 export const PaymentOrderList = ({ orders, total, filter }: PaymentOrderListProps) => {
     const router = useRouter()
     const [delivering, setDelivering] = useState<IAdminPaymentOrder | null>(null)
+    const [refunding, setRefunding] = useState<IAdminPaymentOrder | null>(null)
 
     const setFilter = (next: string) => {
         router.push(next === 'partial' ? '/admin/crypto' : `/admin/crypto?filter=${next}`)
@@ -60,7 +63,7 @@ export const PaymentOrderList = ({ orders, total, filter }: PaymentOrderListProp
                     </select>
                 </div>
                 <p className='md:col-span-2 text-xs text-neutral-400'>
-                    Un pago parcial se entrega solo si llega al umbral de tolerancia (95 % del precio por defecto). Por debajo, decide aquí si entregas el pack o devuelves el pago desde el panel de NOWPayments.
+                    Un pago parcial se entrega solo si llega al umbral de tolerancia (95 % del precio por defecto). Por debajo, decide aquí si entregas el pack o lo devuelves: la devolución se hace en NOWPayments o desde tu exchange, y aquí solo se marca con su TxID.
                 </p>
             </div>
 
@@ -87,7 +90,8 @@ export const PaymentOrderList = ({ orders, total, filter }: PaymentOrderListProp
                                 </tr>
                             ) : orders.map((order) => {
                                 const percent = paidPercent(order)
-                                const canDeliver = order.completed_at === null && order.payment_id !== null
+                                const isOpen = order.completed_at === null && order.refund === null && order.status !== 'refunded'
+                                const canDeliver = isOpen && order.payment_id !== null
                                 return (
                                     <tr key={order.payment_order_id} className='border-b border-neutral-800'>
                                         <td className='p-2 whitespace-nowrap text-xs'>
@@ -111,16 +115,33 @@ export const PaymentOrderList = ({ orders, total, filter }: PaymentOrderListProp
                                                 </span>
                                             )}
                                         </td>
-                                        <td className='p-2 whitespace-nowrap'>
-                                            {order.completed_at !== null ? 'Entregado' : STATUS_LABEL[order.status] ?? order.status}
+                                        <td className='p-2'>
+                                            <span className='whitespace-nowrap'>
+                                                {order.completed_at !== null ? 'Entregado' : STATUS_LABEL[order.status] ?? order.status}
+                                            </span>
+                                            {order.refund && (
+                                                <span className='block text-xs text-neutral-400 max-w-48'>
+                                                    <LocalDate date={order.refund.at} />
+                                                    <span className='block font-mono break-all'>TxID {order.refund.txid}</span>
+                                                    {order.refund.note && <span className='block'>{order.refund.note}</span>}
+                                                </span>
+                                            )}
                                         </td>
                                         <td className='p-2 font-mono text-xs break-all'>{order.payment_id ?? '—'}</td>
                                         <td className='p-2'>
-                                            {canDeliver && (
-                                                <button type='button' className='btn-primary whitespace-nowrap' onClick={() => { setDelivering(order) }}>
-                                                    <FaCheck aria-hidden />
-                                                    Entregar pack
-                                                </button>
+                                            {isOpen && (
+                                                <div className='flex flex-col gap-2'>
+                                                    {canDeliver && (
+                                                        <button type='button' className='btn-primary whitespace-nowrap' onClick={() => { setDelivering(order) }}>
+                                                            <FaCheck aria-hidden />
+                                                            Entregar pack
+                                                        </button>
+                                                    )}
+                                                    <button type='button' className='btn-primary whitespace-nowrap' onClick={() => { setRefunding(order) }}>
+                                                        <FaRotateLeft aria-hidden />
+                                                        Marcar como devuelto
+                                                    </button>
+                                                </div>
                                             )}
                                         </td>
                                     </tr>
@@ -131,6 +152,12 @@ export const PaymentOrderList = ({ orders, total, filter }: PaymentOrderListProp
                 </div>
             </div>
 
+            <DialogRefundPayment
+                open={refunding !== null}
+                order={refunding}
+                onClose={() => { setRefunding(null) }}
+                onRefunded={() => { router.refresh() }}
+            />
             <DialogDeliverPayment
                 open={delivering !== null}
                 order={delivering}
