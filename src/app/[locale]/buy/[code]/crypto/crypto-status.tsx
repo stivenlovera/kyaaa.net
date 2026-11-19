@@ -85,7 +85,8 @@ export const CryptoStatus = ({ orderId, code, name, thanksImage }: CryptoStatusP
                         <div className="h-1 w-full overflow-hidden rounded bg-neutral-800">
                             <div className="h-full w-1/3 animate-pulse rounded bg-neutral-300" />
                         </div>
-                        <p>{t('esperando')}</p>
+                        {/* Aún no ha pagado: el pago se hace en la pestaña de NOWPayments. */}
+                        <p>{state === null || ['created', 'waiting'].includes(state.status) ? t('pendiente_pago') : t('esperando')}</p>
                         {state && <p className="text-xs text-neutral-400">{t('estado', { status: state.status })}</p>}
                     </div>
                 )}

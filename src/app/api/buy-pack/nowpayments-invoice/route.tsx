@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
         await repositoryPaymentOrder.setExternalId(order.payment_order_id, String(invoice.id));
         logger.info(`/api/buy-pack/nowpayments-invoice POST order=${order.payment_order_id} invoice=${invoice.id}`)
 
-        return NextResponse.json({ success: true, message: 'Invoice creado', data: { url: invoice.invoice_url } }, { status: 200 });
+        return NextResponse.json({ success: true, message: 'Invoice creado', data: { url: invoice.invoice_url, order: order.payment_order_id } }, { status: 200 });
     }
     catch (error) {
         logger.error(`/api/buy-pack/nowpayments-invoice POST ${jsonLog(describeNowPaymentsError(error))}`)
