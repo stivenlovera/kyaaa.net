@@ -21,7 +21,7 @@ export interface ISale {
     method: SaleMethod
     /** Lo que pagó el comprador. */
     gross: number
-    /** Comisión de la pasarela (0 si se desconoce, como en NOWPayments). */
+    /** Comisión de la pasarela (0 si se desconoce: ventas de cripto antiguas o cobradas en una cripto no estable). */
     fee: number
     /** Lo que queda (buy_pack.price). */
     net: number

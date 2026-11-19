@@ -1,7 +1,7 @@
 import { repositoryAuth } from "@/src/app/repositories/auth.repository";
 import { repositoryPaymentOrder } from "@/src/app/repositories/payment-order.repository";
 import logger, { jsonLog } from "@/src/app/utils/logger";
-import { INowPaymentsIpn, NOWPAYMENTS_STATUS, paidRatio, partialTolerance, verifyIpnSignature } from "@/src/app/utils/nowpayments";
+import { INowPaymentsIpn, NOWPAYMENTS_STATUS, paidRatio, partialTolerance, saleAmounts, verifyIpnSignature } from "@/src/app/utils/nowpayments";
 import { sendPurchaseMails } from "@/src/app/utils/purchase-mails";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -60,13 +60,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: true }, { status: 200 });
         }
 
-        // Bruto: lo que pagó realmente (en un parcial aceptado, la parte proporcional del precio).
-        const gross = Math.round(price * Math.min(ratio ?? 1, 1) * 100) / 100;
+        // Bruto: lo que pagó el comprador; neto: lo que llega a la billetera de retiro (ver saleAmounts).
+        const amounts = saleAmounts(payload, order.amount, order.currency);
         if (isPartial) {
-            logger.warn(`/api/buy-pack/nowpayments-ipn PARCIAL ACEPTADO order=${order.payment_order_id} payment=${paymentId} recibido=${((ratio ?? 1) * 100).toFixed(1)}% bruto=${gross} ${order.currency}`)
+            logger.warn(`/api/buy-pack/nowpayments-ipn PARCIAL ACEPTADO order=${order.payment_order_id} payment=${paymentId} recibido=${((ratio ?? 1) * 100).toFixed(1)}% bruto=${amounts.gross} neto=${amounts.net} ${order.currency}`)
         }
 
-        const result = await repositoryPaymentOrder.complete(order.payment_order_id, paymentId, raw, { gross, currency: order.currency });
+        const result = await repositoryPaymentOrder.complete(order.payment_order_id, paymentId, raw, amounts);
         logger.info(`/api/buy-pack/nowpayments-ipn order=${order.payment_order_id} ${result}`)
         if (result === 'already_owned') {
             logger.warn(`/api/buy-pack/nowpayments-ipn COBRADO DOS VECES: el usuario ${order.user_id} ya tenía el pack ${order.pack_code} (order=${order.payment_order_id}, payment=${paymentId})`)
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
             if (buyer !== null) {
                 void sendPurchaseMails(buyer, order.pack_code, {
                     method: 'nowpayments',
-                    amount: gross.toFixed(2),
+                    amount: amounts.gross.toFixed(2),
                     currency: order.currency,
                     reference: paymentId,
                 })

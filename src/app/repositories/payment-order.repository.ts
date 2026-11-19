@@ -1,5 +1,6 @@
 import { prisma } from "../utils/prisma";
 import { METHOD_BUY } from "../utils/method-buy";
+import { ISaleAmounts } from "../utils/nowpayments";
 import { Prisma } from "../../../generated/prisma/client";
 import { AdminPaymentFilter, IAdminPaymentOrder, IAdminPaymentPage } from "../types/payment-order.types";
 
@@ -133,7 +134,7 @@ export const repositoryPaymentOrder = {
      * Marca la orden como pagada y crea la compra, en una transacción. Idempotente: un IPN repetido devuelve
      * 'already_completed'. Si el usuario ya tenía el pack (p. ej. lo pagó también con PayPal) no se crea otra fila.
      */
-    complete: async (payment_order_id: number, payment_id: string, content: string, amounts: { gross: number, currency: string }): Promise<CompleteResult> => {
+    complete: async (payment_order_id: number, payment_id: string, content: string, amounts: ISaleAmounts): Promise<CompleteResult> => {
         return prisma.$transaction(async (tx) => {
             const marked = await tx.payment_Order.updateMany({
                 where: { payment_order_id, completed_at: null },
@@ -152,10 +153,10 @@ export const repositoryPaymentOrder = {
                     user_id: order.user_id,
                     pack_id: order.pack_id,
                     method_buy_id: METHOD_BUY.NOWPAYMENTS,
-                    // NOWPayments no da la comisión en la moneda del precio: neto = bruto y comisión desconocida.
-                    price: amounts.gross,
+                    // price es el neto, como en PayPal (ver saleAmounts).
+                    price: amounts.net,
                     gross: amounts.gross,
-                    fee: null,
+                    fee: amounts.fee,
                     currency: amounts.currency,
                     transaction: payment_id,
                     content,

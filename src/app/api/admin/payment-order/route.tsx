@@ -1,5 +1,6 @@
 import { repositoryAuth } from "@/src/app/repositories/auth.repository";
-import { paidFromContent, repositoryPaymentOrder } from "@/src/app/repositories/payment-order.repository";
+import { repositoryPaymentOrder } from "@/src/app/repositories/payment-order.repository";
+import { saleAmounts } from "@/src/app/utils/nowpayments";
 import { IResponse } from "@/src/app/types/response";
 import { adminDenied, getCurrentUser } from "@/src/app/utils/auth";
 import logger, { jsonLog } from "@/src/app/utils/logger";
@@ -8,8 +9,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Entrega a mano el pack de un pago con cripto que no se completó solo (p. ej. un parcial por debajo de la
- * tolerancia). Usa la misma transacción idempotente que el webhook. Bruto: lo recibido en fiat según el
- * último aviso, sin pasar del precio; si no hay dato, el precio.
+ * tolerancia). Usa la misma transacción idempotente que el webhook. Bruto, neto y comisión salen del último
+ * aviso guardado, igual que en el webhook (saleAmounts).
  */
 export async function POST(request: NextRequest) {
     try {
@@ -33,11 +34,12 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: false, message: 'NOWPayments no ha notificado ningún pago para esta orden' }, { status: 409 });
         }
 
-        const fiat = paidFromContent(order.content)?.fiat ?? null;
-        const gross = Math.round(Math.min(fiat ?? order.amount, order.amount) * 100) / 100;
+        let ipn = null;
+        try { ipn = order.content ? JSON.parse(order.content) : null; } catch { ipn = null; }
+        const amounts = saleAmounts(ipn, order.amount, order.currency);
         const admin = await getCurrentUser();
-        const result = await repositoryPaymentOrder.complete(order.payment_order_id, order.payment_id, order.content ?? '', { gross, currency: order.currency });
-        logger.warn(`/api/admin/payment-order ENTREGA MANUAL por admin=${admin?.user_id} order=${order.payment_order_id} payment=${order.payment_id} estado=${order.status} bruto=${gross} ${order.currency} ${result}`)
+        const result = await repositoryPaymentOrder.complete(order.payment_order_id, order.payment_id, order.content ?? '', amounts);
+        logger.warn(`/api/admin/payment-order ENTREGA MANUAL por admin=${admin?.user_id} order=${order.payment_order_id} payment=${order.payment_id} estado=${order.status} bruto=${amounts.gross} neto=${amounts.net} ${order.currency} ${result}`)
 
         if (result === 'already_completed') {
             return NextResponse.json({ success: false, message: 'Este pago ya se entregó' }, { status: 409 });
@@ -47,7 +49,7 @@ export async function POST(request: NextRequest) {
             if (buyer !== null) {
                 void sendPurchaseMails(buyer, order.pack_code, {
                     method: 'nowpayments',
-                    amount: gross.toFixed(2),
+                    amount: amounts.gross.toFixed(2),
                     currency: order.currency,
                     reference: order.payment_id,
                 })

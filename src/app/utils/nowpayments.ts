@@ -64,6 +64,54 @@ export interface INowPaymentsIpn {
     outcome_currency?: string
 }
 
+/** Importes de una venta para buy_pack: bruto (lo que pagó el comprador), neto (lo que te llega) y comisión. */
+export interface ISaleAmounts {
+    gross: number
+    net: number
+    /** null si no se puede calcular (cobro en una cripto que no es un dólar estable). */
+    fee: number | null
+    currency: string
+}
+
+const toNumber = (value: unknown): number | null => {
+    const n = Number(value);
+    return value == null || value === '' || !Number.isFinite(n) ? null : n;
+};
+
+const round2 = (value: number) => Math.round(value * 100) / 100;
+
+/** Monedas de cobro que valen 1 USD (usdtbsc, usdttrc20, usdcmatic…): su outcome_amount se puede tomar como USD. */
+const isUsdStablecoin = (currency: unknown) => typeof currency === 'string' && /^(usdt|usdc)/i.test(currency);
+
+/**
+ * Lo que envió el comprador, en USD. actually_paid_at_fiat cuando viene (> 0): en los IPN `finished` NOWPayments
+ * lo manda a 0. Si no, y pagó con USDT/USDC, actually_paid (1 USDT ≈ 1 USD). null si no se puede saber.
+ */
+export function paidUsd(payload: Partial<INowPaymentsIpn> | null): number | null {
+    const fiat = toNumber(payload?.actually_paid_at_fiat);
+    if (fiat !== null && fiat > 0) {
+        return fiat;
+    }
+    const paid = toNumber(payload?.actually_paid);
+    return paid !== null && paid > 0 && isUsdStablecoin(payload?.pay_currency) ? paid : null;
+}
+
+/**
+ * Bruto, neto y comisión de un pago de NOWPayments a partir del IPN:
+ * - bruto: lo que envió el comprador en USD (paidUsd); si no se sabe, el precio del pack.
+ * - neto: outcome_amount (lo que llega a la billetera de retiro), solo si se cobra en USDT/USDC; si no, neto = bruto
+ *   y comisión desconocida.
+ */
+export function saleAmounts(payload: Partial<INowPaymentsIpn> | null, price: number, currency: string): ISaleAmounts {
+    const gross = round2(paidUsd(payload) ?? price);
+    const outcome = toNumber(payload?.outcome_amount);
+    if (outcome !== null && currency === 'USD' && isUsdStablecoin(payload?.outcome_currency)) {
+        const net = round2(Math.min(outcome, gross));
+        return { gross, net, fee: round2(gross - net), currency };
+    }
+    return { gross, net: gross, fee: null, currency };
+}
+
 const DEFAULT_PARTIAL_TOLERANCE = 95;
 
 /** Fracción mínima (0-1) de lo pedido que tiene que llegar para aceptar un pago parcial. */
@@ -74,16 +122,16 @@ export function partialTolerance(): number {
 }
 
 /**
- * Fracción del precio del pack que pagó el comprador: actually_paid_at_fiat / price_amount.
+ * Fracción del precio del pack que pagó el comprador: paidUsd / price_amount.
  * No se mide contra pay_amount porque NOWPayments le suma sus comisiones de red (p. ej. en USDT ERC20 pidió
  * 7.48 USDT por un pack de 7 USD), y un pago de 6.85 USD quedaba en el 92 % y no se entregaba.
- * Si falta el dato en fiat, se usa actually_paid / pay_amount (en la cripto). null si no se puede calcular.
+ * Si no se sabe lo pagado en USD (cripto no estable sin fiat), se usa actually_paid / pay_amount (en la cripto). null si no se puede calcular.
  */
 export function paidRatio(payload: INowPaymentsIpn): number | null {
-    const fiat = Number(payload.actually_paid_at_fiat);
+    const usd = paidUsd(payload);
     const price = Number(payload.price_amount);
-    if (payload.actually_paid_at_fiat != null && Number.isFinite(fiat) && Number.isFinite(price) && price > 0) {
-        return fiat / price;
+    if (usd !== null && Number.isFinite(price) && price > 0) {
+        return usd / price;
     }
     const expected = Number(payload.pay_amount);
     const paid = Number(payload.actually_paid);

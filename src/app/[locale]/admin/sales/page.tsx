@@ -43,7 +43,7 @@ export default async function Page({ searchParams }: AdminSalesPageProps) {
     const cards = [
         { label: 'Ventas pagadas', value: String(summary.sales) },
         { label: 'Bruto', value: money(summary.gross), hint: 'Lo que pagaron los compradores' },
-        { label: 'Comisión', value: money(summary.fee), hint: 'PayPal; la de NOWPayments no se incluye' },
+        { label: 'Comisión', value: money(summary.fee), hint: 'PayPal y NOWPayments' },
         { label: 'Neto', value: money(summary.net), hint: 'Lo que te queda' },
         { label: 'Cupones canjeados', value: String(summary.coupons) },
     ]
