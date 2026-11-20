@@ -27,7 +27,9 @@ declare const messages: {
   "home": {
     "bienvenida": {
       "title": "¡Hi, {nick}! 👋 So glad to have you here!"
-    }
+    },
+    "titulo": "New entries",
+    "descripcion": "The latest image packs published on kyaaa."
   },
   "pack-info": {
     "serie": "Series",
@@ -108,10 +110,14 @@ declare const messages: {
     "titulo": "Characters"
   },
   "serie": {
-    "titulo": "Serie"
+    "titulo": "Serie",
+    "descripcion": "All kyaaa series with the number of packs in each.",
+    "detalle": "Image packs from the series {name} on kyaaa."
   },
   "etiqueta": {
-    "titulo": "Tag"
+    "titulo": "Tag",
+    "descripcion": "All kyaaa tags with the number of packs in each.",
+    "detalle": "Image packs tagged {name} on kyaaa."
   },
   "autor": {
     "titulo": "Authors"
@@ -276,6 +282,9 @@ declare const messages: {
       "reintentar": "Try again",
       "referencia": "Error reference: {digest}"
     }
+  },
+  "meta": {
+    "descripcion": "Discover image packs on kyaaa: browse by series, characters, artists and tags, and save your favorites."
   }
 };
 export default messages;

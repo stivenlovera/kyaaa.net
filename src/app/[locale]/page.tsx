@@ -11,29 +11,15 @@ import { repositoryBuyPack } from "../repositories/buy-pack.repository";
 import { repositoryFavoritePack } from "../repositories/favorite-pack.repository";
 import { INewPacksAuth } from "../types/pack.types";
 import { Card } from "./_components/card";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = 'force-dynamic';
 
-/* export const metadata: Metadata = {
-  title: 'Nuevas entradas',
-  description: 'Nuevas entradas del mes de febrero',
-} */
-
-type Props = {
-  params: Promise<{ id: string }>;
-};
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('home');
   return {
-    title: 'Nuevas entradas',
-    description: 'Nuevas entradas del mes de febrero',
-    openGraph: {
-      images: [
-        {
-          url: 'https://usc1.contabostorage.com/698352ccd113428cb40866703a92c514:static/01.jpeg',
-          alt: 'Nuevas entradas',
-        },
-      ],
-    },
+    title: t('titulo'),
+    description: t('descripcion'),
   };
 }
 
