@@ -47,3 +47,7 @@ next-env.d.ts
 certificates
 # mcp
 /mcp/*/node_modules
+
+# Restos del antiguo flujo de foto de perfil (ahora se procesa en memoria)
+/public/temp/
+/public/resize/

@@ -1,12 +1,12 @@
 import sharp from "sharp";
-import logger from "./logger";
 
-export async function resizeImage(path: string, nameFile: string) {
-    logger.info(`resizeImage ${path}`)
-    logger.info(`nameFile ${nameFile}`)
-    const image = sharp(path)
-    await image
+/**
+ * Foto de perfil: 450px de ancho en AVIF. Todo en memoria: la imagen subida no se escribe en disco
+ * (antes quedaba una copia del original en public/temp y otra en public/resize que nunca se borraban).
+ */
+export async function resizeProfileImage(input: Buffer): Promise<Buffer> {
+    return sharp(input)
         .resize(450)
         .toFormat("avif")
-        .toFile(`./public/resize/${nameFile}.avif`);
+        .toBuffer();
 }
