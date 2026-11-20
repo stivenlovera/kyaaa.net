@@ -8,10 +8,14 @@ export const SITE_URL = process.env.SITE_URL ?? 'https://kyaaa.net';
 
 export const SITE_NAME = 'kyaaa';
 
-/** Imagen por defecto al compartir un enlace del sitio (public/img/marca-agua.png, 3800x900). */
+/**
+ * Imagen por defecto al compartir un enlace del sitio: public/img/marca-agua.png, 1200x630 (formato estándar
+ * de og:image, ≈1,91:1) con el logo centrado sobre el fondo del sitio (#171717). Si se cambia el logo, hay que
+ * regenerarla con ese tamaño: las redes recortan las imágenes con otra proporción.
+ */
 export const DEFAULT_OG_IMAGE = {
     url: '/img/marca-agua.png',
-    width: 3800,
-    height: 900,
+    width: 1200,
+    height: 630,
     alt: SITE_NAME,
 };
