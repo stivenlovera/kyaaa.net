@@ -1,13 +1,11 @@
 'use server';
-import { writeFile } from "fs/promises";
-import path from "path";
 import { z } from "zod";
 import { getCurrentUser } from '../utils/auth';
 import { IFieldsChangeProfile, IFormChangeProfile } from '../types/user.type';
 import logger, { jsonLog } from "../utils/logger";
 import { repositoryAuth } from "../repositories/auth.repository";
-import { resizeImage } from "../utils/sharp";
-import { deleteMultipleObjects, getBufferFile, uploadMultipleObjects } from "../utils/uploadS3";
+import { resizeProfileImage } from "../utils/sharp";
+import { deleteMultipleObjects, uploadMultipleObjects } from "../utils/uploadS3";
 import { sleep } from "../utils/other";
 
 export async function actionFormChangeProfile(prevState: IFormChangeProfile, formData: FormData): Promise<IFormChangeProfile> {
@@ -102,18 +100,9 @@ export async function actionFormChangeProfile(prevState: IFormChangeProfile, for
             };
         }
 
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
-        // Save the file to the public directory
-        nameFile = `${Date.now()}`;
-        const relativePath = `temp/${nameFile}_${file.name}`;
-        const absolutePath = path.join(process.cwd(), "public", relativePath);
-        await writeFile(absolutePath, buffer);
-
-        await resizeImage(`public/${relativePath}`, `${nameFile}`)
-        nameFile = `${nameFile}.avif`;
-        const bufferAVIF = await getBufferFile(`./public/resize/${nameFile}`);
+        const buffer = Buffer.from(await file.arrayBuffer());
+        const bufferAVIF = await resizeProfileImage(buffer);
+        nameFile = `${Date.now()}.avif`;
         await uploadMultipleObjects({ name: `${nameFile}`, path: `${nameFile}`, buffer: bufferAVIF })
 
         const userImage = await repositoryAuth.findUserById(user!.user_id)

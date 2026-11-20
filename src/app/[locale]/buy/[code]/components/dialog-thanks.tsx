@@ -10,7 +10,7 @@ interface DialogThanksProps {
     open: boolean;
     /** Código del pack comprado: al continuar se va a /pack/<code>. */
     code: string;
-    /** Imagen propia del pack (pack.thanks_image); si no hay, la genérica. */
+    /** Imagen propia del pack (pack.thanks_image); si no hay, el modal va sin imagen. */
     image?: string | null;
 }
 
@@ -28,15 +28,17 @@ export const DialogThanks = ({ open, code, image }: DialogThanksProps) => {
     return (
         <Dialog isOpen={open} onClose={goToPack} title={t('titulo')}>
             <div className='grid grid-cols-1 gap-4'>
-                <Image
-                    fetchPriority='high'
-                    src={image ?? '/img/thanks.png'}
-                    alt=''
-                    width={400}
-                    height={500}
-                    unoptimized
-                    className='w-full h-auto rounded-md'
-                />
+                {image && (
+                    <Image
+                        fetchPriority='high'
+                        src={image}
+                        alt=''
+                        width={400}
+                        height={500}
+                        unoptimized
+                        className='w-full h-auto rounded-md'
+                    />
+                )}
                 <p>{t('mensaje')}</p>
                 <ul className='grid gap-2'>
                     {VENTAJAS.map((key) => (

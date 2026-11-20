@@ -1,7 +1,6 @@
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getS3Client } from './s3-client';
 import logger, { jsonLog } from './logger';
-import sharp from 'sharp';
 import { profileImageKey } from './profile-image';
 
 export interface IFile {
@@ -52,11 +51,6 @@ export async function deleteMultipleObjects(file: IFile) {
     }
 }
 
-export async function getBufferFile(path: string) {
-    const bufferMarkwater = await sharp(path)
-        .toBuffer();
-    return bufferMarkwater;
-}
 // Sube un archivo al bucket static con la key exacta (sin el prefijo `user/` de las fotos de perfil).
 export async function uploadStaticObject(key: string, buffer: Buffer, contentType: string) {
     const s3Client = getS3Client();

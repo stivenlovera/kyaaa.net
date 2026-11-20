@@ -10,11 +10,23 @@ import { repositoryBuyPack } from "@/src/app/repositories/buy-pack.repository";
 import { repositoryFavoritePack } from "@/src/app/repositories/favorite-pack.repository";
 import { INewPacksAuth } from "@/src/app/types/pack.types";
 import { repositorySerie } from "@/src/app/repositories/serie.repository";
+import { getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
 
 interface PagePaginateProps {
     params: Promise<{
         slug: string
     }>
+}
+
+export async function generateMetadata({ params }: PagePaginateProps): Promise<Metadata> {
+    const { slug } = await params;
+    const name = await repositorySerie.findNameBySlug(slug);
+    if (name === null) {
+        return { title: (await getTranslations('errores'))('not_found.titulo'), robots: { index: false } };
+    }
+    const t = await getTranslations('serie');
+    return { title: name, description: t('detalle', { name }) };
 }
 
 export default async function Page({ params }: PagePaginateProps) {

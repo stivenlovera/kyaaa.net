@@ -24,7 +24,9 @@
   "home": {
     "bienvenida": {
       "title": "¡Hola, {nick}! 👋 Qué alegría tenerte por aquí!"
-    }
+    },
+    "titulo": "Nuevas entradas",
+    "descripcion": "Los packs de imágenes más recientes publicados en kyaaa."
   },
   "pack-info": {
     "serie": "Series",
@@ -105,10 +107,14 @@
     "titulo": "Personajes"
   },
   "serie": {
-    "titulo": "Series"
+    "titulo": "Series",
+    "descripcion": "Todas las series de kyaaa con el número de packs de cada una.",
+    "detalle": "Packs de imágenes de la serie {name} en kyaaa."
   },
   "etiqueta": {
-    "titulo": "Etiquetas"
+    "titulo": "Etiquetas",
+    "descripcion": "Todas las etiquetas de kyaaa con el número de packs de cada una.",
+    "detalle": "Packs de imágenes con la etiqueta {name} en kyaaa."
   },
   "autor": {
     "titulo": "Autores"
@@ -273,5 +279,8 @@
       "reintentar": "Reintentar",
       "referencia": "Referencia del error: {digest}"
     }
+  },
+  "meta": {
+    "descripcion": "Descubre packs de imágenes en kyaaa: explora por series, personajes, autores y etiquetas, y guarda tus favoritos."
   }
 }

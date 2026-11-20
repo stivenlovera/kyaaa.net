@@ -3,8 +3,15 @@ import { getTranslations } from "next-intl/server";
 import { getAbc } from "../../utils/get_abc";
 import Link from "next/link";
 import { repositoryLabel } from "../../repositories/label.repository";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations('etiqueta');
+    return { title: t('titulo'), description: t('descripcion') };
+}
+
 export default async function Page() {
     const t = await getTranslations('etiqueta');
     const labels = await repositoryLabel.findAllAndTotal();
