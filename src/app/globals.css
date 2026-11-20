@@ -7,17 +7,14 @@
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css"; */
 
-@font-face {
-  font-family: "WildWordsRoman";
-  src: url("/../fonts/New_Wild_Words.TTF") format("truetype");
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
 @theme {
   --color-darkmode: oklch(20.5% 0 0);
-  --font-wild-words-roman: "WildWordsRoman", sans-serif;
+}
+
+/* Fuente del logo: la carga next/font/local en [locale]/layout.tsx (precarga + caché inmutable) y expone
+   --font-wild-words en <html>. `inline` hace que la utilidad font-wild-words-roman use esa variable directamente. */
+@theme inline {
+  --font-wild-words-roman: var(--font-wild-words), sans-serif;
 }
 
 @layer base {}

@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL } from '../utils/site-metadata';
 import { Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import { GoogleTagManager } from '@next/third-parties/google';
 import "../globals.css";
 import Header from '../layout/components/navigate/header';
@@ -27,6 +28,17 @@ export interface PageHomeProps {
 }
 
 const inter = Inter({ subsets: ['latin'] });
+
+// Fuente del logo "kyaaa" de la cabecera (utilidad font-wild-words-roman). next/font la precarga y la sirve
+// desde /_next/static con caché inmutable. `block` evita que el logo aparezca un instante con la fuente
+// del sistema y luego cambie (con `swap` se veía ese salto).
+const wildWords = localFont({
+    src: '../fonts/new-wild-words.ttf',
+    weight: '900',
+    style: 'normal',
+    display: 'block',
+    variable: '--font-wild-words',
+});
 
 export function generateStaticParams() {
     return routing.locales.map((locale) => ({ locale }));
@@ -68,7 +80,7 @@ export default async function LocaleLayout({
     const isAdmin = user !== null && await repositoryAuth.isAdmin(user.user_id);
 
     return (
-        <html className=" text-white" lang={locale}>
+        <html className={`${wildWords.variable} text-white`} lang={locale}>
             <GoogleTagManager gtmId="GTM-5PWHMDJ4" />
             <body className={`${inter.className} bg-neutral-900 min-h-screen flex flex-col`}>
                 <Suspense fallback={<Splashscreen></Splashscreen>}>
