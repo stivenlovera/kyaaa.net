@@ -7,19 +7,25 @@ import { IPagePack } from '@/src/app/types/page.types'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { preload, } from 'react-dom';
 import { useTranslations } from 'next-intl'
+import { useAuth } from '@/src/providers/AuthContext'
+import { DialogRegisterNow } from './dialog-register-now'
 
 interface PreviewPageProps {
     code: string
     currentPage: string
     pack: IPagePack
+    /** Imagen del modal "¡Regístrate ahora!" (pack.register_image); solo llega para anónimos. */
+    registerImage?: string | null
 }
 export interface ImagesProps {
     num: string
     img: string
 }
 
-export const ViewPage = ({ code, currentPage, pack }: PreviewPageProps) => {
+export const ViewPage = ({ code, currentPage, pack, registerImage }: PreviewPageProps) => {
     const t = useTranslations('pack-info');
+    const { user } = useAuth()
+    const [openDialogRegisterNow, setOpenDialogRegisterNow] = useState(false)
     const searchParams = useSearchParams()
     const historyStack = useRef<string[]>([]);
     const numPage = searchParams.get('page') ?? currentPage
@@ -114,9 +120,21 @@ export const ViewPage = ({ code, currentPage, pack }: PreviewPageProps) => {
                 {locked > 0 && !pack.full_access && (
                     <div className='flex mx-auto flex-wrap items-center justify-center gap-2 py-2 text-center'>
                         <span>{t('paginas_bloqueadas', { count: locked })}</span>
-                        <Link href={`/buy/${code}`} className='rounded-full bg-gray-800 px-3 py-1 hover:bg-gray-700'>
-                            {t('extra-pack.comprar')}
-                        </Link>
+                        {user === null ? (
+                            // Sin sesión no se puede comprar (/buy exige login): como en la ficha del pack
+                            // (extras-pack.tsx), un botón que abre el modal "¡Regístrate ahora!" en vez de un enlace.
+                            <button
+                                type='button'
+                                className='rounded-full bg-gray-800 px-3 py-1 hover:bg-gray-700 cursor-pointer'
+                                onClick={() => { setOpenDialogRegisterNow(true) }}
+                            >
+                                {t('extra-pack.comprar')}
+                            </button>
+                        ) : (
+                            <Link href={`/buy/${code}`} className='rounded-full bg-gray-800 px-3 py-1 hover:bg-gray-700'>
+                                {t('extra-pack.comprar')}
+                            </Link>
+                        )}
                     </div>
                 )}
                 <div className='flex mx-auto flex-wrap items-center justify-center pb-1'>
@@ -125,6 +143,11 @@ export const ViewPage = ({ code, currentPage, pack }: PreviewPageProps) => {
                     </Link>
                 </div>
             </div>
+            <DialogRegisterNow
+                open={openDialogRegisterNow}
+                image={registerImage}
+                onClose={(open) => { setOpenDialogRegisterNow(open) }}
+            />
         </div>
     )
 }

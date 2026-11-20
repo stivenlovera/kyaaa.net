@@ -200,6 +200,12 @@ export const repositoryPack = {
         };
     },
 
+    /** URL de la imagen del modal "¡Regístrate ahora!" (pack.register_image), o null si el pack no tiene. */
+    findRegisterImage: async (code: string): Promise<string | null> => {
+        const pack = await prisma.pack.findFirst({ where: { code: code }, select: { register_image: true } });
+        return packMediaUrl(pack?.register_image ?? null);
+    },
+
     findPackInfo: async (code: string, loggedIn: boolean): Promise<IPackInfo | null> => {
         const pack = await prisma.pack.findFirst({
             where: {

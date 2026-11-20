@@ -69,11 +69,14 @@ export default async function Page({ params, searchParams }: PagePaginateProps) 
         if (pack === null || !isNumber(page) || !pack.pages.some((p) => p.num === page)) {
             redirect('/pack/' + code)
         }
+        // Un anónimo que pulsa "Comprar ahora" ve el modal "¡Regístrate ahora!" en lugar de ir a /buy.
+        const registerImage = user === null ? await repositoryPack.findRegisterImage(code) : null;
         return (
             <ViewPage
                 pack={pack}
                 code={code}
                 currentPage={page}
+                registerImage={registerImage}
             >
             </ViewPage>
         )
