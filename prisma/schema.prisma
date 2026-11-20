@@ -23,7 +23,7 @@ model Pack {
   pack_id           Int                @id @default(autoincrement())
   name              String
   description       String
-  code              String
+  code              String             @unique(map: "uq_pack_code")
   code_pay          String?
   price_list        Decimal
   code_free         String?
