@@ -35,7 +35,6 @@ model Pack {
   create_at         DateTime?
   update_at         DateTime?
   pages             Page[]
-  pack_types        Pack_type[]
   pack_character    Pack_character[]
   pack_label        Pack_label[]
   pack_serie        Pack_serie[]
@@ -89,18 +88,6 @@ model Page_Type {
   pages        Page[]
 
   @@map(name: "page_type")
-}
-
-model Type {
-  type_id    Int         @id @default(autoincrement())
-  name       String
-  slug       String
-  state      Int
-  pack_types Pack_type[]
-  create_at  DateTime?
-  update_at  DateTime?
-
-  @@map(name: "type")
 }
 
 model Label {
@@ -222,18 +209,6 @@ model Page_size {
 
   @@id([size_id, page_id])
   @@map(name: "page_size")
-}
-
-model Pack_type {
-  type      Type      @relation(fields: [type_id], references: [type_id])
-  type_id   Int
-  pack      Pack      @relation(fields: [pack_id], references: [pack_id])
-  pack_id   Int
-  create_at DateTime?
-  update_at DateTime?
-
-  @@id([pack_id, type_id])
-  @@map(name: "pack_type")
 }
 
 model Pack_label {

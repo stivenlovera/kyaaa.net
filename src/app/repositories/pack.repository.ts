@@ -253,16 +253,6 @@ export const repositoryPack = {
                         }
                     }
                 },
-                pack_types: {
-                    select: {
-                        type: {
-                            select: {
-                                name: true,
-                                type_id: true
-                            }
-                        }
-                    }
-                },
                 pack_character: {
                     select: {
                         character: {

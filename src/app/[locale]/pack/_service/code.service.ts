@@ -42,16 +42,6 @@ export const packInfo = async (code: string) => {
                     }
                 }
             },
-            pack_types: {
-                select: {
-                    type: {
-                        select: {
-                            name: true,
-                            type_id: true
-                        }
-                    }
-                }
-            },
             pack_character: {
                 select: {
                     character: {
@@ -104,17 +94,6 @@ export const totalCharacter = async (character_id: number[]) => {
         inner join \`character\` on \`character\`.character_id = pack_character.character_id
         where \`character\`.character_id in (${character_id})
         group by \`character\`.character_id; `;
-
-    return result;
-}
-
-export const totalType = async (type_id: number[]) => {
-    const result = await prisma.$queryRaw<ICountTag[]>`
-    select count(pack.pack_id) as count, type.name from pack 
-        inner join pack_type on pack_type.pack_id = pack.pack_id 
-        inner join \`type\` on type.type_id = pack_type.type_id
-        where type.type_id in (${type_id})
-        group by type.type_id; `;
 
     return result;
 }

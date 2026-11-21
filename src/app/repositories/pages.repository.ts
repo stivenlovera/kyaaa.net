@@ -1,6 +1,6 @@
 import { IAdminPage, IFormPage, IPagePack } from "../types/page.types";
 import { packImageUrl } from "../utils/pack-images";
-import { PACK_TYPE, PAGE_TYPE, pageTypesWithoutPurchase, ZIP_LEVEL, ZipLevel } from "../utils/page-access";
+import { PAGE_TYPE, pageTypesWithoutPurchase, ZIP_LEVEL, ZipLevel } from "../utils/page-access";
 import { prisma } from "../utils/prisma";
 
 /** Alguna de las páginas de un guardado en bloque ya no existe (la borraron mientras se editaba). */
@@ -10,7 +10,7 @@ export class PageNotFoundError extends Error {
     }
 }
 
-/** Pack por código y si el usuario tiene acceso completo: pack gratuito o comprado por él. */
+/** Pack por código y si el usuario tiene acceso completo (lo compró). */
 async function findPackAccess(code: string, user_id?: number) {
     const pack = await prisma.pack.findFirst({
         where: {
@@ -21,20 +21,14 @@ async function findPackAccess(code: string, user_id?: number) {
             description: true,
             pack_id: true,
             code: true,
-            pack_types: {
-                select: {
-                    type_id: true
-                }
-            }
         }
     });
     if (pack === null) {
         return null;
     }
 
-    const isFreePack = pack.pack_types.some(({ type_id }) => type_id === PACK_TYPE.FREE);
-    let fullAccess = isFreePack;
-    if (!fullAccess && user_id !== undefined) {
+    let fullAccess = false;
+    if (user_id !== undefined) {
         const buy = await prisma.buy_Pack.findFirst({
             select: {
                 pack_id: true
@@ -46,23 +40,22 @@ async function findPackAccess(code: string, user_id?: number) {
         });
         fullAccess = buy !== null;
     }
-    return { pack, isFreePack, fullAccess };
+    return { pack, fullAccess };
 }
 
 /**
- * Pack "gratis para registrados": de pago (sin pack_type gratis), con páginas y ninguna "de pago", así que
- * cualquier usuario logueado lo ve y lo descarga entero sin comprar. No hay columna para esto: sale de los
- * tipos de página, así que vuelve a ser de pago en cuanto alguna página pase a "De pago".
+ * Pack "gratis para registrados": tiene páginas y ninguna "de pago", así que cualquier usuario logueado lo
+ * ve y lo descarga entero sin comprar. No hay columna para esto: sale de los tipos de página, así que
+ * vuelve a ser de pago en cuanto alguna página pase a "De pago".
  */
-function freeForRegistered(isFreePack: boolean, total: number, buyPages: number): boolean {
-    return !isFreePack && total > 0 && buyPages === 0;
+function freeForRegistered(total: number, buyPages: number): boolean {
+    return total > 0 && buyPages === 0;
 }
 
 export const repositoryPage = {
 
     /**
-     * Páginas de un pack visibles para el usuario. Ve todas si el pack es gratuito o si lo compró;
-     * si no, un anónimo ve solo las gratis (censuradas) y un usuario logueado las gratis y las de
+     * Páginas de un pack visibles para el usuario. Ve todas si lo compró; si no, un anónimo ve solo las gratis (censuradas) y un usuario logueado las gratis y las de
      * registrados (sin censura).
      */
     findPagesPack: async (code: string, id_size: number, user_id?: number): Promise<IPagePack | null> => {
@@ -70,7 +63,7 @@ export const repositoryPage = {
         if (access === null) {
             return null;
         }
-        const { pack, isFreePack, fullAccess } = access;
+        const { pack, fullAccess } = access;
         const loggedIn = user_id !== undefined;
         const visibleTypes = pageTypesWithoutPurchase(loggedIn);
 
@@ -125,32 +118,30 @@ export const repositoryPage = {
                 }),
             }))),
             total: total,
-            free: isFreePack ? total : free,
-            is_free: isFreePack,
-            free_for_registered: freeForRegistered(isFreePack, total, buyPages),
+            free: free,
+            free_for_registered: freeForRegistered(total, buyPages),
             full_access: fullAccess,
         };
     },
 
     /** Si el pack es "gratis para registrados" (ver freeForRegistered): no se puede comprar. */
     isFreeForRegistered: async (pack_id: number): Promise<boolean> => {
-        const [isFreePack, total, buyPages] = await Promise.all([
-            prisma.pack_type.count({ where: { pack_id, type_id: PACK_TYPE.FREE } }).then((n) => n > 0),
+        const [total, buyPages] = await Promise.all([
             prisma.page.count({ where: { pack_id } }),
             prisma.page.count({ where: { pack_id, page_type_id: PAGE_TYPE.BUY } }),
         ]);
-        return freeForRegistered(isFreePack, total, buyPages);
+        return freeForRegistered(total, buyPages);
     },
 
-    /**
-     * ZIP que puede descargar un usuario logueado (mismas reglas que findPagesPack): el completo si el
-     * pack es gratuito o lo compró; si no, el de páginas gratis y de registrados. null si el pack no existe.
-     */
     /** Número total de imágenes del pack (todas, sin filtrar por acceso). */
     countByPack: async (pack_id: number): Promise<number> => {
         return await prisma.page.count({ where: { pack_id } });
     },
 
+    /**
+     * ZIP que puede descargar un usuario logueado (mismas reglas que findPagesPack): el completo si lo
+     * compró; si no, el de páginas gratis y de registrados. null si el pack no existe.
+     */
     findDownloadLevel: async (code: string, user_id: number): Promise<{ code: string, level: ZipLevel } | null> => {
         const access = await findPackAccess(code, user_id);
         if (access === null) {
