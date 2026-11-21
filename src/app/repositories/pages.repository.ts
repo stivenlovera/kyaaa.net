@@ -1,7 +1,14 @@
-import { IAdminPage, IPagePack } from "../types/page.types";
+import { IAdminPage, IFormPage, IPagePack } from "../types/page.types";
 import { packImageUrl } from "../utils/pack-images";
 import { PACK_TYPE, PAGE_TYPE, pageTypesWithoutPurchase, ZIP_LEVEL, ZipLevel } from "../utils/page-access";
 import { prisma } from "../utils/prisma";
+
+/** Alguna de las páginas de un guardado en bloque ya no existe (la borraron mientras se editaba). */
+export class PageNotFoundError extends Error {
+    constructor() {
+        super("Alguna de las páginas ya no existe")
+    }
+}
 
 /** Pack por código y si el usuario tiene acceso completo: pack gratuito o comprado por él. */
 async function findPackAccess(code: string, user_id?: number) {
@@ -167,12 +174,31 @@ export const repositoryPage = {
         })))
     },
 
-    update: async (page_id: number, num: string, page_type_id: number, state: number): Promise<{ page_id: number }> => {
-        return await prisma.page.update({
-            where: { page_id },
-            data: { num, page_type_id, state, update_at: new Date() },
-            select: { page_id: true }
+    /**
+     * Guarda varias páginas a la vez (admin, "Guardar cambios"), todo o nada. `num` es único por pack
+     * (uq_page_pack_num), así que las que cambian de número pasan antes por un número temporal: si no,
+     * intercambiar 01 y 02 chocaría a mitad de camino. Devuelve cuántas se guardaron.
+     */
+    updateMany: async (pages: IFormPage[]): Promise<number> => {
+        const update_at = new Date()
+        await prisma.$transaction(async (tx) => {
+            const current = await tx.page.findMany({
+                where: { page_id: { in: pages.map(({ page_id }) => page_id) } },
+                select: { page_id: true, num: true },
+            })
+            if (current.length !== pages.length) {
+                throw new PageNotFoundError()
+            }
+            const renamed = pages.filter(({ page_id, num }) => current.find((p) => p.page_id === page_id)?.num !== num)
+            for (const [index, { page_id }] of renamed.entries()) {
+                // varchar(5): "~" + índice en base 36 (los números reales son dígitos, no chocan).
+                await tx.page.update({ where: { page_id }, data: { num: `~${index.toString(36)}` } })
+            }
+            for (const { page_id, num, page_type_id, state } of pages) {
+                await tx.page.update({ where: { page_id }, data: { num, page_type_id, state, update_at } })
+            }
         })
+        return pages.length
     },
 
     /** Borra el registro de la página (y sus filas de page_size); no toca los archivos en S3. */
