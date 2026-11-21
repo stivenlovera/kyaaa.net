@@ -51,3 +51,8 @@ export interface IFormPage {
     page_type_id: number
     state: number
 }
+
+/** Guardado en bloque de las páginas editadas (PATCH /api/pack/pages/batch). */
+export interface IFormPagesBatch {
+    pages: IFormPage[]
+}
