@@ -6,13 +6,11 @@ export interface IPagePack {
     pages: IPage[]
     /** Total de páginas del pack, incluidas las bloqueadas para este usuario. */
     total: number
-    /** Páginas que este usuario ve sin comprar (gratis, más las de registrados si está logueado; todas si el pack es gratuito). */
+    /** Páginas que este usuario ve sin comprar (gratis, más las de registrados si está logueado). */
     free: number
-    /** El pack es gratuito (pack_type gratis). */
-    is_free: boolean
     /** Pack de pago sin páginas "de pago": todo es gratis para usuarios registrados y no se puede comprar. */
     free_for_registered: boolean
-    /** true si el usuario ve todo el pack (pack gratuito o comprado). */
+    /** true si el usuario compró el pack (lo ve todo). */
     full_access: boolean
 }
 

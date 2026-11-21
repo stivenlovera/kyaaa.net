@@ -157,17 +157,6 @@ CREATE TABLE `state_participate` (
   PRIMARY KEY (`state_participate_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `type`;
-CREATE TABLE `type` (
-  `type_id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(512) NOT NULL,
-  `slug` varchar(512) NOT NULL,
-  `state` tinyint(1) NOT NULL DEFAULT '1',
-  `create_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  `update_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `user_id` int NOT NULL AUTO_INCREMENT,
@@ -369,18 +358,6 @@ CREATE TABLE `pack_serie` (
   KEY `pack_id` (`pack_id`),
   CONSTRAINT `pack_serie_ibfk_1` FOREIGN KEY (`serie_id`) REFERENCES `serie` (`serie_id`),
   CONSTRAINT `pack_serie_ibfk_2` FOREIGN KEY (`pack_id`) REFERENCES `pack` (`pack_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-DROP TABLE IF EXISTS `pack_type`;
-CREATE TABLE `pack_type` (
-  `type_id` int NOT NULL,
-  `pack_id` int NOT NULL,
-  `create_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  `update_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  KEY `type_id` (`type_id`),
-  KEY `pack_id` (`pack_id`),
-  CONSTRAINT `pack_type_ibfk_1` FOREIGN KEY (`type_id`) REFERENCES `type` (`type_id`),
-  CONSTRAINT `pack_type_ibfk_2` FOREIGN KEY (`pack_id`) REFERENCES `pack` (`pack_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `page`;

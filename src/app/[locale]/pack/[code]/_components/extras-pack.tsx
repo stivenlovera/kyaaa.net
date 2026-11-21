@@ -22,8 +22,6 @@ interface IExtraPackProps {
     user_like: boolean,
     user_favorite: boolean
     user_buy: boolean
-    /** Pack gratuito: no hay nada que comprar. */
-    free?: boolean
     /** Pack sin páginas de pago: gratis para usuarios registrados, no se compra. */
     free_for_registered?: boolean
     /** URL de la imagen del modal "Registrate ahora!" (pack.register_image). */
@@ -36,7 +34,6 @@ export const ExtraPack = ({
     user_like,
     user_favorite,
     user_buy,
-    free = false,
     free_for_registered = false,
     register_image
 }: IExtraPackProps) => {
@@ -160,7 +157,7 @@ export const ExtraPack = ({
                             {t('extra-pack.ver_compras')}
                         </Link>
                     </div>
-                ) : free ? null : free_for_registered ? (
+                ) : free_for_registered ? (
                     <div className='py-3'>
                         {user === null ? (
                             // Igual que "Comprar" sin sesión: abre el modal "¡Regístrate ahora!".

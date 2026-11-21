@@ -43,7 +43,6 @@ export interface IPackInfo {
     /** URL de la imagen del modal "Registrate ahora!"; null = sin imagen. */
     register_image: string | null
     pack_serie: PackSerie[]
-    pack_types: PackType[]
     pack_character: PackCharacter[]
     pack_label: PackLabel[]
     pack_authors: PackAuthor[]
@@ -82,15 +81,6 @@ export interface PackSerie {
 export interface Serie {
     name: string
     serie_id: number
-}
-
-export interface PackType {
-    type: Type
-}
-
-export interface Type {
-    name: string
-    type_id: number
 }
 
 export interface PackCharacter {

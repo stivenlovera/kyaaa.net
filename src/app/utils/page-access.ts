@@ -1,4 +1,4 @@
-// Ids de las tablas `page_type` y `type` (ver data-base/population.sql, sección #POBLACION).
+// Ids de la tabla `page_type` (ver data-base/population.sql, sección #POBLACION).
 // FREE: muestra para todos (censurada para anónimos). REGISTERED: muestra para usuarios logueados.
 // BUY: solo para quien compra el pack.
 export const PAGE_TYPE = {
@@ -11,11 +11,6 @@ export const PAGE_TYPE = {
 export function pageTypesWithoutPurchase(loggedIn: boolean): number[] {
     return loggedIn ? [PAGE_TYPE.FREE, PAGE_TYPE.REGISTERED] : [PAGE_TYPE.FREE];
 }
-
-export const PACK_TYPE = {
-    PAID: 1,
-    FREE: 2,
-} as const;
 
 // Ids de la tabla `rol` (ver data-base/migrations/2026-10-31_rol_admin.sql).
 export const ROL = {

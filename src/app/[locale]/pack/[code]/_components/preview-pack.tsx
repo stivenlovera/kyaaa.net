@@ -157,11 +157,6 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                             datos={tagLanguages}
                             nameSection={('language')}
                             route='language'
-                        />
-                        <CardSection
-                            datos={tagTypes}
-                            nameSection={('tipo')}
-                            route='type'
                         /> */}
                     <div className="">
                         <div className="flex mx-auto flex-wrap items-center py-1">
@@ -211,7 +206,6 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                         price={packInfo.price_list}
                         pack_id={packInfo.pack_id}
                         user_buy={packInfo.buy}
-                        free={pack_page.is_free}
                         free_for_registered={pack_page.free_for_registered}
                         user_favorite={packInfo.favorite}
                         user_like={packInfo.like}

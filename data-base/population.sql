@@ -4,8 +4,6 @@
 use `ia_kyaaa`;
 
 #POBLACION
-insert into `type` (type_id,name) values (1,'de pago');
-insert into `type` (type_id,name) values (2,'gratis');
 insert into page_type (page_type_id,name) values (1,'free'),(2,'buy'),(3,'registered');
 insert into rol (rol_id,name) values (1,'admin');
 insert into size (size_id, name, extension)
@@ -64,7 +62,6 @@ insert into platform (name, slug, base_url, is_payment) values ('Ko-fi','ko-fi',
 
 #POBLACION te encontre
 insert into pack (name,code,price_list) values ('te encontre','20260128202950',7.0);
-insert into pack_type (type_id, pack_id) values (2,1);
 insert into pack_label (label_id, pack_id) values (1,1),(2,1),(3,1),(6,1),(8,1),(9,1);
 insert into pack_serie (serie_id, pack_id) values (5,1);
 insert into pack_character (character_id,pack_id) values (1,1);
@@ -73,7 +70,6 @@ insert into pack_language (language_id,pack_id) values (1,1);
 
 #POBLACION nico anal
 insert into pack (name,code,price_list) values ('nicoAnal','20260128202951',7.0);
-insert into pack_type (type_id, pack_id) values (1,2);
 insert into pack_label (label_id, pack_id) values (1,2),(2,2),(3,2),(5,2),(6,2),(7,2),(9,2),(10,2),(11,2);
 insert into pack_serie (serie_id, pack_id) values (2,2);
 insert into pack_character (character_id,pack_id) values (3,2);
