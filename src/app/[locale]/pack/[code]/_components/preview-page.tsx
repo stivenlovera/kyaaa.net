@@ -137,11 +137,6 @@ export const ViewPage = ({ code, currentPage, pack, registerImage }: PreviewPage
                         )}
                     </div>
                 )}
-                <div className='flex mx-auto flex-wrap items-center justify-center pb-1'>
-                    <Link href={`/pack/${code}`} className='flex items-center justify-center hover:bg-gray-800 rounded-full'>
-                        Volver a la galeria
-                    </Link>
-                </div>
             </div>
             <DialogRegisterNow
                 open={openDialogRegisterNow}
