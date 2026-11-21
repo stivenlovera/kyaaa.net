@@ -49,6 +49,15 @@ async function findPackAccess(code: string, user_id?: number) {
     return { pack, isFreePack, fullAccess };
 }
 
+/**
+ * Pack "gratis para registrados": de pago (sin pack_type gratis), con páginas y ninguna "de pago", así que
+ * cualquier usuario logueado lo ve y lo descarga entero sin comprar. No hay columna para esto: sale de los
+ * tipos de página, así que vuelve a ser de pago en cuanto alguna página pase a "De pago".
+ */
+function freeForRegistered(isFreePack: boolean, total: number, buyPages: number): boolean {
+    return !isFreePack && total > 0 && buyPages === 0;
+}
+
 export const repositoryPage = {
 
     /**
@@ -65,7 +74,7 @@ export const repositoryPage = {
         const loggedIn = user_id !== undefined;
         const visibleTypes = pageTypesWithoutPurchase(loggedIn);
 
-        const [pages, total, free] = await Promise.all([
+        const [pages, total, free, buyPages] = await Promise.all([
             prisma.page.findMany({
                 where: {
                     pack_id: pack.pack_id,
@@ -95,6 +104,7 @@ export const repositoryPage = {
             }),
             prisma.page.count({ where: { pack_id: pack.pack_id } }),
             prisma.page.count({ where: { pack_id: pack.pack_id, page_type_id: { in: visibleTypes } } }),
+            prisma.page.count({ where: { pack_id: pack.pack_id, page_type_id: PAGE_TYPE.BUY } }),
         ]);
 
         return {
@@ -117,8 +127,19 @@ export const repositoryPage = {
             total: total,
             free: isFreePack ? total : free,
             is_free: isFreePack,
+            free_for_registered: freeForRegistered(isFreePack, total, buyPages),
             full_access: fullAccess,
         };
+    },
+
+    /** Si el pack es "gratis para registrados" (ver freeForRegistered): no se puede comprar. */
+    isFreeForRegistered: async (pack_id: number): Promise<boolean> => {
+        const [isFreePack, total, buyPages] = await Promise.all([
+            prisma.pack_type.count({ where: { pack_id, type_id: PACK_TYPE.FREE } }).then((n) => n > 0),
+            prisma.page.count({ where: { pack_id } }),
+            prisma.page.count({ where: { pack_id, page_type_id: PAGE_TYPE.BUY } }),
+        ]);
+        return freeForRegistered(isFreePack, total, buyPages);
     },
 
     /**

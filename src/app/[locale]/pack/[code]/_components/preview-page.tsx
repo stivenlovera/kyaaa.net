@@ -119,8 +119,18 @@ export const ViewPage = ({ code, currentPage, pack, registerImage }: PreviewPage
                 />
                 {locked > 0 && !pack.full_access && (
                     <div className='flex mx-auto flex-wrap items-center justify-center gap-2 py-2 text-center'>
-                        <span>{t('paginas_bloqueadas', { count: locked })}</span>
-                        {user === null ? (
+                        <span>{t(pack.free_for_registered ? 'paginas_bloqueadas_registro' : 'paginas_bloqueadas', { count: locked })}</span>
+                        {pack.free_for_registered ? (
+                            // Gratis para registrados: no hay nada que comprar, solo registrarse (y un
+                            // logueado ya lo ve todo, así que aquí solo llega un anónimo).
+                            <button
+                                type='button'
+                                className='rounded-full bg-gray-800 px-3 py-1 hover:bg-gray-700 cursor-pointer'
+                                onClick={() => { setOpenDialogRegisterNow(true) }}
+                            >
+                                {t('extra-pack.registrate_gratis')}
+                            </button>
+                        ) : user === null ? (
                             // Sin sesión no se puede comprar (/buy exige login): como en la ficha del pack
                             // (extras-pack.tsx), un botón que abre el modal "¡Regístrate ahora!" en vez de un enlace.
                             <button
