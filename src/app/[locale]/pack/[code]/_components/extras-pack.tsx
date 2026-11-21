@@ -24,6 +24,8 @@ interface IExtraPackProps {
     user_buy: boolean
     /** Pack gratuito: no hay nada que comprar. */
     free?: boolean
+    /** Pack sin páginas de pago: gratis para usuarios registrados, no se compra. */
+    free_for_registered?: boolean
     /** URL de la imagen del modal "Registrate ahora!" (pack.register_image). */
     register_image?: string | null
 }
@@ -35,6 +37,7 @@ export const ExtraPack = ({
     user_favorite,
     user_buy,
     free = false,
+    free_for_registered = false,
     register_image
 }: IExtraPackProps) => {
     const t = useTranslations('pack-info');
@@ -157,7 +160,23 @@ export const ExtraPack = ({
                             {t('extra-pack.ver_compras')}
                         </Link>
                     </div>
-                ) : free ? null : (
+                ) : free ? null : free_for_registered ? (
+                    <div className='py-3'>
+                        {user === null ? (
+                            // Igual que "Comprar" sin sesión: abre el modal "¡Regístrate ahora!".
+                            <button
+                                type='button'
+                                className='btn-primary w-full'
+                                disabled={loading}
+                                onClick={() => { setOpenDialogRegisterNow(true) }}
+                            >
+                                {t('extra-pack.gratis_registrados')}
+                            </button>
+                        ) : (
+                            <p className='text-center text-sm text-green-400'>{t('extra-pack.gratis_registrados_acceso')}</p>
+                        )}
+                    </div>
+                ) : (
                     <div className='py-2'>
                         {user === null ? (
                             // Sin sesión no hay navegación: un botón (no un enlace a /buy) que abre el modal

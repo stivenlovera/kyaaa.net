@@ -30,8 +30,10 @@ export default async function Page({ params }: PageProps) {
         notFound()
     }
 
-    // Si ya lo compró, no se le deja pagar otra vez: va directo al pack.
-    if (await repositoryBuyPack.verfiedLikeForUser(user.user_id, pack.pack_id) !== null) {
+    // Si ya lo compró, o es gratis para registrados (no tiene páginas de pago), no se le deja pagar:
+    // va directo al pack, que ya ve entero.
+    if (await repositoryBuyPack.verfiedLikeForUser(user.user_id, pack.pack_id) !== null
+        || await repositoryPage.isFreeForRegistered(pack.pack_id)) {
         const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
         redirect(`${prefix}/pack/${pack.code}`);
     }

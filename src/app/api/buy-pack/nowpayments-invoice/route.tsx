@@ -1,4 +1,5 @@
 import { repositoryBuyPack } from "@/src/app/repositories/buy-pack.repository";
+import { repositoryPage } from "@/src/app/repositories/pages.repository";
 import { repositoryPack } from "@/src/app/repositories/pack.repository";
 import { repositoryPaymentOrder } from "@/src/app/repositories/payment-order.repository";
 import { getCurrentUser } from "@/src/app/utils/auth";
@@ -29,6 +30,9 @@ export async function POST(request: NextRequest) {
         }
         if (await repositoryBuyPack.verfiedLikeForUser(user.user_id, pack.pack_id) !== null) {
             return NextResponse.json({ success: false, message: 'Ya compraste este pack' }, { status: 409 });
+        }
+        if (await repositoryPage.isFreeForRegistered(pack.pack_id)) {
+            return NextResponse.json({ success: false, message: 'Este pack es gratis para usuarios registrados' }, { status: 409 });
         }
 
         // Precio de la BD, nunca el del navegador.

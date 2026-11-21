@@ -212,6 +212,7 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
                         pack_id={packInfo.pack_id}
                         user_buy={packInfo.buy}
                         free={pack_page.is_free}
+                        free_for_registered={pack_page.free_for_registered}
                         user_favorite={packInfo.favorite}
                         user_like={packInfo.like}
                         register_image={packInfo.register_image}
@@ -261,7 +262,7 @@ export const PreviewPack = async ({ code, currentPage = 1 }: PreviewPackProps) =
             </div>
             {!pack_page.full_access && pack_page.total > pack_page.pages.length && (
                 <div className="flex mx-auto flex-wrap items-center justify-center gap-2 py-4 text-center text-sm">
-                    <span>{t('paginas_bloqueadas', { count: pack_page.total - pack_page.pages.length })}</span>
+                    <span>{t(pack_page.free_for_registered ? 'paginas_bloqueadas_registro' : 'paginas_bloqueadas', { count: pack_page.total - pack_page.pages.length })}</span>
                 </div>
             )}
             <NumericPagination

@@ -36,12 +36,16 @@
     "paginas": "Images",
     "paginas_gratis": "Free images",
     "paginas_bloqueadas": "There are {count, number} more images in this pack",
+    "paginas_bloqueadas_registro": "Sign up for free to see {count, number} more images in this pack",
     "actualizado": "Updated",
     "compra-tambien": "Also buy on",
     "siguenos": "Follow us on",
     "extra-pack": {
       "descarga": "Donwload",
       "comprar": "Buy now!",
+      "gratis_registrados": "Free for registered users",
+      "gratis_registrados_acceso": "Free for registered users: you already have access to the whole pack",
+      "registrate_gratis": "Sign up for free",
       "ver_compras": "See purchases",
       "dialogo_descargar": {
         "titulo": "Register now!",
